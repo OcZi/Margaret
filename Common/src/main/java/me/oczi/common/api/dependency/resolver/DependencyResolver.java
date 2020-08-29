@@ -7,6 +7,4 @@ import java.util.logging.Logger;
 public interface DependencyResolver {
 
   void addUrl(URL url) throws InvocationTargetException, IllegalAccessException;
-
-  void setLogger(Logger logger);
 }
