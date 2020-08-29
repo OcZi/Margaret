@@ -9,15 +9,16 @@ import java.net.URLClassLoader;
 import java.util.logging.Logger;
 
 public class DependencyResolverImpl implements DependencyResolver {
-  private static Logger logger;
+  private Logger logger;
 
-  private static URLClassLoader urlClassLoader;
-  private static Method ADD_URL_METHOD;
+  private URLClassLoader urlClassLoader;
+  private Method ADD_URL_METHOD;
 
   public DependencyResolverImpl(URLClassLoader classLoader) {
     urlClassLoader = classLoader;
     try {
-      ADD_URL_METHOD = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+      ADD_URL_METHOD = URLClassLoader.class
+          .getDeclaredMethod("addURL", URL.class);
       ADD_URL_METHOD.setAccessible(true);
     } catch (NoSuchMethodException e) {
       e.printStackTrace();
@@ -32,7 +33,7 @@ public class DependencyResolverImpl implements DependencyResolver {
 
   @Override
   public void setLogger(Logger logger) {
-    DependencyResolverImpl.logger = logger;
+    this.logger = logger;
   }
 
   public void logger(String msg) {
