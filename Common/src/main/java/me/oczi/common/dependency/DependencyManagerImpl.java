@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * Dependency manager responsible to download and load it to the ClassLoader.
+ * Imeplementation of {@link DependencyManager}.
  */
 public class DependencyManagerImpl implements DependencyManager, Loggable {
   private File path;
