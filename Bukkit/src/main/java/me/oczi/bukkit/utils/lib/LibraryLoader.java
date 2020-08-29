@@ -1,6 +1,6 @@
 package me.oczi.bukkit.utils.lib;
 
-import me.oczi.common.api.dependency.DependencyManager;
+import me.oczi.common.dependency.DependencyManager;
 import me.oczi.common.dependency.Dependency;
 import me.oczi.common.dependency.DependencyManagerImpl;
 import org.jetbrains.annotations.Nullable;

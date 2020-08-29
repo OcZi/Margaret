@@ -5,9 +5,6 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import me.oczi.common.api.Loggable;
-import me.oczi.common.api.dependency.DependencyManager;
-import me.oczi.common.api.dependency.downloader.DependencyDownloader;
-import me.oczi.common.api.dependency.resolver.DependencyResolver;
 import me.oczi.common.utils.CommonsUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +17,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * Imeplementation of {@link DependencyManager}.
+ * Implementation of {@link DependencyManager}.
  */
 public class DependencyManagerImpl implements DependencyManager, Loggable {
   private File path;

@@ -1,6 +1,5 @@
 package me.oczi.common.dependency;
 
-import me.oczi.common.api.dependency.downloader.DependencyDownloader;
 import me.oczi.common.dependency.monitor.MonitorByteChannel;
 
 import java.io.*;

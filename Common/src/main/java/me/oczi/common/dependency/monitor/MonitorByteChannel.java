@@ -27,11 +27,27 @@ public interface MonitorByteChannel extends ReadableByteChannel, Loggable {
     return new MonitorByteChannelImpl(channel, fileName, length, logger);
   }
 
+  /**
+   * Get the percentage of download to finish.
+   * @return Percentage of download
+   */
   String getPercentage();
 
+  /**
+   * Get the total bytes downloaded.
+   * @return Total bytes downloaded.
+   */
   int getTotalDownloaded();
 
+  /**
+   * Get absolute size of download.
+   * @return Absolute file
+   */
   int getAbsoluteSize();
 
+  /**
+   * Get the needed bytes to download to finish.
+   * @return Needed bytes to finish.
+   */
   int getBytesNeeded();
 }

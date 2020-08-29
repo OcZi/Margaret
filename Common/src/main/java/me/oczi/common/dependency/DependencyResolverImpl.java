@@ -1,12 +1,9 @@
 package me.oczi.common.dependency;
 
-import me.oczi.common.api.dependency.resolver.DependencyResolver;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.logging.Logger;
 
 /**
  * Class used to load any dependency in a {@link URLClassLoader}

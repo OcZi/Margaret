@@ -19,7 +19,7 @@ import me.oczi.bukkit.utils.MessageUtils;
 import me.oczi.bukkit.utils.lib.LibraryLoader;
 import me.oczi.bukkit.utils.lib.MargaretLibrary;
 import me.oczi.common.api.configuration.CacheConfig;
-import me.oczi.common.api.dependency.DependencyManager;
+import me.oczi.common.dependency.DependencyManager;
 import me.oczi.common.dependency.Dependency;
 import me.oczi.common.storage.sql.datasource.DataSourceType;
 import org.bukkit.Bukkit;
