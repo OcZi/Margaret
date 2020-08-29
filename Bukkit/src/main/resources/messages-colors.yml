@@ -1,6 +1,20 @@
-## Color schematic used in every message.
+## Color schematic used in
+## every message of Messages.yml
+## Like "$1Hello world"
+
+## Color 1. Used if the message not have a property color.
 base: gray
+
+## Color 2. Used in relevant information.
 relevant: dark_aqua
+
+## Color 3. Used in irrelevant information.
 irrelevant: dark_gray
+
+## Color 4. Used rarely for important information.
 important: blue
+
+## Color 5. Used for error messages.
 warning: red
+
+## Note: A "color" 6 exist, but only reset the ChatColor.
