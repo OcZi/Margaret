@@ -11,7 +11,6 @@ import me.oczi.bukkit.utils.MessageUtils;
 
 public class PartnerObjectLoader extends AbstractObjectLoader<String> {
   private final PartnerObjectBuilder builder;
-  private boolean alreadyExist;
 
   public PartnerObjectLoader(MemoryManager memoryManager) {
     super(memoryManager);
@@ -22,7 +21,6 @@ public class PartnerObjectLoader extends AbstractObjectLoader<String> {
   public void load(String id) {
     // Case if partner is loaded by the other partner.
     if (persistenceCache.containsPartner(id)) {
-      this.alreadyExist = true;
       return;
     }
 
@@ -58,11 +56,11 @@ public class PartnerObjectLoader extends AbstractObjectLoader<String> {
     if (cache.isGarbageCache()) {
       Partner partner = persistenceCache.getPartner(id);
       garbageCache.putPartner(id, partner);
-      System.out.println(id + " Partner swap from Persistence to Garbage");
+      MessageUtils.debug(id + " Partner swap from Persistence to Garbage");
     }
 
     persistenceCache.removePartner(id);
-    System.out.println(id + " closed");
+    MessageUtils.debug(id + " session ended");
   }
 
   @Override
@@ -70,17 +68,6 @@ public class PartnerObjectLoader extends AbstractObjectLoader<String> {
     Partner partner = garbageCache.getPartner(id);
     persistenceCache.putPartner(id, partner);
     garbageCache.removePartner(id);
-    System.out.println(id + " Partner swap from Garbage to Persistence");
-  }
-
-  /**
-   * See if last load partner exist.
-   * @return Is already exist.
-   */
-  public boolean isAlreadyExist() {
-    boolean result = alreadyExist;
-    // Delete them after get result to avoid always be true.
-    this.alreadyExist = false;
-    return result;
+    MessageUtils.debug(id + " Partner swap from Garbage to Persistence");
   }
 }

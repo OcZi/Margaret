@@ -7,6 +7,7 @@ import me.oczi.bukkit.objects.partner.Partner;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.objects.player.MargaretPlayerMeta;
 import me.oczi.bukkit.objects.player.PlayerData;
+import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
 
 import org.bukkit.entity.Player;
@@ -34,14 +35,17 @@ public class PlayerObjectLoader extends AbstractObjectLoader<Player> {
     PlayerData playerData = builder.initPlayerData(player);
     MargaretPlayerMeta metaSettings = builder.initPlayerSettings(uuid);
 
-    //DEBUGGING
-    MessageUtils.console(uuid + " Profile:", true);
-    MessageUtils.console("Data: " + playerData.toString(), true);
-    MessageUtils.console("Settings:", true);
-    for (Map.Entry<String, Boolean> entry : metaSettings.asMap().entrySet()) {
-      MessageUtils.console(entry.getKey() + ": " + entry.getValue(), true);
+    if (MargaretYamlStorage.isDebugMode()) {
+      MessageUtils.info(uuid + " Profile:");
+      MessageUtils.info("Data: ");
+      for (Map.Entry<String, String> entry : playerData.toMap().entrySet()) {
+        MessageUtils.info(" " + entry.getKey() + ": " + entry.getValue());
+      }
+      MessageUtils.info("Settings:");
+      for (Map.Entry<String, Boolean> entry : metaSettings.asMap().entrySet()) {
+        MessageUtils.info(" " + entry.getKey() + ": " + entry.getValue());
+      }
     }
-    //DEBUGGING
 
     MargaretPlayer margaretPlayer = builder.createMargaretPlayer(playerData, metaSettings);
     persistenceCache.putMargaretPlayer(uuid, margaretPlayer);
@@ -63,12 +67,12 @@ public class PlayerObjectLoader extends AbstractObjectLoader<Player> {
 
     if (cache.isGarbageCache()) {
       garbageCache.putMargaretPlayer(uuid, margaretPlayer1);
-      MessageUtils.console(margaretPlayer1.getName()
-          + " swap from Persistence to Garbage", true);
+      MessageUtils.debug(margaretPlayer1.getName()
+            + " swap from Persistence to Garbage");
     }
 
     persistenceCache.removeMargaretPlayer(uuid);
-    System.out.println(uuid + " closed");
+    MessageUtils.debug(uuid + " session ended");
   }
 
   @Override
@@ -78,7 +82,7 @@ public class PlayerObjectLoader extends AbstractObjectLoader<Player> {
 
     persistenceCache.putMargaretPlayer(uuid, margaretPlayer);
     garbageCache.removeMargaretPlayer(uuid);
-    MessageUtils.console(margaretPlayer.getName()
-        + " swap from Garbage to Persistence", true);
+    MessageUtils.debug(margaretPlayer.getName()
+        + " swap from Garbage to Persistence");
   }
 }

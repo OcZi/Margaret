@@ -6,6 +6,8 @@ import me.oczi.bukkit.utils.DefaultGender;
 import me.oczi.bukkit.utils.EmptyObjects;
 import me.oczi.bukkit.utils.Genders;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class PlayerData {
@@ -41,6 +43,15 @@ public class PlayerData {
 
   public Gender getGender() {
     return gender;
+  }
+
+  public Map<String, String> toMap() {
+    Map<String, String> map = new HashMap<>();
+    map.put("uuid", uuid.toString());
+    map.put("name", name);
+    map.put("partnerid", partner.getId());
+    map.put("gender", gender.getFormalName());
+    return map;
   }
 
   @Override

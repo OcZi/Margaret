@@ -19,8 +19,6 @@ import java.util.logging.Logger;
  * MargaretPlayer and Partner.
  */
 public class ObjectCachePluginImpl implements ObjectCachePlugin {
-  private final Logger logger = MessageUtils.getLogger();
-
   private final Cache<UUID, MargaretPlayer> playerCache;
   private final Cache<String, Partner> partnerCache;
 

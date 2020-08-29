@@ -443,6 +443,28 @@ public interface MessageUtils {
     }
   }
 
+  static void info(String string) {
+    getLogger().info(string);
+  }
+
+  static void info(String... string) {
+    for (String s : string) {
+      getLogger().info(s);
+    }
+  }
+
+  static void debug(String string) {
+    if (MargaretYamlStorage.isDebugMode()) {
+      info(string);
+    }
+  }
+
+  static void debug(String... string) {
+    if (MargaretYamlStorage.isDebugMode()) {
+      info(string);
+    }
+  }
+
   /**
    * Get the logger of the main class.
    *
