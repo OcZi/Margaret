@@ -31,13 +31,14 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class SqlManagerImpl implements SqlManager {
   private SqlTask sqlTask;
   private DataSource dataSource;
 
   private final SqlDsl dsl;
-  private SqlStatementProcessor adapter;
+  private SqlStatementProcessor statementProcessor;
 
   private SqlProcessorCache executor;
   private DbScript script;
@@ -48,10 +49,14 @@ public class SqlManagerImpl implements SqlManager {
   private DataSourceType dataSourceType;
 
   private List<String> homesId;
+  private final Logger logger;
 
-  public SqlManagerImpl() {
+  public SqlManagerImpl(boolean isDebugMode) {
     checkDataSourceType();
     this.dsl = new SqlDslImpl(this.dataSourceType);
+    this.logger = isDebugMode
+        ? MargaretMain.getCore().getLogger()
+        : null;
   }
 
   @Override
@@ -59,11 +64,14 @@ public class SqlManagerImpl implements SqlManager {
     this.maxPossibleHomes = MargaretYamlStorage
         .getMaxPossibleHomes();
     this.dataSource = createDataSource();
-    SqlProcessor processor = new SqlProcessorImpl(true, dataSource);
-    this.adapter = new SqlStatementProcessorImpl(processor);
+    SqlProcessor processor = logger != null
+        ? new SqlProcessorImpl(true, dataSource, logger)
+        : new SqlProcessorImpl(true, dataSource);
+    this.statementProcessor =
+        new SqlStatementProcessorImpl(processor);
     this.script = new SqlScript(this,
         dsl,
-        adapter,
+        statementProcessor,
         maxPossibleHomes,
         MargaretYamlStorage.getDaysToExpire());
 
@@ -78,7 +86,7 @@ public class SqlManagerImpl implements SqlManager {
         .build();
     return new SqlProcessorCacheImpl(cache.asMap(),
         dsl,
-        adapter);
+        statementProcessor);
   }
 
   @Override

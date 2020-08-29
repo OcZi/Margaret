@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import static me.oczi.common.utils.Sqls.setObjectsStatement;
 
@@ -22,26 +23,31 @@ public class SqlProcessorImpl implements SqlProcessor {
   private final AtomicBoolean nullSafe;
   private final DataSource dataSource;
 
-  private final AtomicInteger statementCount = new AtomicInteger();
+  private Logger logger;
+  private AtomicInteger statementCount;
 
   public SqlProcessorImpl(DataSource dataSource) {
-    this(new AtomicBoolean(false), dataSource);
+    this(false, dataSource);
   }
 
   public SqlProcessorImpl(boolean nullSafe, DataSource dataSource) {
-    this(new AtomicBoolean(nullSafe), dataSource);
+    this(nullSafe, dataSource, null);
   }
 
-  public SqlProcessorImpl(AtomicBoolean nullSafe, DataSource dataSource) {
-    this.nullSafe = nullSafe;
+  public SqlProcessorImpl(boolean nullSafe,
+                          DataSource dataSource,
+                          Logger logger) {
+    this.nullSafe = new AtomicBoolean(nullSafe);
     this.dataSource = dataSource;
+    this.logger = logger;
+    if (logger != null) {
+      this.statementCount = new AtomicInteger();
+    }
   }
 
   public SqlObject queryFirst(String expression,
                               List<Object> params) {
-
-    // TEST
-    printStatementPackage(expression, params);
+    logStatement(expression, params);
     try (final Connection connection = dataSource.getConnection()) {
       try (final PreparedStatement statement = connection
           .prepareStatement(expression)) {
@@ -72,9 +78,7 @@ public class SqlProcessorImpl implements SqlProcessor {
   @Override
   public ResultMap queryMap(String expression,
                            List<Object> params) {
-
-    // TEST
-    printStatementPackage(expression, params);
+    logStatement(expression, params);
     try (final Connection connection = dataSource.getConnection()) {
       try (final PreparedStatement statement = connection
           .prepareStatement(expression)) {
@@ -100,8 +104,7 @@ public class SqlProcessorImpl implements SqlProcessor {
   public boolean queryExist(String expression,
                             List<Object> params) {
     boolean result;
-    // TEST
-    printStatementPackage(expression, params);
+    logStatement(expression, params);
     try (final Connection connection = dataSource.getConnection()) {
       try (final PreparedStatement statement = connection
           .prepareStatement(expression)) {
@@ -131,9 +134,7 @@ public class SqlProcessorImpl implements SqlProcessor {
                                       Class<T> clazz,
                                       List<Object> params) {
     Map<String, T> result = null;
-
-    // TEST
-    printStatementPackage(expression, params);
+    logStatement(expression, params);
     try (final Connection connection = dataSource.getConnection()) {
       try (final PreparedStatement statement = connection
           .prepareStatement(expression)) {
@@ -159,9 +160,7 @@ public class SqlProcessorImpl implements SqlProcessor {
   @Override
   public void update(String expression,
                      List<Object> params) {
-
-    // TEST
-    printStatementPackage(expression, params);
+    logStatement(expression, params);
     try {
       try (final Connection connection = dataSource.getConnection()) {
         try (final PreparedStatement statement =
@@ -187,9 +186,7 @@ public class SqlProcessorImpl implements SqlProcessor {
 
   @Override
   public void batch(List<String> expression) {
-
-    // TEST
-    printBatchStatements(expression);
+    logBatch(expression);
     try {
       try (final Connection connection = dataSource.getConnection()) {
         try (final Statement statement = connection.createStatement()) {
@@ -211,7 +208,7 @@ public class SqlProcessorImpl implements SqlProcessor {
 
   @Override
   public void largeBatch(List<String> expression) {
-    printBatchStatements(expression);
+    logBatch(expression);
     try {
       try (final Connection connection = dataSource.getConnection()) {
         try (final Statement statement = connection.createStatement()) {
@@ -231,7 +228,7 @@ public class SqlProcessorImpl implements SqlProcessor {
                             List<Object> totalParameters,
                             int batches,
                             int paramSize) {
-    printBatchStatements(expression, totalParameters);
+    logReusableBatch(expression, totalParameters);
     try {
       if (totalParameters.size() != (batches * paramSize)) {
         throw new SQLNotSafeException(
@@ -262,7 +259,7 @@ public class SqlProcessorImpl implements SqlProcessor {
                                  List<Object> totalParameters,
                                  int batches,
                                  int paramSize) {
-    printBatchStatements(expression, totalParameters);
+    logReusableBatch(expression, totalParameters);
     try {
       if (totalParameters.size() != (batches * paramSize)) {
         throw new SQLNotSafeException(
@@ -288,24 +285,37 @@ public class SqlProcessorImpl implements SqlProcessor {
     }
   }
 
-  // TEST
-  private void printStatementPackage(String expression, List<Object> params) {
-    printStatementPackage(expression);
-    System.out.println("Statament " + statementCount.getAndIncrement() + " params:" + params.toString());
+  private void logStatement(String expression, List<Object> params) {
+    if (logger == null) {
+      return;
+    }
+    logStatement(expression);
+    logger.info("Statament " + statementCount.getAndIncrement() + " params:" + params.toString());
   }
 
-  private void printBatchStatements(String expression, List<Object> batches) {
-    System.out.println("Statament " + statementCount.getAndIncrement() +
+  private void logReusableBatch(String expression, List<Object> batches) {
+    if (logger == null) {
+      return;
+    }
+    logger.info("Statament " + statementCount.getAndIncrement() +
         " reusable batch " + expression);
-    System.out.println("params:" + batches.toString());
+    logger.info("params:" + batches.toString());
   }
 
-  private void printBatchStatements(List<String> batches) {
-    System.out.println("Statement " + statementCount.getAndIncrement() + " batch:");
-    batches.forEach(System.out::println);
+  private void logBatch(List<String> batches) {
+    if (logger == null) {
+      return;
+    }
+    logger.info("Statement " + statementCount.getAndIncrement() + " batch:");
+    for (String batch : batches) {
+      logger.info(batch);
+    }
   }
 
-  private void printStatementPackage(String expression) {
-    System.out.println("Statament " + statementCount.get() + " expression:" + expression);
+  private void logStatement(String expression) {
+    if (logger == null) {
+      return;
+    }
+    logger.info("Statament " + statementCount.get() + " expression:" + expression);
   }
 }

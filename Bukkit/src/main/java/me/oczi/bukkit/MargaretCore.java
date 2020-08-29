@@ -83,7 +83,10 @@ public class MargaretCore implements PluginCore {
     loadYamlStorage();
   }
 
-  private void initLibraries() throws IllegalAccessException, IOException, InvocationTargetException {
+  private void initLibraries()
+      throws IllegalAccessException,
+      IOException,
+      InvocationTargetException {
     ClassLoader classLoader = getClass().getClassLoader();
     Logger logger = getLogger();
     this.libraryLoader = new LibraryLoader(
@@ -110,7 +113,8 @@ public class MargaretCore implements PluginCore {
 
   private void initDatabase() {
     // TODO: Change SqlManager to DatabaseManager if MongoDBManager is implemented
-    this.dbManager = new SqlManagerImpl();
+    this.dbManager = new SqlManagerImpl(
+        MargaretYamlStorage.isDebugMode());
   }
 
   private void initListeners() {

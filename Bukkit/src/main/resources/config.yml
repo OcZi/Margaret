@@ -83,4 +83,4 @@ other:
 
   ## Activates debugging tools and other things
   ## to test the plugin.
-  debug-mode: true
+  debug-mode: false

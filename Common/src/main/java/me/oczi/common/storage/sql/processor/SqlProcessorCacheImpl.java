@@ -28,14 +28,9 @@ public class SqlProcessorCacheImpl implements SqlProcessorCache {
                                SqlDsl dao,
                                boolean nullSafe,
                                DataSource dataSource) {
-    this(cache, dao, new AtomicBoolean(nullSafe), dataSource);
-  }
-
-  public SqlProcessorCacheImpl(Map<String, PreparedStatement> cache,
-                               SqlDsl dao,
-                               AtomicBoolean nullSafe,
-                               DataSource dataSource) {
-    this(cache, dao, new SqlStatementProcessorImpl(nullSafe, dataSource));
+    this.cache = cache;
+    this.dao = dao;
+    this.statementProcessor = new SqlStatementProcessorImpl(nullSafe, dataSource);
   }
 
   public SqlProcessorCacheImpl(Map<String, PreparedStatement> cache,

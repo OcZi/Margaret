@@ -15,14 +15,10 @@ public class SqlStatementProcessorImpl implements SqlStatementProcessor {
   private final SqlProcessor delegate;
 
   public SqlStatementProcessorImpl(DataSource dataSource) {
-    this.delegate = new SqlProcessorImpl(dataSource);
+    this(false, dataSource);
   }
 
   public SqlStatementProcessorImpl(boolean nullSafe, DataSource dataSource) {
-    this.delegate = new SqlProcessorImpl(nullSafe, dataSource);
-  }
-
-  public SqlStatementProcessorImpl(AtomicBoolean nullSafe, DataSource dataSource) {
     this.delegate = new SqlProcessorImpl(nullSafe, dataSource);
   }
 

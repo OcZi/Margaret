@@ -3,18 +3,15 @@ package me.oczi.bukkit.commands;
 import app.ashcon.intake.Command;
 import app.ashcon.intake.bukkit.parametric.annotation.Sender;
 import app.ashcon.intake.parametric.annotation.Default;
-import me.oczi.bukkit.PluginCore;
 import me.oczi.bukkit.internal.CooldownManager;
 import me.oczi.bukkit.objects.CooldownPlayer;
 import me.oczi.bukkit.objects.Proposal;
-import me.oczi.bukkit.objects.partner.Partner;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
 import me.oczi.bukkit.utils.settings.BasicSettings;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.Set;
 import java.util.UUID;
