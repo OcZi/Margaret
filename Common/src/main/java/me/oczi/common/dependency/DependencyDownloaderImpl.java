@@ -1,8 +1,6 @@
 package me.oczi.common.dependency;
 
-import me.oczi.common.api.Loggable;
 import me.oczi.common.api.dependency.downloader.DependencyDownloader;
-import me.oczi.common.dependency.maven.MavenDependency;
 import me.oczi.common.dependency.monitor.MonitorByteChannel;
 
 import java.io.*;
@@ -13,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
 
-public class DependencyDownloaderImpl implements DependencyDownloader, Loggable {
+public class DependencyDownloaderImpl implements DependencyDownloader {
   private Logger logger;
   private final File path;
 
@@ -23,7 +21,7 @@ public class DependencyDownloaderImpl implements DependencyDownloader, Loggable 
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
   @Override
-  public File download(MavenDependency dependency) {
+  public File download(Dependency dependency) {
     Path dependencyPath = Paths.get(
         path.getAbsolutePath(),
         dependency.getFileName());
@@ -38,8 +36,8 @@ public class DependencyDownloaderImpl implements DependencyDownloader, Loggable 
           return dependencyFile;
         } else {
           warning("Dependency file '" + dependency.getFileName()
-              + "' size not match with file size in Maven repository." +
-              "(File size in folder: " + fileSize
+                  + "' size not match with file size in Maven repository."
+                  + "(File size in folder: " + fileSize
                   + ", File size in repository: " + expectedSize,
               "deleting file to download it again...");
           dependencyFile.delete();

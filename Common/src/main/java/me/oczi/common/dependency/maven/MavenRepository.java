@@ -1,5 +1,8 @@
 package me.oczi.common.dependency.maven;
 
+/**
+ * URL of Maven's repository.
+ */
 public enum MavenRepository {
   JITPACK("https://jitpack.io/"),
   MAVEN("https://repo1.maven.org/maven2/"),

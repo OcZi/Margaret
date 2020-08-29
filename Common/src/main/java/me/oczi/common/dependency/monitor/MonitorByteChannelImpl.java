@@ -1,6 +1,5 @@
 package me.oczi.common.dependency.monitor;
 
-import me.oczi.common.api.Loggable;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -9,8 +8,12 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-public class MonitorByteChannelImpl implements MonitorByteChannel, Loggable {
+/**
+ * Implementation of {@link MonitorByteChannel}.
+ */
+public class MonitorByteChannelImpl implements MonitorByteChannel {
   private final String fileName;
+  // Hardcoded message info
   private final String formatInfo = "Downloading %s... [%s]";
 
   private final ReadableByteChannel delegate;

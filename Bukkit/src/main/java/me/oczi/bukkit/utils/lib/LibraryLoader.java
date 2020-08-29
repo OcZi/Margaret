@@ -3,7 +3,6 @@ package me.oczi.bukkit.utils.lib;
 import me.oczi.common.api.dependency.DependencyManager;
 import me.oczi.common.dependency.Dependency;
 import me.oczi.common.dependency.DependencyManagerImpl;
-import me.oczi.common.dependency.maven.MavenDependency;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -43,7 +42,7 @@ public class LibraryLoader implements DependencyManager {
   }
 
   @Override
-  public List<MavenDependency> process()
+  public List<Dependency> process()
       throws IllegalAccessException,
       IOException,
       InvocationTargetException {
@@ -56,7 +55,7 @@ public class LibraryLoader implements DependencyManager {
   }
 
   @Override
-  public List<MavenDependency> getDependencyList() {
+  public List<Dependency> getDependencyList() {
     return delegate.getDependencyList();
   }
 }

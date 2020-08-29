@@ -8,9 +8,10 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.logging.Logger;
 
+/**
+ * Class used to load any dependency in a {@link URLClassLoader}
+ */
 public class DependencyResolverImpl implements DependencyResolver {
-  private Logger logger;
-
   private URLClassLoader urlClassLoader;
   private Method ADD_URL_METHOD;
 
@@ -29,15 +30,5 @@ public class DependencyResolverImpl implements DependencyResolver {
   public void addUrl(URL url)
       throws InvocationTargetException, IllegalAccessException {
     ADD_URL_METHOD.invoke(urlClassLoader, url);
-  }
-
-  @Override
-  public void setLogger(Logger logger) {
-    this.logger = logger;
-  }
-
-  public void logger(String msg) {
-    if (logger == null) { return; }
-    logger.info(msg);
   }
 }

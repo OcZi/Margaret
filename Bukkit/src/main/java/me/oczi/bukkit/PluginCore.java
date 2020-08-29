@@ -9,7 +9,7 @@ import me.oczi.bukkit.internal.database.DbTasks;
 import me.oczi.bukkit.objects.partner.Partner;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.GenderManager;
-import me.oczi.common.dependency.maven.MavenDependency;
+import me.oczi.common.dependency.Dependency;
 import org.bukkit.event.Event;
 
 import java.io.File;
@@ -97,7 +97,7 @@ public interface PluginCore {
    * Get loaded dependencies of plugin.
    * @return Dependencies.
    */
-  List<MavenDependency> getLoadedDependencies();
+  List<Dependency> getLoadedDependencies();
 
   CommandManager getCommandManager();
 

@@ -2,6 +2,9 @@ package me.oczi.common.dependency;
 
 import me.oczi.common.dependency.maven.MavenRepository;
 
+/**
+ * Dependency interface representation.
+ */
 public interface Dependency {
 
   String getGroupId();

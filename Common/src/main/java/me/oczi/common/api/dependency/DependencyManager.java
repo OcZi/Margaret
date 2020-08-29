@@ -1,7 +1,6 @@
 package me.oczi.common.api.dependency;
 
 import me.oczi.common.dependency.Dependency;
-import me.oczi.common.dependency.maven.MavenDependency;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,9 +16,9 @@ public interface DependencyManager {
 
   DependencyManager addDependency(Collection<Dependency> dependencies);
 
-  List<MavenDependency> process() throws IOException, InvocationTargetException, IllegalAccessException;
+  List<Dependency> process() throws IOException, InvocationTargetException, IllegalAccessException;
 
   void setPath(File path);
 
-  List<MavenDependency> getDependencyList();
+  List<Dependency> getDependencyList();
 }

@@ -20,10 +20,9 @@ import me.oczi.bukkit.utils.lib.LibraryLoader;
 import me.oczi.bukkit.utils.lib.MargaretLibrary;
 import me.oczi.common.api.configuration.CacheConfig;
 import me.oczi.common.api.dependency.DependencyManager;
-import me.oczi.common.dependency.maven.MavenDependency;
+import me.oczi.common.dependency.Dependency;
 import me.oczi.common.storage.sql.datasource.DataSourceType;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event;
 
 import java.io.File;
@@ -47,7 +46,7 @@ public class MargaretCore implements PluginCore {
   private GenderManager genderManager;
   private CommandManager commandManager;
   private DependencyManager libraryLoader;
-  private List<MavenDependency> loadedDependencies;
+  private List<Dependency> loadedDependencies;
 
   MargaretCore(MargaretMain plugin) {
     this.plugin = plugin;
@@ -126,9 +125,6 @@ public class MargaretCore implements PluginCore {
   }
 
   private void initCooldown() {
-    FileConfiguration mainConfig = MargaretYamlStorage
-        .getMainConfig()
-        .getAccess();
     int cooldownEviction = MargaretYamlStorage.getCommandTimeout();
     int proposalTimeout = MargaretYamlStorage.getProposalTimeout();
     this.cooldownManager = new CooldownManagerImpl(
@@ -229,7 +225,7 @@ public class MargaretCore implements PluginCore {
   }
 
   @Override
-  public List<MavenDependency> getLoadedDependencies() {
+  public List<Dependency> getLoadedDependencies() {
     return loadedDependencies;
   }
 

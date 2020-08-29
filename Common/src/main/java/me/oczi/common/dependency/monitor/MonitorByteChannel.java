@@ -1,5 +1,6 @@
 package me.oczi.common.dependency.monitor;
 
+import me.oczi.common.api.Loggable;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -7,7 +8,10 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Logger;
 
-public interface MonitorByteChannel extends ReadableByteChannel {
+/**
+ * A {@link ReadableByteChannel} that can be {@link Loggable}.
+ */
+public interface MonitorByteChannel extends ReadableByteChannel, Loggable {
 
   static MonitorByteChannel newChannel(InputStream channel,
                                        String fileName,

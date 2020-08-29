@@ -8,7 +8,6 @@ import me.oczi.common.api.Loggable;
 import me.oczi.common.api.dependency.DependencyManager;
 import me.oczi.common.api.dependency.downloader.DependencyDownloader;
 import me.oczi.common.api.dependency.resolver.DependencyResolver;
-import me.oczi.common.dependency.maven.MavenDependency;
 import me.oczi.common.utils.CommonsUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,12 +19,15 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.logging.Logger;
 
+/**
+ * Dependency manager responsible to download and load it to the ClassLoader.
+ */
 public class DependencyManagerImpl implements DependencyManager, Loggable {
   private File path;
 
   private final DependencyDownloader downloader;
   private final DependencyResolver resolver;
-  private final List<MavenDependency> dependencyList = new ArrayList<>();
+  private final List<Dependency> dependencyList = new ArrayList<>();
   private Logger logger;
 
   public DependencyManagerImpl(File path, ClassLoader classLoader) {
@@ -45,7 +47,7 @@ public class DependencyManagerImpl implements DependencyManager, Loggable {
 
   @Override
   public DependencyManager addDependency(Dependency dependency) {
-    dependencyList.add(new MavenDependency(dependency));
+    dependencyList.add(dependency);
     return this;
   }
 
@@ -67,7 +69,7 @@ public class DependencyManagerImpl implements DependencyManager, Loggable {
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
   @Override
-  public List<MavenDependency> process()
+  public List<Dependency> process()
       throws IOException,
       InvocationTargetException,
       IllegalAccessException {
@@ -83,8 +85,8 @@ public class DependencyManagerImpl implements DependencyManager, Loggable {
     return getResultAndClear();
   }
 
-  private List<MavenDependency> getResultAndClear() {
-    List<MavenDependency> result = Lists.newArrayList(dependencyList);
+  private List<Dependency> getResultAndClear() {
+    List<Dependency> result = Lists.newArrayList(dependencyList);
     dependencyList.clear();
     return result;
   }
@@ -93,17 +95,17 @@ public class DependencyManagerImpl implements DependencyManager, Loggable {
     List<File> files = new ArrayList<>();
     info("Start to download dependencies... ["
         + dependencyList.size() + " dependencies]");
-    for (MavenDependency mavenDependency : dependencyList) {
+    for (Dependency dependency : dependencyList) {
       // Download dependency to lib folder
-      File fileOutput = downloader.download(mavenDependency);
+      File fileOutput = downloader.download(dependency);
       Map<String, File> fileMap =
           CommonsUtils.mapPath(fileOutput.getParent());
-      if (!fileMap.containsKey(mavenDependency.getFileName())) {
+      if (!fileMap.containsKey(dependency.getFileName())) {
         throw new IOException(
-            "Dependency file " + mavenDependency.getFileName()
+            "Dependency file " + dependency.getFileName()
                 + "doesn't exist after download.");
       }
-      checkHash(fileOutput, mavenDependency.getChecksum());
+      checkHash(fileOutput, dependency.getChecksum());
       files.add(fileOutput);
     }
     return files;
@@ -129,7 +131,7 @@ public class DependencyManagerImpl implements DependencyManager, Loggable {
   }
 
   @Override
-  public List<MavenDependency> getDependencyList() {
+  public List<Dependency> getDependencyList() {
     return dependencyList;
   }
 
@@ -188,7 +190,6 @@ public class DependencyManagerImpl implements DependencyManager, Loggable {
   public void setLogger(Logger logger) {
     if (logger != null) {
       this.logger = logger;
-      resolver.setLogger(logger);
       downloader.setLogger(logger);
     }
   }
