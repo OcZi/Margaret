@@ -1,7 +1,7 @@
 package me.oczi.bukkit.internal.database.tasks;
 
-import me.oczi.common.storage.sql.orm.result.ResultMap;
-import me.oczi.common.storage.sql.orm.result.SqlObject;
+import me.oczi.common.storage.sql.dsl.result.ResultMap;
+import me.oczi.common.storage.sql.dsl.result.SqlObject;
 
 import java.util.Date;
 import java.util.UUID;

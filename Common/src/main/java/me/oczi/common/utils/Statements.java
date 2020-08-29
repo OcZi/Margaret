@@ -3,16 +3,14 @@ package me.oczi.common.utils;
 import me.oczi.common.api.sql.StatementPattern;
 import me.oczi.common.storage.sql.datasource.DataSourceType;
 import me.oczi.common.storage.sql.interoperability.ConstraintsComp;
-import me.oczi.common.storage.sql.orm.result.SqlObject;
-import org.apache.commons.lang.StringUtils;
+import me.oczi.common.storage.sql.dsl.result.SqlObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import static me.oczi.common.storage.sql.orm.other.LogicalOperatorPattern.EQUALS;
-import static me.oczi.common.storage.sql.orm.other.LogicalOperatorPattern.IN;
+import static me.oczi.common.storage.sql.dsl.other.LogicalOperatorPattern.EQUALS;
+import static me.oczi.common.storage.sql.dsl.other.LogicalOperatorPattern.IN;
 
 /**
  * "SQL" utilities.

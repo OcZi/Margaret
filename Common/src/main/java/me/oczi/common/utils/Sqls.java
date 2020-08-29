@@ -2,10 +2,10 @@ package me.oczi.common.utils;
 
 import me.oczi.common.exceptions.SQLNotSafeException;
 import me.oczi.common.exceptions.SQLRuntimeException;
-import me.oczi.common.storage.sql.orm.result.QueryMap;
-import me.oczi.common.storage.sql.orm.result.ResultMap;
-import me.oczi.common.storage.sql.orm.result.SqlObject;
-import me.oczi.common.storage.sql.orm.result.SqlObjectImpl;
+import me.oczi.common.storage.sql.dsl.result.QueryMap;
+import me.oczi.common.storage.sql.dsl.result.ResultMap;
+import me.oczi.common.storage.sql.dsl.result.SqlObject;
+import me.oczi.common.storage.sql.dsl.result.SqlObjectImpl;
 
 import java.sql.*;
 import java.util.Collections;

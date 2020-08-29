@@ -2,11 +2,11 @@ package me.oczi.common.executors;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
-import me.oczi.common.storage.sql.orm.result.ResultMap;
-import me.oczi.common.storage.sql.orm.result.SqlObject;
-import me.oczi.common.storage.sql.orm.dsl.SqlDsl;
-import me.oczi.common.storage.sql.orm.statements.data.StatementMetadata;
-import me.oczi.common.storage.sql.orm.statements.prepared.PreparedStatement;
+import me.oczi.common.storage.sql.dsl.result.ResultMap;
+import me.oczi.common.storage.sql.dsl.result.SqlObject;
+import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
+import me.oczi.common.storage.sql.dsl.statements.data.StatementMetadata;
+import me.oczi.common.storage.sql.dsl.statements.prepared.PreparedStatement;
 import me.oczi.common.storage.sql.processor.SqlProcessorCache;
 import me.oczi.common.storage.sql.processor.SqlStatementProcessor;
 import me.oczi.common.storage.sql.processor.SqlProcessor;

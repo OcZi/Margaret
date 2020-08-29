@@ -1,7 +1,7 @@
 package me.oczi.common.storage.sql.processor;
 
-import me.oczi.common.storage.sql.orm.result.ResultMap;
-import me.oczi.common.storage.sql.orm.result.SqlObject;
+import me.oczi.common.storage.sql.dsl.result.ResultMap;
+import me.oczi.common.storage.sql.dsl.result.SqlObject;
 
 import java.util.List;
 import java.util.Map;

@@ -1,11 +1,11 @@
 package me.oczi.common.storage.sql.processor;
 
 import me.oczi.common.storage.sql.datasource.DataSource;
-import me.oczi.common.storage.sql.orm.result.ResultMap;
-import me.oczi.common.storage.sql.orm.result.SqlObject;
-import me.oczi.common.storage.sql.orm.dsl.SqlDsl;
-import me.oczi.common.storage.sql.orm.statements.data.StatementMetadata;
-import me.oczi.common.storage.sql.orm.statements.prepared.PreparedStatement;
+import me.oczi.common.storage.sql.dsl.result.ResultMap;
+import me.oczi.common.storage.sql.dsl.result.SqlObject;
+import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
+import me.oczi.common.storage.sql.dsl.statements.data.StatementMetadata;
+import me.oczi.common.storage.sql.dsl.statements.prepared.PreparedStatement;
 
 import java.util.Map;
 import java.util.Set;

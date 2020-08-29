@@ -19,9 +19,9 @@ import me.oczi.common.storage.sql.datasource.DataSourceType;
 import me.oczi.common.storage.sql.datasource.DataSourceTypePackage;
 import me.oczi.common.storage.sql.datasource.instance.DataSourceCPBuilder;
 import me.oczi.common.storage.sql.datasource.instance.DataSources;
-import me.oczi.common.storage.sql.orm.dsl.SqlDsl;
-import me.oczi.common.storage.sql.orm.dsl.SqlDslImpl;
-import me.oczi.common.storage.sql.orm.statements.prepared.PreparedStatement;
+import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
+import me.oczi.common.storage.sql.dsl.expressions.SqlDslImpl;
+import me.oczi.common.storage.sql.dsl.statements.prepared.PreparedStatement;
 import me.oczi.common.storage.sql.processor.*;
 import org.bukkit.configuration.file.FileConfiguration;
 

@@ -2,10 +2,9 @@ package me.oczi.common.storage.sql.processor;
 
 import me.oczi.common.exceptions.SQLNotSafeException;
 import me.oczi.common.storage.sql.datasource.DataSource;
-import me.oczi.common.storage.sql.orm.result.QueryMap;
-import me.oczi.common.storage.sql.orm.result.ResultMap;
-import me.oczi.common.storage.sql.orm.result.SqlObject;
-import me.oczi.common.storage.sql.orm.result.SqlObjectImpl;
+import me.oczi.common.storage.sql.dsl.result.ResultMap;
+import me.oczi.common.storage.sql.dsl.result.SqlObject;
+import me.oczi.common.storage.sql.dsl.result.SqlObjectImpl;
 import me.oczi.common.utils.CommonsUtils;
 import me.oczi.common.utils.Sqls;
 
