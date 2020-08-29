@@ -29,7 +29,7 @@ public interface GenderManager {
   /**
    * Get gender registered in GenderManager.
    * @param genderName Gender to search.
-   * @return Gender searched, or {@link DefaultGender}.
+   * @return Gender.
    */
   Gender getGender(String genderName);
 }

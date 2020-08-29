@@ -17,11 +17,6 @@ import static me.oczi.bukkit.utils.DefaultGender.UNKNOWN;
  * Implementation of Gender Manager.
  */
 public class GenderManagerImpl implements GenderManager {
-  private final Gender defaultGender = new GenderImpl(UNKNOWN.getName(),
-      "Unknown",
-      UNKNOWN.getColor(),
-      UNKNOWN.getPrefix());
-
   private final Map<String, Gender> genders = new HashMap<>();
   private final FileConfiguration gendersConfig;
 
@@ -34,14 +29,29 @@ public class GenderManagerImpl implements GenderManager {
    * Initialization of gender.
    */
   public void initGenders() {
-    Set<String> genderRoot = gendersConfig.getKeys(false);
-    // Always register Unknown gender.
-    genders.put(defaultGender.getRealName(), defaultGender);
-
-    for (String genderEntry : genderRoot) {
+    Set<String> root = gendersConfig.getKeys(false);
+    // Init default gender and remove them from the root
+    // to avoid a double register.
+    initDefaultGender(root);
+    root.removeIf(s -> s.equalsIgnoreCase("unknown"));
+    for (String genderEntry : root) {
       Gender gender = createGenderByNode(genderEntry);
       registerGender(gender);
     }
+  }
+
+  private void initDefaultGender(Set<String> root) {
+    String nodeRoot = "unknown";
+    Gender gender;
+    if (root.contains(nodeRoot)) {
+      gender = createGenderByNode(nodeRoot);
+    } else {
+      gender = new GenderImpl(UNKNOWN.getName(),
+          UNKNOWN.getName(),
+          UNKNOWN.getColor(),
+          UNKNOWN.getPrefix());
+    }
+    registerGender(gender);
   }
 
   private Gender createGenderByNode(String gender) {
@@ -94,6 +104,6 @@ public class GenderManagerImpl implements GenderManager {
 
   @Override
   public Gender getGender(String genderName) {
-    return genders.getOrDefault(genderName, defaultGender);
+    return genders.get(genderName);
   }
 }

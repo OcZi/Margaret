@@ -2,6 +2,12 @@
 ## if you want, you can use it to create
 ## your own gender here.
 
+## Default gender.
+## It will always be registered, even if it is deleted.
+unknown:
+  formal-name: unknown
+  color: gray
+  prefix: '?'
 male:
   formal-name: Male
   color: blue
