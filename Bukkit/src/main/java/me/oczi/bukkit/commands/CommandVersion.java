@@ -6,6 +6,7 @@ import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.*;
 import me.oczi.common.utils.CommonsUtils;
 import net.kyori.text.TextComponent;
+import net.kyori.text.event.ClickEvent;
 import net.kyori.text.format.TextColor;
 import net.kyori.text.format.TextDecoration;
 import org.bukkit.command.CommandSender;
@@ -43,9 +44,11 @@ public class CommandVersion {
   }
 
   private TextComponent composeGithubMessage(PluginDescriptionFile description) {
-    return TextComponent.of(description.getWebsite())
+    String website = description.getWebsite();
+    return TextComponent.of(website)
         .color(TextColor.DARK_AQUA)
         .decoration(TextDecoration.UNDERLINED, true)
+        .clickEvent(ClickEvent.openUrl(website))
         .hoverEvent(MessageUtils
             .hoverTextOf(Messages.GITHUB_HOVER));
   }
