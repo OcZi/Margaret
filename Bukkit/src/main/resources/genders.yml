@@ -1,0 +1,17 @@
+## This file is used for create genders.
+## if you want, you can use it to create
+## your own gender here.
+
+male:
+  formal-name: Male
+  color: blue
+  prefix: M
+female:
+  formal-name: Female
+  color: light_purple
+  prefix: F
+## Gender example
+## id_of_gender:
+##   formal-name: formal_name
+##   color: chat_color_name
+##   prefix: prefix

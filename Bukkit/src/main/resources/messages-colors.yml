@@ -1,0 +1,6 @@
+## Color schematic used in every message.
+base: gray
+relevant: dark_aqua
+irrelevant: dark_gray
+important: blue
+warning: red

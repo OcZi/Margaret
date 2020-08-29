@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <relativePath>../pom.xml</relativePath>
+        <artifactId>Margaret</artifactId>
+        <groupId>me.oczi</groupId>
+        <version>0.9.7-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>Bukkit</artifactId>
+    <version>0.9.6-SNAPSHOT</version>
+
+    <build>
+        <finalName>${project.parent.artifactId}-${project.artifactId}-${project.parent.version}</finalName>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+           <groupId>me.oczi</groupId>
+           <artifactId>Common</artifactId>
+           <version>0.8-SNAPSHOT</version>
+           <scope>compile</scope>
+        </dependency>
+
+        <!-- Command Framework -->
+        <dependency>
+            <groupId>app.ashcon.intake</groupId>
+            <artifactId>intake-bukkit</artifactId>
+            <version>1.2-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Text Framework -->
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>text-adapter-bukkit</artifactId>
+            <version>3.0.5</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

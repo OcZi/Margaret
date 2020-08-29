@@ -1,0 +1,68 @@
+general:
+
+  ## Database Type.
+  ## Available databases:
+  ## - H2
+  ## - SQLite
+  ## - Postgresql
+  ## - MySQL
+  database-type: H2
+
+  ## Set the mode of Database.
+  ## Modes:
+  ## - Embedded
+  ## - Server
+  ## Only available for H2.
+  database-mode: embedded
+
+  ## Threads available for ExecutorService in Database.
+  ## Available options:
+  ## 0 = CachedThreadPool (Create Threads dynamically without limit).
+  ## 1 = SingleThreadExecutor.
+  ## 2 >= FixedThreadPool.
+  ## NOTE: is recommended to maintain 1 thread for embedded databases.
+  threads: 1
+
+## Table names in Database
+table:
+  sql_properties: margaret_sql_properties
+
+  player_data: margaret_player_data
+  partner_data: margaret_partner_data
+
+  player_settings: margaret_player_settings
+  partner_settings: margaret_partner_settings
+
+  partner_homes_list: margaret_partner_homes_list
+
+## Database credentials.
+## Only for remote Databases.
+## Ports
+## - MySQL: 3306
+## - Postgresql: 5432
+credentials:
+  username: user
+  password: password
+  database: database
+  hostname: localhost
+  port: 3306
+
+## HikariCP Configuration.
+## More about in: https://github.com/brettwooldridge/HikariCP#configuration-knobs-baby
+hikariconfig:
+  connection-test-query: SELECT 1
+  connection-timeout: 30000
+  idle-timeout: 600000
+  max-lifetime: 1800000
+  minimum-idle: 10
+  maximum.pool-size: 10
+
+## Database properties.
+## You can make your own properties with
+## the name of database as node and the properties to add.
+properties:
+  mysql:
+    cache-prep-stmts: true
+    prep-stmt-cache-size: 250
+    prep-stmt-cache-sql-limit: 2048
+    use-server-prep-stmts: true

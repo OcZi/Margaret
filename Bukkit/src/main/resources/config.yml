@@ -1,0 +1,86 @@
+
+player:
+
+  ## Maximum of proposals per user.
+  maximum-proposals: 12
+
+  ## Time out to evict proposal from player's proposal list.
+  proposal-time-out: 60
+
+  ## Cooldown to send proposals after end a partner
+  ## or their proposal be declined.
+  proposal-cooldown: 30
+
+  ## Days to expire all the player data (including partner)
+  ## in database for absence.
+  player-expire: 30
+
+command:
+
+  ## Command cooldown in seconds.
+  command-cooldown: 10
+
+chat:
+
+  ## The format used for the player's message in chat.
+  ## Placeholders usage:
+  ##  {0}: Gender prefix
+  ##  {1}: Partner prefix
+  chat-format: "{0}{1}"
+
+partner:
+
+  ## Broadcast the start/end of every partner.
+  announce-partner: true
+
+  ## Maximum homes for any player without exceptions.
+  ## will be the number of columns available for homes in table database.
+  ## NOTE: ONLY CAN BE INCREMENTED, NOT DECREMENTED.
+  max-possible-homes: 1
+
+  permission:
+
+    ## Default max homes for partners.
+    default-max-homes: 5
+
+    ## Allow the players to set a custom relation
+    allow-custom-relations: true
+
+    ## Default settings for partners.
+    default-settings:
+      - mount
+      - pvp
+
+  relation:
+
+    ## List of allowed relations for everyone.
+    ## First relation in list will be default.
+
+    ## Relation Unknown will always added.
+    allowed-relations:
+      - friends
+
+## Cache Storage of objects (Partners & Players).
+cache:
+
+  ## Create a Garbage Cache that retains the
+  ## information of the players and the partners
+  ## that are disconnected.
+
+  ## This can be useful to reuse the information
+  ## instead of creating it again by sending
+  ## a request to the database.
+
+  ## All objects in Garbage Cache will be
+  ## removed after the timeout of each object.
+  create-garbage-cache: true
+
+  ## Time out to remove objects in seconds.
+  cache-player-timeout: 120
+  cache-partner-timeout: 120
+
+other:
+
+  ## Activates debugging tools and other things
+  ## to test the plugin.
+  debug-mode: true
