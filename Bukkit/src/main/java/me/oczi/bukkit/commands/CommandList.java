@@ -5,13 +5,17 @@ import app.ashcon.intake.bukkit.parametric.annotation.Sender;
 import app.ashcon.intake.dispatcher.Dispatcher;
 import app.ashcon.intake.parametric.annotation.Default;
 import com.google.common.collect.Lists;
+import me.oczi.bukkit.internal.MemoryManager;
 import me.oczi.bukkit.internal.commandmanager.CommandManager;
 import me.oczi.bukkit.objects.Gender;
 import me.oczi.bukkit.objects.Home;
 import me.oczi.bukkit.objects.Proposal;
 import me.oczi.bukkit.objects.collections.HomeList;
+import me.oczi.bukkit.objects.collections.PartnerTop;
 import me.oczi.bukkit.objects.partner.Partner;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
+import me.oczi.bukkit.objects.player.PlayerData;
+import me.oczi.bukkit.objects.player.PlayerDataPair;
 import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
@@ -43,8 +47,31 @@ public class CommandList {
         true);
   }
 
-  // TODO: Partner's list
-  public void partners() {}
+  @Command(
+      aliases = {"top-partner", "partners", "partner"},
+      desc = "Top partners.")
+  public void partners(@Sender CommandSender sender,
+                       MemoryManager memoryManager) {
+    PartnerTop partnerTop = memoryManager.getPartnerTop();
+    MessageUtils.compose(sender,
+        Messages.LIST_PARTNER_HEADER,
+        true,
+        partnerTop.size());
+    for (PlayerDataPair pair : partnerTop) {
+      String playerName1 = processPlayerData(pair.getLeft());
+      String playerName2 = processPlayerData(pair.getRight());
+      MessageUtils.compose(sender,
+          Messages.LIST_PARTNER_ENTRY,
+          true,
+          playerName1,
+          playerName2);
+    }
+  }
+
+  private String processPlayerData(PlayerData data) {
+    Gender gender = data.getGender();
+    return gender.getChatColor() + data.getName();
+  }
 
   @Command(
       aliases = {"genders", "gender", "g"},

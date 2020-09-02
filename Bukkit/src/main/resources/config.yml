@@ -79,6 +79,12 @@ cache:
   cache-player-timeout: 120
   cache-partner-timeout: 120
 
+  ## Time out to refresh the Partner's top in seconds.
+  cache-partner-top-refresh: 300
+
+  ## Limit of entries in cache for Partner's top.
+  cache-partner-top-limit: 10
+
 other:
 
   ## Activates debugging tools and other things

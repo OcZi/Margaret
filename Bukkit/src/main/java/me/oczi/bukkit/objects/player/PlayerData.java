@@ -5,6 +5,7 @@ import me.oczi.bukkit.objects.partner.Partner;
 import me.oczi.bukkit.utils.DefaultGender;
 import me.oczi.bukkit.utils.EmptyObjects;
 import me.oczi.bukkit.utils.Genders;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,12 +19,13 @@ public class PlayerData {
 
   public PlayerData(UUID uuid,
                     String name,
-                    Partner partner,
+                    @Nullable Partner partner,
                     String gender) {
     this.uuid = uuid;
     this.name = name;
-    this.partner = partner == null ?
-        EmptyObjects.getEmptyPartner() : partner;
+    this.partner = partner == null
+        ? EmptyObjects.getEmptyPartner()
+        : partner;
     this.gender = Genders.genderExist(gender)
         ? Genders.getGender(gender)
         : Genders.getGender(DefaultGender.UNKNOWN.getName());

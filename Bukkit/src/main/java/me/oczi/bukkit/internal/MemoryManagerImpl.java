@@ -1,6 +1,9 @@
 package me.oczi.bukkit.internal;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import me.oczi.bukkit.MargaretMain;
+import me.oczi.bukkit.objects.collections.PartnerTop;
+import me.oczi.bukkit.objects.collections.PartnerTopImpl;
 import me.oczi.common.api.configuration.CacheConfig;
 
 import java.util.concurrent.TimeUnit;
@@ -9,8 +12,10 @@ public class MemoryManagerImpl implements MemoryManager {
   private final ObjectCachePlugin persistenceCache;
   private ObjectCachePlugin garbageCache;
 
+  private final PartnerTop top;
+
   public MemoryManagerImpl(CacheConfig config) {
-    persistenceCache = new ObjectCachePluginImpl(
+    this.persistenceCache = new ObjectCachePluginImpl(
         Caffeine.newBuilder()
             .expireAfterWrite(1, TimeUnit.DAYS)
             .build(),
@@ -20,6 +25,12 @@ public class MemoryManagerImpl implements MemoryManager {
     if (config.isGarbage()) {
       createGarbageCache(config);
     }
+    this.top = new PartnerTopImpl(
+        config.getPartnerTopLimit(),
+        config.getPartnerTimeOut(),
+        // Hardcoded DbTasks
+        // At this point, database is loaded.
+        MargaretMain.getCore().getDatabaseTask());
   }
 
   private void createGarbageCache(CacheConfig config) {
@@ -47,5 +58,10 @@ public class MemoryManagerImpl implements MemoryManager {
   @Override
   public ObjectCachePlugin getGarbageCache() {
     return garbageCache;
+  }
+
+  @Override
+  public PartnerTop getPartnerTop() {
+    return top;
   }
 }

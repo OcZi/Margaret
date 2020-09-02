@@ -29,6 +29,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.oczi.bukkit.internal.database.sql.MargaretSqlTable.*;
+import static me.oczi.common.storage.sql.dsl.expressions.select.SelectStatementFunction.COUNT;
 
 public class SqlTask implements DbTasks {
   private final Date cacheDay;
@@ -196,6 +197,27 @@ public class SqlTask implements DbTasks {
         Collections.singletonList("*"));
   }
 
+  public ResultMap getAllPlayerData(String... uuids) {
+    return getAllPlayerData(Arrays.asList(uuids));
+  }
+
+  // No register this statement in cache
+  // because the parameters cannot be predicted.
+  @Override
+  public ResultMap getAllPlayerData(List<String> uuids) {
+    StatementBasicData data = StatementBasicData
+        .newData(PLAYER_DATA,
+            Arrays.asList("id, name, gender, partnerid", "id"),
+            uuids);
+    return sqlExecutor
+        .queryMap("", // Empty statement id to bypass cache
+            data,
+            dsl -> dsl.select("columns")
+                .from(PLAYER_DATA)
+                .where("id", uuids)
+                .build());
+  }
+
   @Override
   public Date getPlayerExpire(UUID uuid) {
     return getColumnOfRow("player-expire-get",
@@ -223,6 +245,28 @@ public class SqlTask implements DbTasks {
         settingName,
         uuid.toString())
         .getBooleanOrDefault(false);
+  }
+
+  @Override
+  public ResultMap getTopOfPartners(int limit) {
+    return getRowsByColumn("",
+        PARTNER_DATA,
+        limit,
+        "creation_date",
+        Lists.newArrayList("player1", "player2"));
+  }
+
+  @Override
+  public int getCountOfPartners() {
+    StatementBasicData data = StatementBasicData.newData(
+        PARTNER_DATA,
+        null,
+        null);
+    return sqlExecutor.queryFirst("partner-count-get",
+        data,
+        dsl -> dsl.select(COUNT)
+            .from(PARTNER_DATA)
+            .build()).getInteger();
   }
 
   @Override
@@ -365,7 +409,7 @@ public class SqlTask implements DbTasks {
         .newData(table, columns, params);
     sqlExecutor.update(id,
         data,
-        dao -> dao.insert()
+        dsl -> dsl.insert()
             .into(table)
             .values(params)
             .build());
@@ -381,7 +425,7 @@ public class SqlTask implements DbTasks {
     StatementBasicData data = StatementBasicData.newData(
         table, columns, Collections.singletonList(id));
     return sqlExecutor.queryMap(idStatement, data,
-        dao -> dao.select(selects)
+        dsl -> dsl.select(selects)
             .from(table)
             .where("id", id)
             .build());
@@ -395,9 +439,59 @@ public class SqlTask implements DbTasks {
         Lists.newArrayList(columnName, "id"),
         Lists.newArrayList(id));
     return sqlExecutor.queryFirst(idStatement, data,
-        dao -> dao.select(columnName)
+        dsl -> dsl.select(columnName)
             .from(table)
             .where("id", id)
+            .build());
+  }
+
+  private ResultMap getFixedRows(String idStatement,
+                                 MargaretSqlTable table,
+                                 int start,
+                                 int end,
+                                 List<String> selects) {
+    List<String> columns  = Lists.newArrayList(
+        String.join(", ", selects));
+    StatementBasicData data = StatementBasicData.newData(
+        table, columns, null);
+    return sqlExecutor.queryMap(idStatement, data,
+        dsl -> dsl.select(selects)
+            .from(table)
+            .offset(start)
+            .limit(end)
+            .build());
+  }
+
+  private ResultMap getFirstRows(String idStatement,
+                                 MargaretSqlTable table,
+                                 int limit,
+                                 List<String> selects) {
+    List<String> columns  = Lists.newArrayList(
+        String.join(", ", selects));
+    StatementBasicData data = StatementBasicData.newData(
+        table, columns, null);
+    return sqlExecutor.queryMap(idStatement, data,
+        dsl -> dsl.select(columns)
+            .from(table)
+            .limit(limit)
+            .build());
+  }
+
+  private ResultMap getRowsByColumn(String idStatement,
+                                    MargaretSqlTable table,
+                                    int limit,
+                                    String dateName,
+                                    List<String> selects) {
+    List<String> columns  = Lists.newArrayList(
+        String.join(", ", selects));
+    columns.add(dateName);
+    StatementBasicData data = StatementBasicData.newData(
+        table, columns, null);
+    return sqlExecutor.queryMap(idStatement, data,
+        dsl -> dsl.select(columns)
+            .from(table)
+            .orderBy(dateName)
+            .limit(limit)
             .build());
   }
 
@@ -407,7 +501,7 @@ public class SqlTask implements DbTasks {
     StatementBasicData data = StatementBasicData.newData(table,
         Collections.emptyList(), params);
     sqlExecutor.update(idStatement, data,
-        dao -> dao.insert()
+        dsl -> dsl.insert()
             .orReplace()
             .into(table)
             .values(params)
@@ -444,7 +538,7 @@ public class SqlTask implements DbTasks {
         Lists.newArrayList(columnName, "id"),
         params);
     sqlExecutor.update(idStatement, data,
-        dao -> dao.update(table)
+        dsl -> dsl.update(table)
             .set(columnName, param)
             .where("id", ids)
             .build());
@@ -456,7 +550,7 @@ public class SqlTask implements DbTasks {
     StatementBasicData data = StatementBasicData.newData(table,
         Lists.newArrayList("id"), Lists.newArrayList(id));
     sqlExecutor.update(idStatement, data,
-        dao -> dao.deleteFrom(table)
+        dsl -> dsl.deleteFrom(table)
             .where("id", id)
             .build());
   }
@@ -468,7 +562,7 @@ public class SqlTask implements DbTasks {
         Lists.newArrayList("id", "id"),
         Lists.newArrayList(id));
     return sqlExecutor.queryExist(idStatement, data,
-        dao -> dao.select("id")
+        dsl -> dsl.select("id")
             .from(table)
             .where("id", id)
             .limit(1)

@@ -1,7 +1,6 @@
 package me.oczi.bukkit.internal;
 
-import me.oczi.bukkit.objects.partner.Partner;
-import me.oczi.bukkit.objects.player.MargaretPlayer;
+import me.oczi.bukkit.objects.collections.PartnerTop;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,4 +25,6 @@ public interface MemoryManager {
    * @return Garbage cache.
    */
   @Nullable ObjectCachePlugin getGarbageCache();
+
+  PartnerTop getPartnerTop();
 }

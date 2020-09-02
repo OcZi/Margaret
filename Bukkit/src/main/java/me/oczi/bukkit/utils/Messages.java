@@ -133,10 +133,12 @@ public enum Messages {
   LIST_RELATIONS_HEADER("Relations[{0}]", "list"),
   LIST_SETTINGS_HEADER("Settings[{0}]", "list"),
   LIST_GENDERS_HEADER("Genders[{0}]", "list"),
+  LIST_PARTNER_HEADER("Top partners[{0}]", "list"),
 
   LIST_ENTRY("- {0}", "list"),
   LIST_ENUM_ENTRY("{0}. {1}", "list"),
   LIST_HOME_ENTRY("{0}. {1}: $1{2}", "list"),
+  LIST_PARTNER_ENTRY("$11. {0} $1- {1}", "list"),
 
   // Help messages.
   COMMAND_LIST_PAGE_HEADER("$0-------$2[$3{0} {1}$2]$0-------", "help"),
