@@ -7,4 +7,8 @@ public interface CacheConfig {
   int getPlayerTimeOut();
 
   int getPartnerTimeOut();
+
+  long getPartnerTopRefresh();
+
+  int getPartnerTopLimit();
 }
