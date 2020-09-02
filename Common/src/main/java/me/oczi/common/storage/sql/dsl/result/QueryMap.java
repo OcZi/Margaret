@@ -1,6 +1,6 @@
 package me.oczi.common.storage.sql.dsl.result;
 
-import me.oczi.common.utils.CommonsUtils;
+import me.oczi.common.utils.Statements;
 
 import java.util.*;
 
@@ -47,7 +47,7 @@ public class QueryMap extends ResultMap {
     Map<String, SqlObject> map = new HashMap<>();
     for (Entry<String, SqlObject> entry : resultMap.entrySet()) {
       String key = entry.getKey();
-      if (!CommonsUtils.findNumeric(key)) {
+      if (!Statements.isDuplicated(key)) {
         map.put(key, entry.getValue());
       }
       if (map.size() == columns) {
@@ -60,10 +60,12 @@ public class QueryMap extends ResultMap {
   @Override
   public Map<String, SqlObject> findRow(int i) {
     Map<String, SqlObject> map = new HashMap<>();
+    int slot = i + 1;
     for (Entry<String, SqlObject> entry : resultMap.entrySet()) {
       String key = entry.getKey();
-      if (CommonsUtils.findNumeric(key)) {
-        key = key.replace("-" + i, "");
+      if (Statements.isDuplicated(key) &&
+          key.endsWith(String.valueOf(slot))) {
+        key = key.substring(0, key.indexOf("-"));
         map.put(key, entry.getValue());
       }
       if (map.size() == columns) {

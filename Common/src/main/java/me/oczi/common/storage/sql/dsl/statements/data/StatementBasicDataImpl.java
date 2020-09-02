@@ -1,6 +1,7 @@
 package me.oczi.common.storage.sql.dsl.statements.data;
 
 import me.oczi.common.api.sql.SqlTable;
+import me.oczi.common.utils.CommonsUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -23,7 +24,9 @@ public class StatementBasicDataImpl
     if (table != null) {
       this.table = table;
     }
-    this.params.addAll(params);
+    if (!CommonsUtils.isNullOrEmpty(params)) {
+      this.params.addAll(params);
+    }
     this.cols = cols;
   }
 
@@ -72,7 +75,9 @@ public class StatementBasicDataImpl
   }
 
   @Override
-  public StatementBasicData setMetaData(@Nullable SqlTable table, List<String> cols, List<Object> params) {
+  public StatementBasicData setMetaData(@Nullable SqlTable table,
+                                        List<String> cols,
+                                        List<Object> params) {
     this.table = table;
     this.cols = cols;
     this.params = params;

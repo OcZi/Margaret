@@ -6,6 +6,7 @@ import me.oczi.common.storage.sql.datasource.DataSourceType;
 import me.oczi.common.storage.sql.dsl.expressions.clause.ValuesClause;
 import me.oczi.common.storage.sql.dsl.statements.AbstractStatement;
 import me.oczi.common.storage.sql.dsl.statements.prepared.PreparedStatement;
+import me.oczi.common.utils.CommonsUtils;
 import org.jetbrains.annotations.NotNull;
 
 import static me.oczi.common.storage.sql.dsl.expressions.table.builder.CreateStatementPattern.*;
@@ -41,7 +42,7 @@ public class TableBuilderImpl
       statementBuilder.formatLastClause(table.getName());
     }
     ValuesClause.createValues(statementBuilder, dataSourceType);
-    if (!charSet.isEmpty() &&
+    if (!CommonsUtils.isNullOrEmpty(charSet) &&
         dataSourceType.equals(DataSourceType.MYSQL)) {
       statementBuilder.appendPlain(
           CharSetPattern.DEFAULT_CHARSET, charSet);

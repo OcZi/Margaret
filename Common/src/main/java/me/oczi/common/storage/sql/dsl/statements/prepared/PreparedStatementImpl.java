@@ -57,12 +57,6 @@ public final class PreparedStatementImpl
           + " not reached (Input: " + i2
           + ", Required: " + i1 + ")");
     }
-    // Deleting List overflow.
-    if (i1 < i2) {
-      int difference = i2 - i1;
-      list.removeAll(
-          list.subList(i2 - difference, i2));
-    }
   }
 
   @Override
