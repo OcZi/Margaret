@@ -6,6 +6,7 @@ public enum ClauseStatementPattern implements StatementPattern {
 
   FROM("FROM %s"),
   LIMIT("LIMIT %s"),
+  OFFSET("OFFSET %s"),
   WHERE("WHERE %s"),
   ORDER("ORDER BY %s"),
   VALUES("VALUES(%s)");

@@ -22,7 +22,6 @@ import java.util.function.Function;
 public class SqlTaskExecutor extends TaskExecutor implements SqlProcessorCache {
   private final SqlProcessorCache processor;
 
-
   public SqlTaskExecutor(SqlProcessorCache processor,
                          ExecutorService executorService) {
     super(executorService);
@@ -109,12 +108,12 @@ public class SqlTaskExecutor extends TaskExecutor implements SqlProcessorCache {
   }
 
   @Override
-  public SqlStatementProcessor getProcessorAdapter() {
-    return processor.getProcessorAdapter();
+  public SqlStatementProcessor getStatementProcessor() {
+    return processor.getStatementProcessor();
   }
 
   @Override
-  public SqlDsl getDaoStatements() {
-    return processor.getDaoStatements();
+  public SqlDsl getDslStatements() {
+    return processor.getDslStatements();
   }
 }

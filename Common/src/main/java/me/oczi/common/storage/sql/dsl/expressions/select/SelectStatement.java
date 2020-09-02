@@ -146,4 +146,11 @@ public class SelectStatement
   public PreparedStatement build() {
     return statementBuilder.build();
   }
+
+  @Override
+  public SelectClauses offset(int offset) {
+    return OffsetClause.offset(this,
+        statementBuilder,
+        offset);
+  }
 }

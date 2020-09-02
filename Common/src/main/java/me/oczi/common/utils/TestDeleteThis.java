@@ -130,6 +130,13 @@ public class TestDeleteThis {
         .limit(1)
         .build()
         .toString());
+    System.out.println("9: " + dsl
+        .select("nani")
+        .from(TestTables.TEST)
+        .offset(10)
+        .limit(10)
+        .build()
+        .toString());
 
     System.out.println();
     System.out.println("Insert:");

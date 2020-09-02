@@ -42,7 +42,7 @@ public interface SqlProcessorCache {
 
   Set<String> getStatementsCached();
 
-  SqlStatementProcessor getProcessorAdapter();
+  SqlStatementProcessor getStatementProcessor();
 
-  SqlDsl getDaoStatements();
+  SqlDsl getDslStatements();
 }

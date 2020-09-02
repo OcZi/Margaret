@@ -8,6 +8,7 @@ import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static me.oczi.common.storage.sql.dsl.other.LogicalOperatorPattern.EQUALS;
 import static me.oczi.common.storage.sql.dsl.other.LogicalOperatorPattern.IN;
@@ -16,6 +17,12 @@ import static me.oczi.common.storage.sql.dsl.other.LogicalOperatorPattern.IN;
  * "SQL" utilities.
  */
 public interface Statements {
+
+  /**
+   * Regex to check if is a column duplicated
+   * Like "column_name-{number}".
+   */
+  Pattern regexSuffix = Pattern.compile("-\\d+?$");
 
   static void checkObjects(String errMessage, SqlObject... sqlObjects) {
     for (SqlObject sqlObject : sqlObjects) {
@@ -80,6 +87,10 @@ public interface Statements {
       patternList.add(pattern.getPattern());
     }
     return CommonsUtils.cyclicFormat(patternList, true);
+  }
+
+  static boolean isDuplicated(String string) {
+    return regexSuffix.matcher(string).find();
   }
 
   static String getColumnName(String id) {

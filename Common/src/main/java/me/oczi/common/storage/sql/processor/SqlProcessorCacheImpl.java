@@ -9,48 +9,46 @@ import me.oczi.common.storage.sql.dsl.statements.prepared.PreparedStatement;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 public class SqlProcessorCacheImpl implements SqlProcessorCache {
   private final Map<String, PreparedStatement> cache;
 
-  private final SqlDsl dao;
+  private final SqlDsl dsl;
   private final SqlStatementProcessor statementProcessor;
 
   public SqlProcessorCacheImpl(Map<String, PreparedStatement> cache,
-                               SqlDsl dao,
+                               SqlDsl dsl,
                                DataSource dataSource) {
-    this(cache, dao, false, dataSource);
+    this(cache, dsl, false, dataSource);
   }
 
   public SqlProcessorCacheImpl(Map<String, PreparedStatement> cache,
-                               SqlDsl dao,
+                               SqlDsl dsl,
                                boolean nullSafe,
                                DataSource dataSource) {
     this.cache = cache;
-    this.dao = dao;
+    this.dsl = dsl;
     this.statementProcessor = new SqlStatementProcessorImpl(nullSafe, dataSource);
   }
 
   public SqlProcessorCacheImpl(Map<String, PreparedStatement> cache,
-                               SqlDsl dao,
+                               SqlDsl dsl,
                                SqlStatementProcessor statementProcessor) {
     this.cache = cache;
-    this.dao = dao;
+    this.dsl = dsl;
     this.statementProcessor = statementProcessor;
   }
 
   private PreparedStatement process(String idStatement,
                                     Function<SqlDsl, PreparedStatement> function) {
-    PreparedStatement statement;
-    if (!cache.containsKey(idStatement)) {
-      statement = function.apply(dao);
-      cache.put(idStatement, statement);
+    // No process any statement with empty id.
+    if (idStatement.isEmpty()) {
+      return function.apply(dsl);
     } else {
-      statement = cache.get(idStatement);
+      return cache.computeIfAbsent(idStatement,
+          (k) -> function.apply(dsl));
     }
-    return statement;
   }
 
   private PreparedStatement processStatement(String idStatement,
@@ -118,7 +116,7 @@ public class SqlProcessorCacheImpl implements SqlProcessorCache {
   }
 
   @Override
-  public SqlStatementProcessor getProcessorAdapter() {
+  public SqlStatementProcessor getStatementProcessor() {
     return statementProcessor;
   }
 
@@ -128,7 +126,7 @@ public class SqlProcessorCacheImpl implements SqlProcessorCache {
   }
 
   @Override
-  public SqlDsl getDaoStatements() {
-    return dao;
+  public SqlDsl getDslStatements() {
+    return dsl;
   }
 }
