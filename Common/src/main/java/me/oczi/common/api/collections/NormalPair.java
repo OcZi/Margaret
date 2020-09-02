@@ -1,4 +1,4 @@
-package me.oczi.common.api;
+package me.oczi.common.api.collections;
 
 public class NormalPair<L, R> implements Pair<L, R> {
   private final L left;

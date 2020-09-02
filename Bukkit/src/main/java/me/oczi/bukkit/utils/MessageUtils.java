@@ -5,7 +5,7 @@ import me.oczi.bukkit.MargaretMain;
 import me.oczi.bukkit.objects.partner.Partner;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
-import me.oczi.common.api.TypePair;
+import me.oczi.common.api.collections.TypePair;
 import me.oczi.common.utils.CommonsUtils;
 import net.kyori.text.Component;
 import net.kyori.text.TextComponent;

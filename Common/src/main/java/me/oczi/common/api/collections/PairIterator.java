@@ -1,4 +1,4 @@
-package me.oczi.common.api;
+package me.oczi.common.api.collections;
 
 import java.util.Iterator;
 

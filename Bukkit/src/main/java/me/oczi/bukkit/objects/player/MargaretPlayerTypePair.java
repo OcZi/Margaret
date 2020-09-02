@@ -2,7 +2,7 @@ package me.oczi.bukkit.objects.player;
 
 import com.google.common.collect.Lists;
 import me.oczi.bukkit.utils.EmptyObjects;
-import me.oczi.common.api.TypePair;
+import me.oczi.common.api.collections.TypePair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;

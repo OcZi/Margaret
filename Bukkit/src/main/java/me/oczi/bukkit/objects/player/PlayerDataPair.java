@@ -1,7 +1,7 @@
 package me.oczi.bukkit.objects.player;
 
-import me.oczi.common.api.PairIterator;
-import me.oczi.common.api.TypePair;
+import me.oczi.common.api.collections.PairIterator;
+import me.oczi.common.api.collections.TypePair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;

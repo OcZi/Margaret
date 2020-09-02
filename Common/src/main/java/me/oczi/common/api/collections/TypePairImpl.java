@@ -1,9 +1,7 @@
-package me.oczi.common.api;
+package me.oczi.common.api.collections;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 
 public class TypePairImpl<T> implements TypePair<T> {

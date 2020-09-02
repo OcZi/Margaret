@@ -58,4 +58,9 @@ public class LibraryLoader implements DependencyManager {
   public List<Dependency> getDependencyList() {
     return delegate.getDependencyList();
   }
+
+  @Override
+  public void setLogger(Logger logger) {
+    this.delegate.setLogger(logger);
+  }
 }
