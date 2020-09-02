@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 /**
  * Implementation of {@link DependencyManager}.
  */
-public class DependencyManagerImpl implements DependencyManager, Loggable {
+public class DependencyManagerImpl implements DependencyManager {
   private File path;
 
   private final DependencyDownloader downloader;
@@ -151,15 +151,13 @@ public class DependencyManagerImpl implements DependencyManager, Loggable {
     }
   }
 
-  @Override
-  public void info(String message) {
+  private void info(String message) {
     if (logger != null) {
       logger.info(message);
     }
   }
 
-  @Override
-  public void info(String... messages) {
+  private void info(String... messages) {
     if (logger != null) {
       for (String s : messages) {
         logger.info(s);
@@ -167,15 +165,13 @@ public class DependencyManagerImpl implements DependencyManager, Loggable {
     }
   }
 
-  @Override
-  public void warning(String message) {
+  private void warning(String message) {
     if (logger != null) {
       logger.warning(message);
     }
   }
 
-  @Override
-  public void warning(String... messages) {
+  private void warning(String... messages) {
     if (logger != null) {
       for (String s : messages) {
         logger.warning(s);

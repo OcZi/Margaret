@@ -1,5 +1,7 @@
 package me.oczi.common.dependency;
 
+import me.oczi.common.api.Loggable;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -9,7 +11,7 @@ import java.util.List;
 /**
  * Dependency manager responsible to download and load it to the ClassLoader.
  */
-public interface DependencyManager {
+public interface DependencyManager extends Loggable {
 
   /**
    * Add dependencies to the list of dependencies to be process.
