@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * A variety of commons utils used in plugin.
+ * A variety of commons utils used in the plugin.
  */
 public interface CommonsUtils {
 
@@ -26,6 +26,13 @@ public interface CommonsUtils {
    */
   Pattern regexBoolean = Pattern.compile("\\d+");
 
+  /**
+   * Check if enum class contains a enum with first argument.
+   * @param enumName Enum name to check.
+   * @param clazz Class of enum.
+   * @param <E> Enum type.
+   * @return result of check.
+   */
   static <E extends Enum<E>> boolean enumExist(String enumName, Class<E> clazz) {
     for (E enumConstant : clazz.getEnumConstants()) {
       if (enumConstant.name().equalsIgnoreCase(enumName)) {
@@ -35,15 +42,29 @@ public interface CommonsUtils {
     return false;
   }
 
+  /**
+   * Format all "." to "/" for urls.
+   * @param string String to format.
+   * @return String formatted.
+   */
   static String formatUrl(String string) {
     return string.replace(".", "/");
   }
 
-
+  /**
+   * Map the files of a path.
+   * @param path Path to map.
+   * @return map of files in path.
+   */
   static Map<String, File> mapPath(String path) {
     return mapPath(new File(path));
   }
 
+  /**
+   * Map the files of a path.
+   * @param path Path to map.
+   * @return map of files in path.
+   */
   static Map<String, File> mapPath(File path) {
     File[] arrayFiles = path.listFiles();
     if (arrayFiles == null) {
@@ -58,28 +79,49 @@ public interface CommonsUtils {
     return fileMap;
   }
 
-  static String arrayToString(String[] params) {
-    if (params.length == 1) {
-      return params[0];
-    } else if (params.length > 1){
-      return String.join(", ", params);
+  /**
+   * Array of strings to a single string.
+   * @param strings Strings to single string.
+   * @return Array joined or first value of array.
+   */
+  static String arrayToString(String[] strings) {
+    if (strings.length == 1) {
+      return strings[0];
+    } else if (strings.length > 1){
+      return String.join(", ", strings);
     } else {
       return "";
     }
   }
 
-  static boolean arrayContains(String[] array, String match) {
+  /**
+   * Array to search a argument.
+   * @param array Array to iterate.
+   * @param match Object to search.
+   * @return result of search.
+   */
+  static <T> boolean arrayContains(T[] array, T match) {
     return Arrays
         .stream(array)
-        .anyMatch(element -> element.equalsIgnoreCase(match));
+        .anyMatch((t) -> t == match);
   }
 
-  static boolean containsSpace(String string) {
-    for (char c : string.toCharArray())
+  /**
+   * Check is string contains a space.
+   * @param str String to check.
+   * @return result of check.
+   */
+  static boolean containsSpace(String str) {
+    for (char c : str.toCharArray())
       if (!Character.isSpaceChar(c)) { return true; }
     return false;
   }
 
+  /**
+   * Check is string contains a regex.
+   * @param str String to check.
+   * @return result of check.
+   */
   static boolean containsRegex(String str) {
     return regexStringFormat.matcher(str).matches();
   }
@@ -113,10 +155,10 @@ public interface CommonsUtils {
   }
 
   /**
-   * Check if string parameters is null or empty.
+   * Check if any string is null or empty
    * Used for plural cases.
-   * @param strings - Strings to check
-   * @return is Null or empty
+   * @param strings - Strings to check.
+   * @return is null or empty.
    */
   static boolean isNullOrEmpty(String... strings) {
     for (String var : strings)
@@ -124,14 +166,19 @@ public interface CommonsUtils {
     return false;
   }
 
-  static boolean isNullOrEmpty(String var) {
-    return var == null || var.isEmpty();
+  /**
+   * Check is string null or empty.
+   * @param str String to check
+   * @return is null or empty.
+   */
+  static boolean isNullOrEmpty(String str) {
+    return str == null || str.isEmpty();
   }
 
   /**
    * Check if a collection is null or empty.
-   * @param objects - Objects to check
-   * @return is Null or empty
+   * @param objects - Objects to check.
+   * @return is mull or empty.
    */
   static boolean isNullOrEmpty(Object... objects) {
     return objects == null || objects.length == 0;
@@ -157,37 +204,46 @@ public interface CommonsUtils {
   }
 
   /**
-   * A dirty trick.
-   * @param stringRepeater - String to repeat by intRepeat.
-   * @param stringSequence - String sequence to join the String Repeat.
-   * @param intRepeat - Number of repeat String Repeat.
-   * @return String formatted
+   * A dirty trick to repeat
+   * Strings and {@link String#join} them.
+   * @param string - String to repeat.
+   * @param charSequence - CharSequence to join the result.
+   * @param repeat - Number of repeats for string.
+   * @return String repeated joined by CharSequence.
    */
-  static String joinRepeatedString(String stringRepeater,
-                                   String stringSequence,
-                                   int intRepeat) {
-    if (intRepeat <= 1) { return stringRepeater; }
-    String[] strings = new String[intRepeat];
-    for (int i = 0; i < intRepeat; i++) {
-      strings[i] = stringRepeater;
+  static String joinRepeatedString(String string,
+                                   CharSequence charSequence,
+                                   int repeat) {
+    if (repeat <= 1) {
+      return string;
     }
-    return String.join(stringSequence, strings);
+    String[] strings = new String[repeat];
+    for (int i = 0; i < repeat; i++) {
+      strings[i] = string;
+    }
+    return String.join(charSequence, strings);
   }
 
   /**
    * {@link String#join}-alike
-   * for collections of any type.
-   * @param collection - Collection to join
+   * for iterables of any type.
+   * @param iterable - Iterable to join
    * @return Collection joined as String
    */
-  static <E> String joinCollection(Collection<E> collection) {
-    return joinCollection(", ", collection);
+  static <E> String joinIterable(Iterable<E> iterable) {
+    return joinIterable(", ", iterable);
   }
 
-  static <E> String joinCollection(String charSequence,
-                                   Collection<E> collection) {
+  /**
+   * {@link String#join}-alike
+   * for iterables of any type.
+   * @param iterable - Iterable to join
+   * @return Collection joined as String
+   */
+  static <E> String joinIterable(String charSequence,
+                                 Iterable<E> iterable) {
     StringBuilder builder = new StringBuilder();
-    for (Object object : collection) {
+    for (Object object : iterable) {
       if (builder.length() > 0) {
         builder.append(charSequence);
       }
@@ -209,37 +265,32 @@ public interface CommonsUtils {
     }
   }
 
-  static List<String> stringEnclosed(String enclose, String string, int i) {
-    List<String> list = Lists.newArrayList();
-    for (int j = 0; j < i; j++) {
-      list.add(middleSplit(enclose, string));
-    }
-    return list;
-  }
-
-  static List<String> generateRegex(int i) {
-    List<String> list = Lists.newArrayList();
-    for (int j = 0; j < i; j++) { list.add("%s"); }
-    return list;
-  }
-
-  static <E> String parenthesesString(E string, int i) {
-    List<E> list = Lists.newArrayList();
-    for (int j = 0; j < i; j++) { list.add(string); }
-    return parenthesesString(list);
-  }
-
-  static <E> String parenthesesString(Collection<E> list) {
-    return !list.isEmpty()
+  /**
+   * Join all the elements of collection into parentheses.
+   * @param collection Collection to join.
+   * @param <E> Type of elements.
+   * @return Collection joined into parentheses.
+   */
+  static <E> String parenthesesString(Collection<E> collection) {
+    return !isNullOrEmpty(collection)
         ? parenthesesString(
-            Joiner.on(", ").join(list.toArray())) : "";
+            joinIterable(collection))
+        : "";
   }
 
+  /**
+   * Join all the elements of array into parentheses.
+   * @param objects Array to join.
+   * @param <T> Type of elements.
+   * @return Collection joined into parentheses.
+   */
   @SafeVarargs
-  static <T> String parenthesesString(T... strings) {
-    return strings.length > 0
+  static <T> String parenthesesString(T... objects) {
+    return objects.length > 0
         ? parenthesesString(
-            Joiner.on(", ").join(strings)) : "";
+            Joiner.on(", ")
+                .join(objects))
+        : "";
   }
 
   /**
@@ -257,22 +308,6 @@ public interface CommonsUtils {
         split.substring(0, mid),
         split.substring(mid)};
     return splitter[0] + string + splitter[1];
-  }
-
-  /**
-   * Cast all of the keys/values of Map to Object.
-   * @param map - Map to cast
-   * @return Map of key/value String
-   */
-  @Deprecated
-  static Map<Object, Object> allMapToObject(Map<?, ?> map) {
-    Map<Object, Object> newMap = new HashMap<>();
-
-    for (Map.Entry<?, ?> entry : map.entrySet()) {
-      newMap.put(entry.getKey(), entry.getValue());
-    }
-
-    return newMap;
   }
 
   /**
@@ -318,11 +353,24 @@ public interface CommonsUtils {
     return message;
   }
 
-  static String cyclicFormat(Collection<String> strings) {
+  /**
+   * Iterate all the elements
+   * to format with the next value.
+   * @param strings Strings to format in cycle.
+   * @return A string formatted.
+   */
+  static String cyclicFormat(Iterable<String> strings) {
     return cyclicFormat(strings, false);
   }
 
-  static String cyclicFormat(Collection<String> strings, boolean endWithS) {
+  /**
+   * Iterate all the elements
+   * to format with the next value.
+   * @param strings Strings to format in cycle.
+   * @param endWithS End with %s.
+   * @return A string formatted.
+   */
+  static String cyclicFormat(Iterable<String> strings, boolean endWithS) {
     String base = "";
     for (String string : strings) {
       if (base.isEmpty()) {
@@ -355,6 +403,11 @@ public interface CommonsUtils {
     return Lists.partition(list, i);
   }
 
+  /**
+   * Parse a string to boolean.
+   * @param str String to boolean.
+   * @return Boolean.
+   */
   static boolean parseBoolean(String str) {
     if (regexBoolean.matcher(str).matches()) {
       int i = Integer.parseInt(str);
@@ -364,24 +417,50 @@ public interface CommonsUtils {
     return Boolean.parseBoolean(str);
   }
 
+  /**
+   * Parse a integer to boolean.
+   * @param intToBoolean Integer to boolean.
+   * @return Boolean.
+   */
   static boolean parseBoolean(int intToBoolean) {
     return intToBoolean == 1;
   }
 
+  /**
+   * Parse a boolean to integer.
+   * @param toInt Boolean to integer.
+   * @return Integer..
+   */
   static int parseInt(boolean toInt) {
     return toInt ? 1 : 0;
   }
 
+  /**
+   * Parse a string to integer safety.
+   * @param toInt String to integer.
+   * @return String to integer or 0.
+   */
   static int parseInt(String toInt) {
-    return !Strings.isNullOrEmpty(toInt)
-        && regexNumber.matcher(toInt).matches()
-        ? Integer.parseInt(toInt) : 0;
+    return !Strings.isNullOrEmpty(toInt) &&
+           regexNumber.matcher(toInt).matches()
+        ? Integer.parseInt(toInt)
+        : 0;
   }
 
+  /**
+   * Check is string contains only numbers.
+   * @param string String to check.
+   * @return result of check.
+   */
   static boolean isNumeric(String string) {
     return regexNumber.matcher(string).matches();
   }
 
+  /**
+   * Check is string contains only numbers.
+   * @param string String to check.
+   * @return result of check.
+   */
   static boolean findNumeric(String string) {
     return regexNumber.matcher(string).find();
   }
