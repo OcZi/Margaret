@@ -1,6 +1,11 @@
 
 player:
 
+  ## Authenticate any player's name
+  ## that not match with her name in database.
+  ## Not work in Server offline-mode.
+  player-authentication: true
+
   ## Maximum of proposals per user.
   maximum-proposals: 12
 

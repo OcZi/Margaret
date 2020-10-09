@@ -13,6 +13,7 @@ import me.oczi.bukkit.objects.player.MargaretPlayerImpl;
 import me.oczi.bukkit.objects.player.MargaretPlayerMeta;
 import me.oczi.bukkit.objects.player.PlayerData;
 import me.oczi.bukkit.other.ProposalWriter;
+import me.oczi.bukkit.other.exceptions.PlayerVerificationException;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.DefaultGender;
 import me.oczi.bukkit.utils.EmptyObjects;
@@ -20,8 +21,10 @@ import me.oczi.bukkit.utils.MessageUtils;
 import me.oczi.bukkit.utils.Partners;
 import me.oczi.bukkit.utils.settings.EnumSettings;
 import me.oczi.bukkit.utils.settings.PlayerSettings;
+import me.oczi.common.api.mojang.MojangAccount;
 import me.oczi.common.exceptions.SQLCastException;
-import me.oczi.common.storage.sql.dsl.result.ResultMap;
+import me.oczi.common.request.AsyncMojangResolver;
+import me.oczi.common.request.MojangResolver;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.utils.CommonsUtils;
 import me.oczi.common.utils.Statements;
@@ -31,6 +34,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 public class PlayerObjectBuilder {
@@ -48,10 +54,13 @@ public class PlayerObjectBuilder {
           .stream()
           .map(EnumSettings::getDefaultValue)
           .collect(Collectors.toList());
+  private final AsyncMojangResolver resolver;
 
   public PlayerObjectBuilder(PluginCore core) {
     this.core = core;
     this.dbTasks = core.getDatabaseTask();
+    this.resolver = MojangResolver.newAsyncResolver(
+        Executors.newSingleThreadExecutor());
   }
 
   public MargaretPlayer createMargaretPlayer(PlayerData playerData,
@@ -66,7 +75,7 @@ public class PlayerObjectBuilder {
 
   public PlayerData initPlayerData(Player player) {
     UUID uuid = player.getUniqueId();
-    ResultMap databaseMeta = dbTasks.getPlayerData(uuid);
+    Map<String, SqlObject> databaseMeta = dbTasks.getPlayerData(uuid);
     PlayerData playerData;
     if (CommonsUtils.isNullOrEmpty(databaseMeta)) {
       playerData = defaultPlayerData(player);
@@ -79,7 +88,7 @@ public class PlayerObjectBuilder {
   }
 
   public MargaretPlayerMeta initPlayerSettings(UUID uuid) {
-    ResultMap playerSettings = dbTasks.getPlayerSettings(uuid);
+    Map<String, SqlObject> playerSettings = dbTasks.getPlayerSettings(uuid);
     if (CommonsUtils.isNullOrEmpty(playerSettings)) {
       dbTasks.setupPlayerSettings(uuid, defaultSettingsValues);
     }
@@ -87,7 +96,7 @@ public class PlayerObjectBuilder {
   }
 
   private PlayerData createPlayerData(Player player,
-                                      ResultMap metadata) {
+                                      Map<String, SqlObject> metadata) {
     if (CommonsUtils.isNullOrEmpty(metadata)) {
       throw new NullPointerException("Unexpected null or empty of PlayerData.");
     }
@@ -98,15 +107,54 @@ public class PlayerObjectBuilder {
     Statements.checkObjects(
         "Metadata is null.",
         name, partnerId, gender);
-
+    String playerName = MargaretYamlStorage.isPlayerAuthentication()
+        ? checkName(player, name.getString())
+        : updateNameAndGet(player.getUniqueId(), name.getString());
     Partner partner = createPartner(
         player,
         partnerId.getString());
     return new PlayerData(
         player.getUniqueId(),
-        name.getString(),
+        playerName,
         partner,
         gender.getString());
+  }
+
+  private String checkName(Player player, String playerNameDB) {
+    try {
+      if (!playerNameDB.equals(player.getName())) {
+        MojangAccount account = resolver.resolveAccount(player.getName());
+        if (!account.getName().equals(player.getName()) ||
+            !account.getId().equals(player.getUniqueId().toString())) {
+          throw new IllegalStateException(
+              "Player name not match in Mojang's api " +
+                  "(Player's UUID: " + player.getUniqueId() +
+                  ", name: " + player.getName() +
+                  ", Mojang's Account UUID: " + account.getId() +
+                  ", name: " + account.getName());
+        }
+
+        MessageUtils.debug("Update name " + playerNameDB +
+            " of UUID " + player.getUniqueId() +
+            " to " + player.getName());
+        return updateNameAndGet(
+            player.getUniqueId(),
+            account.getName());
+      }
+    } catch (InterruptedException |
+        ExecutionException |
+        TimeoutException |
+        IllegalStateException e) {
+      throw new PlayerVerificationException(e);
+    }
+    return null;
+  }
+
+  private String updateNameAndGet(UUID uuid, String name) {
+    dbTasks.updatePlayerData("name",
+        name,
+        uuid);
+    return name;
   }
 
   public Partner createPartner(Player player,
@@ -134,7 +182,7 @@ public class PlayerObjectBuilder {
         DefaultGender.UNKNOWN.getName());
   }
 
-  private MargaretPlayerMeta refillSettings(UUID uuid, ResultMap resultMap) {
+  private MargaretPlayerMeta refillSettings(UUID uuid, Map<String, SqlObject> resultMap) {
     // Clone map to mutate the information
     Map<String, Boolean> settings = new HashMap<>();
     Map<String, SqlObject> mutable = Maps.newHashMap(resultMap);

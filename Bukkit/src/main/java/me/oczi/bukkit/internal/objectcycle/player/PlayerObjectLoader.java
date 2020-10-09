@@ -8,8 +8,8 @@ import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.objects.player.MargaretPlayerMeta;
 import me.oczi.bukkit.objects.player.PlayerData;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
-import me.oczi.bukkit.utils.*;
-
+import me.oczi.bukkit.utils.MessageUtils;
+import me.oczi.bukkit.utils.Partners;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -55,24 +55,26 @@ public class PlayerObjectLoader extends AbstractObjectLoader<Player> {
   public void close(Player player) {
     UUID uuid = player.getUniqueId();
     MargaretPlayer margaretPlayer1 = persistenceCache.getMargaretPlayer(uuid);
-    if (margaretPlayer1.havePartner()) {
-      Partner partner = margaretPlayer1.getPartner();
-      MargaretPlayer margaretPlayer2 =
-          persistenceCache.getMargaretPlayer(
-              Partners.foundUuidOfPartner(margaretPlayer1));
-      if (margaretPlayer2.isEmpty()) {
-        Partners.closePartner(partner);
+    if (!margaretPlayer1.isEmpty()) {
+      if (margaretPlayer1.havePartner()) {
+        Partner partner = margaretPlayer1.getPartner();
+        MargaretPlayer margaretPlayer2 =
+            persistenceCache.getMargaretPlayer(
+                Partners.foundUuidOfPartner(margaretPlayer1));
+        if (margaretPlayer2.isEmpty()) {
+          Partners.closePartner(partner);
+        }
       }
-    }
 
-    if (cache.isGarbageCache()) {
-      garbageCache.putMargaretPlayer(uuid, margaretPlayer1);
-      MessageUtils.debug(margaretPlayer1.getName()
+      if (cache.isGarbageCache()) {
+        garbageCache.putMargaretPlayer(uuid, margaretPlayer1);
+        MessageUtils.debug(margaretPlayer1.getName()
             + " swap from Persistence to Garbage");
-    }
+      }
 
-    persistenceCache.removeMargaretPlayer(uuid);
-    MessageUtils.debug(uuid + " session ended");
+      persistenceCache.removeMargaretPlayer(uuid);
+      MessageUtils.debug(uuid + " session ended");
+    }
   }
 
   @Override

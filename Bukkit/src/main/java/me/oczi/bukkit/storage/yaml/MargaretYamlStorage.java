@@ -2,6 +2,7 @@ package me.oczi.bukkit.storage.yaml;
 
 import me.oczi.bukkit.utils.MessageUtils;
 import me.oczi.bukkit.utils.Messages;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -40,6 +41,8 @@ public final class MargaretYamlStorage {
 
   private static boolean debugMode;
   private static boolean announcePartner;
+  private static boolean playerAuthentication;
+  private static boolean validatePlayerAuthentication;
 
   public static void generateYamlFiles(JavaPlugin plugin) {
     MargaretYamlStorage.plugin = plugin;
@@ -146,6 +149,22 @@ public final class MargaretYamlStorage {
 
   public static boolean isAnnouncePartner() {
     return announcePartner;
+  }
+
+  public static boolean isPlayerAuthentication() {
+    if (!validatePlayerAuthentication) {
+      if (Bukkit.getOnlineMode()) {
+        playerAuthentication = mainConfig.getAccess()
+            .getBoolean("player.player-authentication", true);
+      } else {
+        MessageUtils.warning(
+            "Cannot activate player authentication in offline mode.",
+            "Set Player authentication to false.");
+        playerAuthentication = false;
+      }
+      validatePlayerAuthentication = true;
+    }
+    return playerAuthentication;
   }
 
   public static List<String> getAllowedRelations() {
