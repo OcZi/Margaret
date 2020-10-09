@@ -2,6 +2,7 @@ package me.oczi.bukkit;
 
 import me.oczi.bukkit.other.exceptions.PluginInitializationException;
 import me.oczi.bukkit.utils.MessageUtils;
+import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,6 +15,7 @@ public final class MargaretMain extends JavaPlugin {
   private static MargaretCore core;
 
   private static boolean loadFailed;
+  private static boolean isCompatible;
 
   public MargaretMain() {
     plugin = this;
@@ -22,20 +24,28 @@ public final class MargaretMain extends JavaPlugin {
 
   @Override
   public void onLoad() {
-    try {
-      core.preInitPlugin();
-    } catch (IllegalAccessException |
-        InvocationTargetException |
-        IOException e) {
-      e.printStackTrace();
-      loadFailed = true;
+    isCompatible = CommonsUtils.isClassLoaded("com.google.gson.Gson");
+    if (isCompatible) {
+      try {
+        core.preInitPlugin();
+      } catch (IllegalAccessException |
+          InvocationTargetException |
+          IOException e) {
+        e.printStackTrace();
+        loadFailed = true;
+      }
     }
   }
 
   @Override
   public void onEnable() {
+    if (!isCompatible) {
+      disableByIncompatibility();
+      return;
+    }
     if (loadFailed) {
       disableByFail("onLoad()");
+      return;
     }
 
     try {
@@ -48,6 +58,13 @@ public final class MargaretMain extends JavaPlugin {
     }
   }
 
+  public void disableByIncompatibility() {
+    getLogger().warning("Server doesn't support Google's gson library.");
+    getLogger().warning("this will probably due to a outdated version of Spigot or derived.");
+    getLogger().warning("Please, use Spigot 1.8.8 or superior for this plugin.");
+    getPluginLoader().disablePlugin(this);
+  }
+
   public void disableByFail(String phase) {
     getLogger().warning("The plugin has failed in " + phase + " phase.");
     getLogger().warning("Disabling plugin...");
@@ -56,6 +73,11 @@ public final class MargaretMain extends JavaPlugin {
 
   @Override
   public void onDisable() {
+    if (!isCompatible ||
+        !CommonsUtils.isClassLoaded("net.kyori.text")) {
+      getLogger().info("Plugin disabled.");
+      return;
+    }
     if (!loadFailed) {
       core.disablePlugin();
     }
