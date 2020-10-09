@@ -64,9 +64,8 @@ public class SqlManagerImpl implements SqlManager {
     this.maxPossibleHomes = MargaretYamlStorage
         .getMaxPossibleHomes();
     this.dataSource = createDataSource();
-    SqlProcessor processor = logger != null
-        ? new SqlProcessorImpl(true, dataSource, logger)
-        : new SqlProcessorImpl(true, dataSource);
+    SqlProcessor processor = new SqlProcessorImpl(
+        true, dataSource, logger);
     this.statementProcessor =
         new SqlStatementProcessorImpl(processor);
     this.script = new SqlScript(this,

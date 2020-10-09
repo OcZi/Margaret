@@ -5,13 +5,14 @@ import me.oczi.common.storage.sql.dsl.result.SqlObject;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface DbTaskGet {
 
   SqlObject getColumnPlayerData(UUID uuid, String columnName);
 
-  ResultMap getPlayerData(UUID uuid);
+  Map<String, SqlObject> getPlayerData(UUID uuid);
 
   ResultMap getAllPlayerData(String... uuids);
 
@@ -19,7 +20,7 @@ public interface DbTaskGet {
 
   Date getPlayerExpire(UUID uuid);
 
-  ResultMap getPlayerSettings(UUID uuid);
+  Map<String, SqlObject> getPlayerSettings(UUID uuid);
 
   boolean getPlayerSetting(UUID uuid,
                            String settingName);
@@ -28,12 +29,14 @@ public interface DbTaskGet {
 
   int getCountOfPartners();
 
-  ResultMap getPartnerData(String id);
+  Map<String, SqlObject> getPartnerData(String id);
 
-  ResultMap getPartnerHomeList(String id);
+  ResultMap getAnythingOfPartnerData();
 
-  ResultMap getHome(String id);
+  Map<String, SqlObject> getPartnerHomeList(String id);
 
-  ResultMap getPartnerProperties(String id);
+  Map<String, SqlObject> getHome(String id);
+
+  Map<String, SqlObject> getPartnerProperties(String id);
 
 }

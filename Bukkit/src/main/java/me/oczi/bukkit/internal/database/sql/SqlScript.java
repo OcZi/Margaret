@@ -1,8 +1,8 @@
 package me.oczi.bukkit.internal.database.sql;
 
+import com.google.common.base.Preconditions;
 import me.oczi.bukkit.utils.EmptyObjects;
 import me.oczi.bukkit.utils.MessageUtils;
-import me.oczi.bukkit.utils.Partners;
 import me.oczi.common.api.collections.TypePair;
 import me.oczi.common.api.collections.TypePairImpl;
 import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
@@ -20,7 +20,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class SqlScript implements DbScript {
   private final SqlManagerImpl sqlManager;
@@ -73,8 +72,8 @@ public class SqlScript implements DbScript {
   }
 
   private void createDynamicTables() {
-    ResultMap query =
-        statementProcessor.queryMap(dsl
+    Map<String, SqlObject> query =
+        statementProcessor.queryFirstRow(dsl
             .select("value")
             .from(MargaretSqlTable.SQL_PROPERTIES)
             .where("id", "max_possible_homes")
@@ -164,15 +163,14 @@ public class SqlScript implements DbScript {
             .where("id", partnerid)
             .build());
         if (!CommonsUtils.isNullOrEmpty(query)) {
-          String player1 = query.get("player1").getString();
-          String player2 = query.get("player2").getString();
-          TypePair<UUID> pair = new TypePairImpl<>(
-              UUID.fromString(player1),
-              UUID.fromString(player2));
-          uuidsPlayerPartner.add(
-              Partners.getUuidOfPartner(
-                  UUID.fromString(id), pair)
-                  .toString());
+          String player1 = row.get("player1").getString();
+          String player2 = row.get("player2").getString();
+          TypePair<String> pair = new TypePairImpl<>(player1, player2);
+          int side = pair.getSide(id);
+          Preconditions.checkArgument(
+              side != 0,
+              "Incorrect partner data (outdated data?)");
+          uuidsPlayerPartner.add(pair.getBySide(side));
         }
         partnersIdOutdated.add(StatementBasicData
             .wrapParameters(partnerid));

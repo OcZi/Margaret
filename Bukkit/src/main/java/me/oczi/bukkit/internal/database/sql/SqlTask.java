@@ -22,10 +22,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.bukkit.Location;
 
 import java.sql.Date;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.oczi.bukkit.internal.database.sql.MargaretSqlTable.*;
@@ -121,7 +118,7 @@ public class SqlTask implements DbTasks {
   public void updatePlayerData(String columnName,
                                Object param,
                                Object uuid) {
-    updateColumnOfRow("player-data-update",
+    updateColumnOfRow("", // No cache
         PLAYER_DATA,
         columnName,
         param,
@@ -133,7 +130,7 @@ public class SqlTask implements DbTasks {
                                      Object param,
                                      Object uuid1,
                                      Object uuid2) {
-    updateColumnOfRow("double-player-data-update",
+    updateColumnOfRow("", // No cache
         PLAYER_DATA,
         columnName,
         param,
@@ -145,7 +142,7 @@ public class SqlTask implements DbTasks {
   public void updatePlayerSetting(String settingName,
                                   Object param,
                                   Object uuid) {
-    updateColumnOfRow("player-setting-update",
+    updateColumnOfRow("", // No cache
         PLAYER_SETTINGS,
         settingName,
         param,
@@ -156,7 +153,7 @@ public class SqlTask implements DbTasks {
   public void updatePartnerData(String columnName,
                                 Object param,
                                 String id) {
-    updateColumnOfRow("partner-data-update",
+    updateColumnOfRow("", // No cache
         PARTNER_DATA,
         columnName,
         param,
@@ -167,7 +164,7 @@ public class SqlTask implements DbTasks {
   public void updatePartnerProperty(String settingName,
                                     Object param,
                                     String id) {
-    updateColumnOfRow("partner-property-update",
+    updateColumnOfRow("", // No cache
         PARTNER_PROPERTIES,
         settingName,
         param,
@@ -183,14 +180,14 @@ public class SqlTask implements DbTasks {
 
   @Override
   public SqlObject getColumnPlayerData(UUID uuid, String columnName) {
-    return getColumnOfRow("player-data-column-get",
+    return getColumnOfRow("", // No cache
         PLAYER_DATA,
         columnName,
         uuid.toString());
   }
 
   @Override
-  public ResultMap getPlayerData(UUID uuid) {
+  public Map<String, SqlObject> getPlayerData(UUID uuid) {
     return getRow("player-data-get",
         PLAYER_DATA,
         uuid.toString(),
@@ -207,7 +204,9 @@ public class SqlTask implements DbTasks {
   public ResultMap getAllPlayerData(List<String> uuids) {
     StatementBasicData data = StatementBasicData
         .newData(PLAYER_DATA,
-            Arrays.asList("id, name, gender, partnerid", "id"),
+            Arrays.asList(
+                "id, name, gender, partnerid, last_date",
+                "id"),
             uuids);
     return sqlExecutor
         .queryMap("", // Empty statement id to bypass cache
@@ -228,7 +227,7 @@ public class SqlTask implements DbTasks {
   }
 
   @Override
-  public ResultMap getPlayerSettings(UUID uuid) {
+  public Map<String, SqlObject> getPlayerSettings(UUID uuid) {
     List<String> settings = Lists.newArrayList(
         PlayerSettings.getDatabaseSettings().keySet());
     return getRow("player-settings-get",
@@ -253,7 +252,7 @@ public class SqlTask implements DbTasks {
         PARTNER_DATA,
         limit,
         "creation_date",
-        Lists.newArrayList("player1", "player2"));
+        Lists.newArrayList("id", "player1", "player2"));
   }
 
   @Override
@@ -262,7 +261,7 @@ public class SqlTask implements DbTasks {
         PARTNER_DATA,
         null,
         null);
-    return sqlExecutor.queryFirst("partner-count-get",
+    return sqlExecutor.queryFirstObject("partner-count-get",
         data,
         dsl -> dsl.select(COUNT)
             .from(PARTNER_DATA)
@@ -270,7 +269,7 @@ public class SqlTask implements DbTasks {
   }
 
   @Override
-  public ResultMap getPartnerData(String id) {
+  public Map<String, SqlObject> getPartnerData(String id) {
     return getRow("partner-data-get",
         PARTNER_DATA,
         id,
@@ -278,7 +277,21 @@ public class SqlTask implements DbTasks {
   }
 
   @Override
-  public ResultMap getPartnerHomeList(String id) {
+  public ResultMap getAnythingOfPartnerData() {
+    StatementBasicData data = StatementBasicData
+        .newData(PLAYER_DATA,
+            Arrays.asList("id", "player1", "player2"),
+            null);
+    return sqlExecutor
+        .queryMap("", // Empty statement id to bypass cache
+            data,
+            dsl -> dsl.select("*")
+                .from(PARTNER_DATA)
+                .build());
+  }
+
+  @Override
+  public Map<String, SqlObject> getPartnerHomeList(String id) {
     List<String> columns = Lists.newArrayList(databaseManager.getTableHomesId());
     return getRow("partner-home-list-get",
         PARTNER_HOMES_LIST,
@@ -287,7 +300,7 @@ public class SqlTask implements DbTasks {
   }
 
   @Override
-  public ResultMap getHome(String id) {
+  public Map<String, SqlObject> getHome(String id) {
     return getRow("partner-home-get",
         PARTNER_HOME,
         id,
@@ -295,7 +308,7 @@ public class SqlTask implements DbTasks {
   }
 
   @Override
-  public ResultMap getPartnerProperties(String id) {
+  public Map<String, SqlObject> getPartnerProperties(String id) {
     List<String> params = Lists.newArrayList(
         "bitpermissions", "maxhomes");
     return getRow("partner-properties-get",
@@ -415,16 +428,32 @@ public class SqlTask implements DbTasks {
             .build());
   }
 
-  private ResultMap getRow(String idStatement,
-                           MargaretSqlTable table,
-                           Object id,
-                           List<String> selects) {
+  private ResultMap getRows(String idStatement,
+                            MargaretSqlTable table,
+                            Object id,
+                            List<String> selects) {
     List<String> columns  = Lists.newArrayList(
         String.join(", ", selects));
     columns.add("id");
     StatementBasicData data = StatementBasicData.newData(
         table, columns, Collections.singletonList(id));
     return sqlExecutor.queryMap(idStatement, data,
+        dsl -> dsl.select(selects)
+            .from(table)
+            .where("id", id)
+            .build());
+  }
+
+  private Map<String, SqlObject> getRow(String idStatement,
+                            MargaretSqlTable table,
+                            Object id,
+                            List<String> selects) {
+    List<String> columns  = Lists.newArrayList(
+        String.join(", ", selects));
+    columns.add("id");
+    StatementBasicData data = StatementBasicData.newData(
+        table, columns, Collections.singletonList(id));
+    return sqlExecutor.queryFirstRow(idStatement, data,
         dsl -> dsl.select(selects)
             .from(table)
             .where("id", id)
@@ -438,7 +467,7 @@ public class SqlTask implements DbTasks {
     StatementBasicData data = StatementBasicData.newData(table,
         Lists.newArrayList(columnName, "id"),
         Lists.newArrayList(id));
-    return sqlExecutor.queryFirst(idStatement, data,
+    return sqlExecutor.queryFirstObject(idStatement, data,
         dsl -> dsl.select(columnName)
             .from(table)
             .where("id", id)
@@ -480,17 +509,17 @@ public class SqlTask implements DbTasks {
   private ResultMap getRowsByColumn(String idStatement,
                                     MargaretSqlTable table,
                                     int limit,
-                                    String dateName,
+                                    String orderColumnName,
                                     List<String> selects) {
     List<String> columns  = Lists.newArrayList(
         String.join(", ", selects));
-    columns.add(dateName);
+    columns.add(orderColumnName);
     StatementBasicData data = StatementBasicData.newData(
         table, columns, null);
     return sqlExecutor.queryMap(idStatement, data,
         dsl -> dsl.select(columns)
             .from(table)
-            .orderBy(dateName)
+            .orderBy(orderColumnName)
             .limit(limit)
             .build());
   }
