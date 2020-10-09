@@ -2,7 +2,7 @@ package me.oczi.common.storage.sql.dsl.statements.builder;
 
 import me.oczi.common.api.sql.SqlTable;
 import me.oczi.common.api.sql.StatementPattern;
-import me.oczi.common.api.state.FinishedState;
+import me.oczi.common.api.sql.FinishedState;
 import me.oczi.common.storage.sql.dsl.statements.Statement;
 
 import java.util.Collection;

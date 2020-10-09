@@ -3,16 +3,16 @@ package me.oczi.common.storage.sql.dsl.statements.prepared;
 import java.util.Collections;
 import java.util.List;
 
-public class SqlPreparedStatementCompiledImpl implements SqlPreparedStatementCompiled {
+public class PreparedStatementCompiledImpl implements PreparedStatementCompiled {
   private final String statement;
   private final List<Object> params;
 
-  public SqlPreparedStatementCompiledImpl(String statement) {
+  public PreparedStatementCompiledImpl(String statement) {
     this.statement = statement;
     this.params = Collections.emptyList();
   }
 
-  public SqlPreparedStatementCompiledImpl(PreparedStatement preparedStatement) {
+  public PreparedStatementCompiledImpl(PreparedStatement preparedStatement) {
     this.statement = preparedStatement.getStatement();
     this.params = preparedStatement.getParams();
   }

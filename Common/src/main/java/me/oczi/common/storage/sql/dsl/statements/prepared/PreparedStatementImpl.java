@@ -60,11 +60,11 @@ public final class PreparedStatementImpl
   }
 
   @Override
-  public SqlPreparedStatementCompiled compile() {
+  public PreparedStatementCompiled compile() {
     checkNumberReached("columns",  requiredColumns, getColumns());
     checkNumberReached("parameters",  requiredParams, getParams());
     formatStatement();
-    return new SqlPreparedStatementCompiledImpl(this);
+    return new PreparedStatementCompiledImpl(this);
   }
 
   /**

@@ -1,6 +1,6 @@
 package me.oczi.common.storage.sql.dsl.expressions.clause.jump;
 
-import me.oczi.common.api.state.FinishedState;
+import me.oczi.common.api.sql.FinishedState;
 
 import java.util.List;
 

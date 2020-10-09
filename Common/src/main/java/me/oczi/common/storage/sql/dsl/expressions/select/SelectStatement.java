@@ -25,7 +25,7 @@ public class SelectStatement
   }
 
   public SelectStatement(Object... plain) {
-    super(SELECT, CommonsUtils.joinCollection(
+    super(SELECT, CommonsUtils.joinIterable(
         Arrays.asList(plain)));
   }
 

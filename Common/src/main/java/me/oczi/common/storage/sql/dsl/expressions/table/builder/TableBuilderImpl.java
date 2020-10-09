@@ -1,7 +1,7 @@
 package me.oczi.common.storage.sql.dsl.expressions.table.builder;
 
 import me.oczi.common.api.sql.SqlTable;
-import me.oczi.common.api.state.FinishedState;
+import me.oczi.common.api.sql.FinishedState;
 import me.oczi.common.storage.sql.datasource.DataSourceType;
 import me.oczi.common.storage.sql.dsl.expressions.clause.ValuesClause;
 import me.oczi.common.storage.sql.dsl.statements.AbstractStatement;

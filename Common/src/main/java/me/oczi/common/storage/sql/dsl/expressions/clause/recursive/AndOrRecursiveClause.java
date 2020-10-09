@@ -1,6 +1,6 @@
 package me.oczi.common.storage.sql.dsl.expressions.clause.recursive;
 
-import me.oczi.common.api.state.UnfinishedState;
+import me.oczi.common.api.sql.UnfinishedState;
 
 public interface AndOrRecursiveClause extends UnfinishedState {
 

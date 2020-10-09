@@ -18,6 +18,8 @@ public interface SqlDsl {
 
   AlterTableStart alterTable(SqlTable table);
 
+  InsertClauses insert(DataSourceType dataSourceType);
+
   InsertClauses insert();
 
   SelectStart select(String... columns);

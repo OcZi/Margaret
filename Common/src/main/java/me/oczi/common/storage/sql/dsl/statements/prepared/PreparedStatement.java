@@ -5,5 +5,5 @@ import me.oczi.common.storage.sql.dsl.statements.Statement;
 public interface PreparedStatement
     extends Statement {
 
-  SqlPreparedStatementCompiled compile();
+  PreparedStatementCompiled compile();
 }

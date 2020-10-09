@@ -10,5 +10,7 @@ public interface CacheConfig {
 
   long getPartnerTopRefresh();
 
-  int getPartnerTopLimit();
+  int getPartnerTopMaxEntries();
+
+  int getPartnerTopEntriesPerPage();
 }

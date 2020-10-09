@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import java.io.File;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -40,6 +41,15 @@ public interface CommonsUtils {
       }
     }
     return false;
+  }
+
+  static boolean isClassLoaded(String uri) {
+    try {
+      Class.forName(uri);
+      return true;
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
   }
 
   /**
@@ -133,7 +143,7 @@ public interface CommonsUtils {
    * @param strings - array to iterate
    * @return is equals
    */
-  static boolean equalsTo(String match, String... strings) {
+  static boolean stringEqualsTo(String match, String... strings) {
     for (String var : strings)
       if (match.equalsIgnoreCase(var)) { return true; }
 
@@ -147,9 +157,38 @@ public interface CommonsUtils {
    * @param strings - Iterable to iterate
    * @return is equals
    */
-  static boolean equalsTo(String match, Iterable<String> strings) {
+  static boolean stringEqualsTo(String match, Iterable<String> strings) {
     for (String var : strings)
       if (match.equalsIgnoreCase(var)) { return true; }
+
+    return false;
+  }
+
+  /**
+   * Check is object equals to any object of array.
+   * @param object Object to compare with array.
+   * @param objects Array of objects to compare.
+   * @param <T> Type.
+   * @return is equals
+   */
+  @SafeVarargs
+  static <T> boolean equalsTo(T object, T... objects) {
+    for (T t : objects)
+      if (object == t) { return true; }
+
+    return false;
+  }
+
+  /**
+   * Check is object equals to any object of iterable.
+   * @param object Object to compare with iterable.
+   * @param objects Iterable of objects to compare.
+   * @param <T> Type.
+   * @return is equals
+   */
+  static <T> boolean equalsTo(T object, Iterable<T> objects) {
+    for (T t : objects)
+      if (object == t) { return true; }
 
     return false;
   }
@@ -347,10 +386,25 @@ public interface CommonsUtils {
                        Object... objects) {
     for (int i = 0; i < objects.length; i++) {
       String placeholder = String.format(format, i);
-      message = message.replace(placeholder, objects[i].toString());
+      String o = String.valueOf(objects[i]);
+      message = message.replace(placeholder, o);
     }
 
     return message;
+  }
+
+  /**
+   * Format a UUID string without dashes
+   * to a complete UUID.
+   * @param notFormat UUID string to format.
+   * @return UUID.
+   */
+  static UUID formatUuid(String notFormat) {
+    BigInteger decimal1 = new BigInteger(
+        notFormat.substring(0, 16), 16);
+    BigInteger decimal2 = new BigInteger(
+        notFormat.substring(16, 32), 16);
+    return new UUID(decimal1.longValue(), decimal2.longValue());
   }
 
   /**

@@ -39,6 +39,11 @@ public class SqlDslImpl implements SqlDsl {
   }
 
   @Override
+  public InsertClauses insert(DataSourceType dataSourceType) {
+    return new InsertStatement(dataSourceType);
+  }
+
+  @Override
   public InsertClauses insert() {
     return new InsertStatement(dataSourceType);
   }

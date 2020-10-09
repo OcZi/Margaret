@@ -176,7 +176,7 @@ public class StatementBuilderImpl implements StatementBuilder {
   public StatementBuilder appendColumn(String pattern,
                                        List<?> columns) {
     return appendColumn(pattern,
-        CommonsUtils.joinCollection(columns));
+        CommonsUtils.joinIterable(columns));
   }
 
   @Override
@@ -239,7 +239,7 @@ public class StatementBuilderImpl implements StatementBuilder {
   public StatementBuilder appendPlain(String pattern,
                                       List<?> plainText) {
     String format = String.format(pattern,
-        CommonsUtils.joinCollection(plainText));
+        CommonsUtils.joinIterable(plainText));
     return patternBuilder.length() > 1
         ? appendSpace(format) : append(format);
   }

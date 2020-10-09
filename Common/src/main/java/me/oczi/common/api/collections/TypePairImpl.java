@@ -46,4 +46,13 @@ public class TypePairImpl<T> implements TypePair<T> {
   public Iterator<T> iterator() {
     return iterator;
   }
+
+  @Override
+  public String toString() {
+    return "TypePairImpl{" +
+        "iterator=" + iterator +
+        ", left=" + left +
+        ", right=" + right +
+        '}';
+  }
 }

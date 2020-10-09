@@ -123,7 +123,7 @@ public enum DataSourceType {
 
   public static boolean isValidMode(String mode) {
     return !CommonsUtils.isNullOrEmpty(mode) &&
-        CommonsUtils.equalsTo(mode,
+        CommonsUtils.stringEqualsTo(mode,
             "embedded", "server");
   }
 
