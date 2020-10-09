@@ -11,7 +11,8 @@ public class CacheConfigImpl implements CacheConfig {
   private final int partnerTimeout;
 
   private final long partnerTopRefresh;
-  private final int partnerTopLimit;
+  private final int partnerTopMaxEntries;
+  private final int partnerTopEntriesPerPage;
 
   public CacheConfigImpl(FileConfiguration config) {
     this.garbage = config.getBoolean(
@@ -20,12 +21,14 @@ public class CacheConfigImpl implements CacheConfig {
         "cache.cache-player-timeout", 120);
     this.partnerTimeout = config.getInt(
         "cache.cache-partner-timeout", 120);
+
     this.partnerTopRefresh = config.getLong(
         "cache.cache-partner-top-refresh",
         Duration.ofMinutes(5).getSeconds());
-
-    this.partnerTopLimit = config.getInt(
-        "cache.cache-partner-top-limit", 10);
+    this.partnerTopEntriesPerPage = config.getInt(
+        "cache-entries-per-page", 10);
+    this.partnerTopMaxEntries = config.getInt(
+        "cache-max-entries", 20);
   }
 
   @Override
@@ -49,7 +52,12 @@ public class CacheConfigImpl implements CacheConfig {
   }
 
   @Override
-  public int getPartnerTopLimit() {
-    return partnerTopLimit;
+  public int getPartnerTopMaxEntries() {
+    return partnerTopMaxEntries;
+  }
+
+  @Override
+  public int getPartnerTopEntriesPerPage() {
+    return partnerTopEntriesPerPage;
   }
 }
