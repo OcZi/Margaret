@@ -8,10 +8,7 @@ import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.storage.sql.dsl.result.SqlObjectImpl;
 
 import java.sql.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public interface Sqls {
 
@@ -89,32 +86,32 @@ public interface Sqls {
    * @return ResultSet to Unmodifiable Map.
    */
   static ResultMap newResultMap(ResultSet rs) {
-    Map<String, SqlObject> map;
+    List<Map<String, SqlObject>> rowList;
     int rows = 0;
     int columns;
     try {
       ResultSetMetaData metaData = rs.getMetaData();
       columns = metaData.getColumnCount();
-      map = new HashMap<>();
+      rowList = new ArrayList<>();
       while (rs.next()) {
         rows++;
-        for (int i = 1; i <= columns; i++) {
+        Map<String, SqlObject> row = new HashMap<>();
+        for (int i = 0; i < columns; i++) {
           // Lowercase the columns to avoid problems
           // with H2 uppercase names.
+          int columnInt = i + 1;
           String column = metaData
-              .getColumnName(i).toLowerCase();
-          SqlObject sqlObject = new SqlObjectImpl(i, rs);
-          if (map.containsKey(column)) {
-            column += "-" + rows;
-          }
-          map.put(column, sqlObject);
+              .getColumnName(columnInt).toLowerCase();
+          SqlObject sqlObject = new SqlObjectImpl(columnInt, rs);
+          row.put(column, sqlObject);
         }
+        rowList.add(row);
       }
     } catch (SQLException e) {
       throw new SQLRuntimeException("Error while create a new ResultMap", e);
     }
 
-    return new QueryMap(map, columns, rows);
+    return new QueryMap(rowList, columns, rows);
   }
 
   static void setObjectsStatement(PreparedStatement statement,

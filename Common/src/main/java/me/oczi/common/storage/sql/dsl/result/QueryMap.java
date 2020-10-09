@@ -1,35 +1,33 @@
 package me.oczi.common.storage.sql.dsl.result;
 
-import me.oczi.common.utils.Statements;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class QueryMap extends ResultMap {
-  private final Map<String, SqlObject> resultMap;
+  private final List<Map<String, SqlObject>> rowList;
 
   private final int rows;
   private final int columns;
 
-  public QueryMap(Map<String, SqlObject> resultMap,
+  public QueryMap(List<Map<String, SqlObject>> rowList,
                   int columns,
                   int rows) {
-    this.resultMap = Collections.unmodifiableMap(resultMap);
+    this.rowList = Collections.unmodifiableList(rowList);
     this.columns = columns;
     this.rows = rows;
   }
 
   @Override
-  protected Map<String, SqlObject> delegate() {
-    return resultMap;
-  }
-
-  @Override
   public SqlObject[] getAll(String key) {
     List<SqlObject> list = new ArrayList<>();
-    for (Entry<String, SqlObject> entry : resultMap.entrySet()) {
-      String entryKey = entry.getKey();
-      if (entryKey.startsWith(key.toLowerCase())) {
-        list.add(entry.getValue());
+    for (Map<String, SqlObject> row : rowList) {
+      for (Map.Entry<String, SqlObject> entry : row.entrySet()) {
+        String entryKey = entry.getKey();
+        if (entryKey.startsWith(key.toLowerCase())) {
+          list.add(entry.getValue());
+        }
       }
     }
     return list.toArray(new SqlObject[]{});
@@ -37,50 +35,26 @@ public class QueryMap extends ResultMap {
 
   @Override
   public Map<String, SqlObject> getRow(int i) {
-    return i == 0
-        ? findFirstRow()
-        : findRow(i);
+    return rowList.get(i);
   }
 
   @Override
-  public Map<String, SqlObject> findFirstRow() {
-    Map<String, SqlObject> map = new HashMap<>();
-    for (Entry<String, SqlObject> entry : resultMap.entrySet()) {
-      String key = entry.getKey();
-      if (!Statements.isDuplicated(key)) {
-        map.put(key, entry.getValue());
-      }
-      if (map.size() == columns) {
-        break;
-      }
-    }
-    return map;
+  public int getColumnCount() {
+    return columns;
   }
 
   @Override
-  public Map<String, SqlObject> findRow(int i) {
-    Map<String, SqlObject> map = new HashMap<>();
-    int slot = i + 1;
-    for (Entry<String, SqlObject> entry : resultMap.entrySet()) {
-      String key = entry.getKey();
-      if (Statements.isDuplicated(key) &&
-          key.endsWith(String.valueOf(slot))) {
-        key = key.substring(0, key.indexOf("-"));
-        map.put(key, entry.getValue());
-      }
-      if (map.size() == columns) {
-        break;
-      }
-    }
-    return map;
+  public int getRowCount() {
+    return rows;
   }
 
   @Override
   public List<Map<String, SqlObject>> getRows() {
-    List<Map<String, SqlObject>> mapRow = new ArrayList<>();
-    for (int i = 0; i < rows; i++) {
-      mapRow.add(getRow(i));
-    }
-    return mapRow;
+    return rowList;
+  }
+
+  @Override
+  protected List<Map<String, SqlObject>> delegate() {
+    return getRows();
   }
 }
