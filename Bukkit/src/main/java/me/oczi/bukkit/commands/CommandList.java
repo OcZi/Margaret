@@ -21,6 +21,7 @@ import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
 import me.oczi.bukkit.utils.settings.EnumSettings;
 import me.oczi.bukkit.utils.settings.PlayerSettings;
+import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -51,26 +52,45 @@ public class CommandList {
       aliases = {"top-partner", "partners", "partner"},
       desc = "Top partners.")
   public void partners(@Sender CommandSender sender,
-                       MemoryManager memoryManager) {
+                       MemoryManager memoryManager,
+                       @Default("") String numPage) {
     PartnerTop partnerTop = memoryManager.getPartnerTop();
+    int page = CommonsUtils.isNullOrEmpty(numPage)
+        ? 1
+        : CommonsUtils.parseInt(numPage);
+    if (page <= 0)  {
+      page = 1;
+    }
     MessageUtils.compose(sender,
         Messages.LIST_PARTNER_HEADER,
         true,
-        partnerTop.size());
-    for (PlayerDataPair pair : partnerTop) {
+        page);
+    List<PlayerDataPair> listPage = partnerTop.getPage(page);
+    int slot = partnerTop.getEntryStartedOfPage(page);
+    for (int i = 0; i < listPage.size(); i++, slot++) {
+      PlayerDataPair pair = listPage.get(i);
+      if (CommonsUtils.isNullOrEmpty(page)) {
+        MessageUtils.compose(sender,
+            Messages.LIST_PARTNER_ENTRY_EMPTY,
+            false,
+            slot);
+      }
       String playerName1 = processPlayerData(pair.getLeft());
       String playerName2 = processPlayerData(pair.getRight());
       MessageUtils.compose(sender,
           Messages.LIST_PARTNER_ENTRY,
-          true,
+          false,
+          slot,
           playerName1,
           playerName2);
     }
   }
 
   private String processPlayerData(PlayerData data) {
-    Gender gender = data.getGender();
-    return gender.getChatColor() + data.getName();
+    System.out.println("data = " + data);
+    return data == null
+        ? "N/A"
+        : data.getGender().getChatColor() + data.getName();
   }
 
   @Command(

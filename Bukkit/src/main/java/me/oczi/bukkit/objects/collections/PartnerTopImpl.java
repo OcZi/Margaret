@@ -2,14 +2,19 @@ package me.oczi.bukkit.objects.collections;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.google.common.collect.Lists;
 import me.oczi.bukkit.internal.database.DbTasks;
 import me.oczi.bukkit.objects.player.PlayerData;
 import me.oczi.bukkit.objects.player.PlayerDataPair;
+import me.oczi.bukkit.other.PartnerTopWriter;
+import me.oczi.common.api.collections.TypePair;
+import me.oczi.common.api.collections.TypePairImpl;
 import me.oczi.common.storage.sql.dsl.result.ResultMap;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.utils.CommonsUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Date;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -17,17 +22,22 @@ import java.util.concurrent.TimeUnit;
 public class PartnerTopImpl
     implements PartnerTop {
   private final LoadingCache<Integer, PlayerDataPair> entries;
-  private final int limitRows;
+  private final int ENTRIES_PER_PAGE;
+  private final int MAX_ENTRIES;
 
   private final DbTasks dbTasks;
+  private List<List<PlayerDataPair>> pages;
 
-  public PartnerTopImpl(int limitRows,
+  public PartnerTopImpl(int maxEntries,
+                        int entriesPerPage,
                         long timeout,
                         DbTasks dbTasks) {
-    this.limitRows = limitRows;
+    this.MAX_ENTRIES = maxEntries;
+    this.ENTRIES_PER_PAGE = entriesPerPage;
     this.entries = Caffeine.newBuilder()
         .expireAfterWrite(timeout, TimeUnit.SECONDS)
-        .maximumSize(limitRows)
+        .maximumSize(MAX_ENTRIES)
+        .writer(new PartnerTopWriter(this))
         .build(this::loader);
     this.dbTasks = dbTasks;
     renovate();
@@ -35,7 +45,50 @@ public class PartnerTopImpl
 
   @Override
   public PlayerDataPair get(int index) {
+    renovate();
     return entries.get(index);
+  }
+
+  @Override
+  public List<PlayerDataPair> getPage(int numPage) {
+    renovate();
+    if (pages.size() <= numPage) {
+      return pages.isEmpty()
+          ? Collections.emptyList()
+          : pages.get(pages.size() - 1);
+    }
+    return pages.get(numPage);
+  }
+
+  @Override
+  public List<List<PlayerDataPair>> getPages() {
+    renovate();
+    return pages == null
+        ? Collections.emptyList()
+        : pages;
+  }
+
+  @Override
+  public int getEntryStartedOfPage(int numPage) {
+    if (CommonsUtils.isNullOrEmpty(pages)) {
+      return 0;
+    }
+    if (pages.size() <= numPage) {
+      numPage = pages.size() - 1;
+    }
+
+    return numPage > 1
+        ? ENTRIES_PER_PAGE * (numPage) : 1;
+  }
+
+  @Override
+  public int getMaxEntries() {
+    return MAX_ENTRIES;
+  }
+
+  @Override
+  public int getEntriesPerPage() {
+    return ENTRIES_PER_PAGE;
   }
 
   private PlayerDataPair loader(int i) {
@@ -46,9 +99,17 @@ public class PartnerTopImpl
   private void renovate() {
     clear();
     if (isEmpty()) {
-      Map<Integer, PlayerDataPair> firstPartners = getFirstPartners(limitRows);
+      List<PlayerDataPair> firstPartners = getFirstPartners(MAX_ENTRIES);
       if (!firstPartners.isEmpty()) {
-        entries.putAll(firstPartners);
+        for (int i = 0; i < firstPartners.size(); i++) {
+          entries.put(i + 1, firstPartners.get(i));
+        }
+        this.pages = CommonsUtils.partitionList(
+            Lists.newArrayList(asMap().values()),
+            ENTRIES_PER_PAGE);
+      } else {
+        this.pages = Collections.emptyList();
+        entries.put(1, new PlayerDataPair(null, null));
       }
     }
   }
@@ -56,64 +117,58 @@ public class PartnerTopImpl
   /**
    * Query the first rows of Partner's data
    * by creation date.
-   * @param limitRows The limit of rows to query.
+   *
+   * @param maxEntries The limit of rows to query.
    * @return Result of query.
    */
-  private Map<Integer, PlayerDataPair> getFirstPartners(int limitRows) {
-    ResultMap firstPartners = dbTasks.getTopOfPartners(limitRows);
-    List<String> params = new ArrayList<>();
+  private List<PlayerDataPair> getFirstPartners(int maxEntries) {
+    ResultMap firstPartners = maxEntries > 0
+        ? dbTasks.getTopOfPartners(maxEntries)
+        : dbTasks.getAnythingOfPartnerData();
+    Map<String, TypePair<String>> namePairs = new HashMap<>();
+    List<String> values = new ArrayList<>();
     for (Map<String, SqlObject> row : firstPartners.getRows()) {
-      params.add(
-          row.get("player1").getString());
-      params.add(
-          row.get("player2").getString());
+      String player1 = row.get("player1").getString();
+      String player2 = row.get("player2").getString();
+      String id = row.get("id").getString();
+      namePairs.put(id,
+          new TypePairImpl<>(player1, player2));
+      values.add(player1);
+      values.add(player2);
     }
-    if (CommonsUtils.isNullOrEmpty(params)) {
-      return Collections.emptyMap();
+    if (CommonsUtils.isNullOrEmpty(values)) {
+      return Collections.emptyList();
     }
-    ResultMap result = dbTasks.getAllPlayerData(params);
-    return createTopPartners(result.getRows());
+    ResultMap result = dbTasks.getAllPlayerData(values);
+    return createTopPartners(result.getRows(), namePairs);
   }
 
   /**
    * Create the Partner's top by a result of rows.
-   * @param rows Rows of result.
+   *
+   * @param rows      Rows of result.
+   * @param namePairs Pairs of name to maintain order.
    * @return Map of top.
    */
-  private Map<Integer, PlayerDataPair> createTopPartners(List<Map<String, SqlObject>> rows) {
-    Map<Integer, PlayerDataPair> pairs = new HashMap<>();
-    List<String> ignored = new ArrayList<>();
-    int i = 0;
-    for (Map<String, SqlObject> row1 : rows) {
-      String id1 = row1.get("id").getString();
-      // Ignore it if has been loaded before.
-      if (ignored.contains(id1)) {
-        continue;
-      }
-      String partnerid = row1.get("partnerid").getString();
-      for (Map<String, SqlObject> row2 : rows) {
-        String id2 = row2.get("id").getString();
-        if (id2.equals(id1)) {
-          continue;
-        }
-        String partnerid2 = row2.get("partnerid").getString();
-        if (partnerid2.equals(partnerid)) {
-          i++;
-          pairs.put(i, new PlayerDataPair(
-              getPlayerDataFrom(row1),
-              getPlayerDataFrom(row2)));
-          // Partner of player in row2 has been loaded.
-          // ignored it to avoid double iteration in row1.
-          ignored.add(id2);
-          break;
-        }
-      }
+  private List<PlayerDataPair> createTopPartners(List<Map<String, SqlObject>> rows,
+                                                 Map<String, TypePair<String>> namePairs) {
+    Map<String, PlayerDataPair> pairs = new HashMap<>();
+    for (Map<String, SqlObject> row : rows) {
+      String partnerid = row.get("partnerid").getString();
+      PlayerData playerData = getPlayerDataFrom(row);
+      PlayerDataPair dataPair = pairs.computeIfAbsent(partnerid,
+          id -> new PlayerDataPair(null, null));
+      TypePair<String> namePair = namePairs.get(partnerid);
+      int i = namePair.getSide(playerData.getUniqueId().toString());
+      dataPair.setBySide(i, playerData);
     }
-    return pairs;
+    List<PlayerDataPair> result = Lists.newArrayList(pairs.values());
+    return Lists.reverse(result);
   }
 
   /**
    * Convert a row of Player's data to object.
+   *
    * @param row Row of Player's data table.
    * @return Player data object.
    */
@@ -197,6 +252,11 @@ public class PartnerTopImpl
   @Override
   public void clear() {
     entries.cleanUp();
+  }
+
+  @Override
+  public void clearPages() {
+    this.pages = null;
   }
 
   @Override

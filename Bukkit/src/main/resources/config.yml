@@ -82,8 +82,12 @@ cache:
   ## Time out to refresh the Partner's top in seconds.
   cache-partner-top-refresh: 300
 
-  ## Limit of entries in cache for Partner's top.
-  cache-partner-top-limit: 10
+  ## The amount of entries per page.
+  cache-entries-per-page: 10
+
+  ## Max entries to get from the database.
+  ## If is set to 0, will catch everything (Not recommended)
+  cache-max-entries: 20
 
 other:
 

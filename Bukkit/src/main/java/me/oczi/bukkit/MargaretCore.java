@@ -22,6 +22,7 @@ import me.oczi.common.api.configuration.CacheConfig;
 import me.oczi.common.dependency.DependencyManager;
 import me.oczi.common.dependency.Dependency;
 import me.oczi.common.storage.sql.datasource.DataSourceType;
+import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 
@@ -31,6 +32,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
+
+import static me.oczi.common.storage.sql.datasource.DataSourceType.MYSQL;
+import static me.oczi.common.storage.sql.datasource.DataSourceType.SQLITE;
 
 /**
  * Margaret's core.
@@ -65,13 +69,13 @@ public class MargaretCore implements PluginCore {
       throws PluginInitializationException {
     try {
       dbManager.init();
+      dbManager.scriptInit();
       initGenders();
       initObjectManager();
       initListeners();
       initCooldown();
       initCommand();
       // Before finish, start database scripts
-      dbManager.scriptInit();
       initFinished();
     } catch (Exception e) {
       throw new PluginInitializationException("Plugin initialization failed.", e);
@@ -94,10 +98,12 @@ public class MargaretCore implements PluginCore {
     libraryLoader
         .addDependency(MargaretLibrary.getDefaultDependencies());
     DataSourceType dataSourceType = dbManager.getDatabaseType();
-    if (dataSourceType != DataSourceType.SQLITE &&
-        dataSourceType != DataSourceType.MYSQL) {
-      MargaretLibrary dbLibrary = MargaretLibrary.valueOf(
-          dbManager.getDatabaseTypeName().toUpperCase());
+    if (!CommonsUtils.equalsTo(
+        dataSourceType, SQLITE, MYSQL)) {
+      String databaseName = dbManager
+          .getDatabaseTypeName().toUpperCase();
+      MargaretLibrary dbLibrary = MargaretLibrary
+          .valueOf(databaseName);
       libraryLoader.addDependency(dbLibrary);
     }
     loadedDependencies = libraryLoader.process();
