@@ -87,7 +87,6 @@ public class CommandList {
   }
 
   private String processPlayerData(PlayerData data) {
-    System.out.println("data = " + data);
     return data == null
         ? "N/A"
         : data.getGender().getChatColor() + data.getName();
