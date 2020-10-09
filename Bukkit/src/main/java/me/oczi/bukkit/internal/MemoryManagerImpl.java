@@ -26,7 +26,8 @@ public class MemoryManagerImpl implements MemoryManager {
       createGarbageCache(config);
     }
     this.top = new PartnerTopImpl(
-        config.getPartnerTopLimit(),
+        config.getPartnerTopMaxEntries(),
+        config.getPartnerTopEntriesPerPage(),
         config.getPartnerTimeOut(),
         // Hardcoded DbTasks
         // At this point, database is loaded.

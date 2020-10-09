@@ -23,7 +23,7 @@ import me.oczi.bukkit.other.exceptions.IdCollisionException;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.common.api.collections.TypePair;
 import me.oczi.common.api.collections.TypePairImpl;
-import me.oczi.common.storage.sql.dsl.result.ResultMap;
+import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.utils.BitMasks;
 import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.Bukkit;
@@ -415,7 +415,7 @@ public final class Partners {
    * @param id ID of partner.
    */
   public static void forceEndPartner(String id) {
-    ResultMap partnerData = dbTasks.getPartnerData(id);
+    Map<String, SqlObject> partnerData = dbTasks.getPartnerData(id);
     String uuid1 = partnerData.get("uuid1").getString();
     String uuid2 = partnerData.get("uuid2").getString();
     endPartnerInternal(id, uuid1, uuid2);

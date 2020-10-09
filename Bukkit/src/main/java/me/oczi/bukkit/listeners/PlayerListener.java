@@ -6,10 +6,8 @@ import me.oczi.bukkit.utils.MargaretPlayers;
 import me.oczi.bukkit.utils.PartnerPermission;
 import me.oczi.bukkit.utils.Partners;
 import me.oczi.bukkit.utils.settings.PartnerSettings;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -20,17 +18,17 @@ import java.util.UUID;
 
 public class PlayerListener implements Listener {
 
-  @EventHandler(priority = EventPriority.NORMAL)
+  @EventHandler
   public void onPlayerJoin(PlayerJoinEvent e) {
     MargaretPlayers.loadMargaretPlayer(e.getPlayer());
   }
 
-  @EventHandler(priority = EventPriority.NORMAL)
+  @EventHandler
   public void onPlayerLeave(PlayerQuitEvent e) {
     MargaretPlayers.closeMargaretPlayer(e.getPlayer());
   }
 
-  @EventHandler()
+  @EventHandler
   public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
     if (!(e.getRightClicked() instanceof Player)) { return; }
 

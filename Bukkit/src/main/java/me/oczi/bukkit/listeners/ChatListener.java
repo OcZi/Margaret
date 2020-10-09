@@ -135,7 +135,7 @@ public class ChatListener implements Listener {
     List<Player> playerList = new ArrayList<>(
         Bukkit.getOnlinePlayers());
     for (Player player : playerList) {
-      if (CommonsUtils.equalsTo(player.getName(),
+      if (CommonsUtils.stringEqualsTo(player.getName(),
           margaretPlayer1.getName(),
           margaretPlayer2.getName())) {
         continue;

@@ -600,7 +600,7 @@ public interface MessageUtils {
     } else if (send instanceof Messages) {
       message = getMessageTranslated((Messages) send);
     } else {
-      message = send.toString();
+      message = String.valueOf(send);
     }
 
     return translateMargaretColor(message);

@@ -104,12 +104,12 @@ public class CommandPartner {
     MessageUtils.compose(sender, "Max homes: " +
         homeList.getMaxHomes(), true);
     MessageUtils.compose(sender, "Permissions: " +
-        CommonsUtils.joinCollection(
+        CommonsUtils.joinIterable(
             permissions), true);
   }
 
   private String getHomesId(HomeList homeList) {
-    String homeIds = CommonsUtils.joinCollection(
+    String homeIds = CommonsUtils.joinIterable(
         homeList.getIds());
     return homeIds.isEmpty()
         ? MessageUtils.getMessageTranslated(

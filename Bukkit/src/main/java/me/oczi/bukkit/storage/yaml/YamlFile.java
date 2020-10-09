@@ -30,11 +30,24 @@ public class YamlFile {
   public YamlFile(JavaPlugin plugin,
                   String fileName,
                   @Nullable Map<String, String> mapRefill) {
+    this(plugin,
+        new File(plugin.getDataFolder(), fileName),
+        mapRefill);
+  }
+
+  public YamlFile(JavaPlugin plugin,
+                  File file) {
+    this(plugin, file, null);
+  }
+
+  public YamlFile(JavaPlugin plugin,
+                  File file,
+                  @Nullable Map<String, String> mapRefill) {
     this.plugin = plugin;
     this.mapRefill = mapRefill;
-    this.file = new File(plugin.getDataFolder(), fileName);
+    this.file = file;
     this.fileConfig = new YamlConfiguration();
-    this.fileName = fileName;
+    this.fileName = file.getName();
     saveDefault();
     loadFileConfiguration();
 

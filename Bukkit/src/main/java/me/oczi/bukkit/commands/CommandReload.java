@@ -17,14 +17,14 @@ public class CommandReload {
   public void reload(@Sender CommandSender sender,
                      String arg)
       throws ConditionException {
-    if (CommonsUtils.equalsTo(arg,
+    if (CommonsUtils.stringEqualsTo(arg,
         "message", "messages", "msg")) {
       MargaretYamlStorage.reloadMessages();
       MessageUtils.compose(sender, Messages.CONFIGURATION_RELOADED,
           true, arg);
       return;
     }
-    if (CommonsUtils.equalsTo(arg,
+    if (CommonsUtils.stringEqualsTo(arg,
         "message-colors", "colors")) {
       MargaretYamlStorage.reloadMessageColors();
       MessageUtils.compose(sender, Messages.CONFIGURATION_RELOADED,

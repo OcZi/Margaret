@@ -8,8 +8,8 @@ import java.util.Iterator;
 
 public class PlayerDataPair implements TypePair<PlayerData> {
   private final Iterator<PlayerData> iterator;
-  private final PlayerData left;
-  private final PlayerData right;
+  private PlayerData left;
+  private PlayerData right;
 
   public PlayerDataPair(PlayerData left,
                         PlayerData right) {
@@ -34,6 +34,26 @@ public class PlayerDataPair implements TypePair<PlayerData> {
     }
   }
 
+  public void setLeft(PlayerData left) {
+    this.left = left;
+  }
+
+  public void setRight(PlayerData right) {
+    this.right = right;
+  }
+
+  public void setBySide(int side,  PlayerData type) {
+    if (side == 1) {
+      setLeft(type);
+    } else if (side == 2) {
+      setRight(type);
+    }
+  }
+
+  public boolean isFull() {
+    return right != null && left != null;
+  }
+
   @NotNull
   @Override
   public Iterator<PlayerData> iterator() {
@@ -48,5 +68,14 @@ public class PlayerDataPair implements TypePair<PlayerData> {
   @Override
   public PlayerData getRight() {
     return right;
+  }
+
+  @Override
+  public String toString() {
+    return "PlayerDataPair{" +
+        "iterator=" + iterator +
+        ", left=" + left +
+        ", right=" + right +
+        '}';
   }
 }

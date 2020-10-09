@@ -26,7 +26,7 @@ public class CommandVersion {
         Messages.MARGARET_INFO,
         true,
         description.getVersion());
-    String authors = CommonsUtils.joinCollection(
+    String authors = CommonsUtils.joinIterable(
         description.getAuthors());
     MessageUtils.compose(sender,
         Messages.AUTHORS,

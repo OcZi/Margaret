@@ -56,4 +56,13 @@ public class MargaretPlayerTypePair
   public Iterator<MargaretPlayer> iterator() {
     return iterator;
   }
+
+  @Override
+  public String toString() {
+    return "MargaretPlayerTypePair{" +
+        "iterator=" + iterator +
+        ", left=" + left +
+        ", right=" + right +
+        '}';
+  }
 }

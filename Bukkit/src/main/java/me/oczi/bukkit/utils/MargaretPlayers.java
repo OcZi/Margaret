@@ -16,7 +16,6 @@ import me.oczi.bukkit.utils.settings.CacheSettings;
 import me.oczi.bukkit.utils.settings.EnumSettings;
 import me.oczi.common.api.collections.TypePair;
 import me.oczi.common.api.collections.TypePairImpl;
-import me.oczi.common.storage.sql.dsl.result.ResultMap;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import net.kyori.text.TextComponent;
 import net.kyori.text.format.TextColor;
@@ -27,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public final class MargaretPlayers {
@@ -76,7 +76,7 @@ public final class MargaretPlayers {
     String partnerName;
     if (partnerPlayer.isEmpty()) {
       if (colorized) {
-        ResultMap playerData = dbTasks.getPlayerData(uuid);
+        Map<String, SqlObject> playerData = dbTasks.getPlayerData(uuid);
         SqlObject nameObject = playerData.get("name");
         SqlObject genderObject = playerData.get("gender");
         partnerName = nameObject.getString();

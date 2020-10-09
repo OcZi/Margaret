@@ -15,7 +15,6 @@ import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
 import me.oczi.common.api.Emptyble;
-import me.oczi.common.storage.sql.dsl.result.ResultMap;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.utils.BitMasks;
 import me.oczi.common.utils.CommonsUtils;
@@ -26,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static me.oczi.bukkit.utils.Partners.callPartnerStartEvent;
@@ -73,7 +73,7 @@ public class PartnerObjectBuilder {
   }
 
   public PartnerData initPartnerData(String id) {
-    ResultMap metadata = dbTasks.getPartnerData(id);
+    Map<String, SqlObject> metadata = dbTasks.getPartnerData(id);
     if (CommonsUtils.isNullOrEmpty(metadata)) {
       MessageUtils.warning(
           "Partner ID "
@@ -85,7 +85,7 @@ public class PartnerObjectBuilder {
   }
 
   public PartnerProperties initPartnerProperties(String id) {
-    ResultMap partnerProperties =
+    Map<String, SqlObject> partnerProperties =
         dbTasks.getPartnerProperties(id);
     if (CommonsUtils.isNullOrEmpty(partnerProperties)) {
       MessageUtils.warning(
@@ -104,7 +104,7 @@ public class PartnerObjectBuilder {
     return createPartnerProperties(id, partnerMaxHomes, bits);
   }
 
-  public PartnerData createPartnerData(ResultMap metadata) {
+  public PartnerData createPartnerData(Map<String, SqlObject> metadata) {
     SqlObject id = metadata.get("id");
     SqlObject player1 = metadata.get("player1");
     SqlObject player2 = metadata.get("player2");
@@ -193,7 +193,7 @@ public class PartnerObjectBuilder {
 
   @Nullable
   public PartnerHome createHome(String id) {
-    ResultMap query = dbTasks.getHome(id);
+    Map<String, SqlObject> query = dbTasks.getHome(id);
     if (CommonsUtils.isNullOrEmpty(query)) {
       return null;
     }
@@ -201,7 +201,7 @@ public class PartnerObjectBuilder {
     return new PartnerHome(id, alias, newLocation(query));
   }
 
-  public Location newLocation(ResultMap map) {
+  public Location newLocation(Map<String, SqlObject> map) {
     return BukkitUtils.newLocation(
         map.get("world").getString(),
         map.get("x").getDouble(),
