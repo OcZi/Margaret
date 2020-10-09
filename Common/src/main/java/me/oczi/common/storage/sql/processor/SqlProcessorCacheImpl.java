@@ -1,9 +1,9 @@
 package me.oczi.common.storage.sql.processor;
 
 import me.oczi.common.storage.sql.datasource.DataSource;
+import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
 import me.oczi.common.storage.sql.dsl.result.ResultMap;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
-import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
 import me.oczi.common.storage.sql.dsl.statements.data.StatementMetadata;
 import me.oczi.common.storage.sql.dsl.statements.prepared.PreparedStatement;
 
@@ -43,12 +43,10 @@ public class SqlProcessorCacheImpl implements SqlProcessorCache {
   private PreparedStatement process(String idStatement,
                                     Function<SqlDsl, PreparedStatement> function) {
     // No process any statement with empty id.
-    if (idStatement.isEmpty()) {
-      return function.apply(dsl);
-    } else {
-      return cache.computeIfAbsent(idStatement,
+    return idStatement.isEmpty()
+        ? function.apply(dsl)
+        : cache.computeIfAbsent(idStatement,
           (k) -> function.apply(dsl));
-    }
   }
 
   private PreparedStatement processStatement(String idStatement,
@@ -77,10 +75,18 @@ public class SqlProcessorCacheImpl implements SqlProcessorCache {
   }
 
   @Override
-  public SqlObject queryFirst(String idStatement,
-                              StatementMetadata metaData,
-                              Function<SqlDsl, PreparedStatement> function) {
-    return statementProcessor.queryFirst(
+  public SqlObject queryFirstObject(String idStatement,
+                                    StatementMetadata metaData,
+                                    Function<SqlDsl, PreparedStatement> function) {
+    return statementProcessor.queryFirstObject(
+        processStatement(idStatement, metaData, function));
+  }
+
+  @Override
+  public Map<String, SqlObject> queryFirstRow(String idStatement,
+                                              StatementMetadata metaData,
+                                              Function<SqlDsl, PreparedStatement> function) {
+    return statementProcessor.queryFirstRow(
         processStatement(idStatement, metaData, function));
   }
 

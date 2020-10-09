@@ -9,10 +9,7 @@ import me.oczi.common.utils.CommonsUtils;
 import me.oczi.common.utils.Sqls;
 
 import java.sql.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
@@ -45,8 +42,8 @@ public class SqlProcessorImpl implements SqlProcessor {
     }
   }
 
-  public SqlObject queryFirst(String expression,
-                              List<Object> params) {
+  public SqlObject queryFirstObject(String expression,
+                                    List<Object> params) {
     logStatement(expression, params);
     try (final Connection connection = dataSource.getConnection()) {
       try (final PreparedStatement statement = connection
@@ -71,8 +68,34 @@ public class SqlProcessorImpl implements SqlProcessor {
   }
 
   @Override
-  public SqlObject queryFirst(String expression, Object... params) {
-    return queryFirst(expression, Arrays.asList(params));
+  public SqlObject queryFirstObject(String expression, Object... params) {
+    return queryFirstObject(expression, Arrays.asList(params));
+  }
+
+  @Override
+  public Map<String, SqlObject> queryFirstRow(String expression, List<Object> params) {
+    logStatement(expression, params);
+    try (final Connection connection = dataSource.getConnection()) {
+      try (final PreparedStatement statement = connection
+          .prepareStatement(expression)) {
+        setObjectsStatement(statement, params, nullSafe.get());
+        try (final ResultSet rs = statement.executeQuery()) {
+          ResultMap resultMap = Sqls.newResultMap(rs);
+          return resultMap.isEmpty()
+              ? new HashMap<>()
+              : resultMap.get(0);
+        }
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    return null;
+  }
+
+  @Override
+  public Map<String, SqlObject> queryFirstRow(String expression, Object... params) {
+    return queryFirstRow(expression, Arrays.asList(params));
   }
 
   @Override

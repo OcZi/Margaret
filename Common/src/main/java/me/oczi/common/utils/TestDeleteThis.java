@@ -5,28 +5,38 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
 import me.oczi.common.api.configuration.DataSourceConfig;
 import me.oczi.common.api.configuration.HkDataSourceConfig;
+import me.oczi.common.api.mojang.HistoryNameEntry;
+import me.oczi.common.api.mojang.MojangAccount;
 import me.oczi.common.api.sql.SqlTable;
 import me.oczi.common.exceptions.SQLCastException;
 import me.oczi.common.executors.SqlTaskExecutor;
-import me.oczi.common.storage.sql.datasource.*;
+import me.oczi.common.request.AsyncMojangResolver;
+import me.oczi.common.request.MojangResolver;
+import me.oczi.common.storage.sql.datasource.DataSource;
+import me.oczi.common.storage.sql.datasource.DataSourceType;
+import me.oczi.common.storage.sql.datasource.DataSourceTypePackage;
 import me.oczi.common.storage.sql.datasource.instance.DataSources;
-import me.oczi.common.storage.sql.interoperability.ConstraintsComp;
-import me.oczi.common.storage.sql.interoperability.SqlConstraints;
+import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
+import me.oczi.common.storage.sql.dsl.expressions.SqlDslImpl;
 import me.oczi.common.storage.sql.dsl.expressions.clause.OrderPattern;
+import me.oczi.common.storage.sql.dsl.expressions.select.SelectStatementFunction;
 import me.oczi.common.storage.sql.dsl.result.ResultMap;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
-import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
 import me.oczi.common.storage.sql.dsl.statements.data.StatementBasicData;
 import me.oczi.common.storage.sql.dsl.statements.data.StatementBasicDataImpl;
-import me.oczi.common.storage.sql.dsl.expressions.SqlDslImpl;
-import me.oczi.common.storage.sql.dsl.expressions.select.SelectStatementFunction;
 import me.oczi.common.storage.sql.dsl.statements.prepared.PreparedStatement;
+import me.oczi.common.storage.sql.interoperability.ConstraintsComp;
+import me.oczi.common.storage.sql.interoperability.SqlConstraints;
 import me.oczi.common.storage.sql.processor.*;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
@@ -74,7 +84,11 @@ public class TestDeleteThis {
       .from(TestTables.TEST)
       .build();
 
-  public static void main(String[] args) {
+  public static void main(String[] args)
+      throws InterruptedException,
+      ExecutionException,
+      TimeoutException {
+    testResolver();
     System.out.println("Select:");
     System.out.println("1:" + dsl
         .select("nani", "nani")
@@ -130,7 +144,7 @@ public class TestDeleteThis {
         .limit(1)
         .build()
         .toString());
-    System.out.println("9: " + dsl
+    System.out.println("9:" + dsl
         .select("nani")
         .from(TestTables.TEST)
         .offset(10)
@@ -146,7 +160,25 @@ public class TestDeleteThis {
         .values("pepe", "nani")
         .toString());
     System.out.println("2:" + dsl
-        .insert()
+        .insert(DataSourceType.MYSQL)
+        .orReplace()
+        .into(TestTables.TEST)
+        .values("nani", "pepe")
+        .toString());
+    System.out.println("3:" + dsl
+        .insert(DataSourceType.POSTGRESQL)
+        .orReplace()
+        .into(TestTables.TEST)
+        .values("nani", "pepe")
+        .toString());
+    System.out.println("4:" + dsl
+        .insert(DataSourceType.H2)
+        .orReplace()
+        .into(TestTables.TEST)
+        .values("nani", "pepe")
+        .toString());
+    System.out.println("5:" + dsl
+        .insert(DataSourceType.SQLITE)
         .orReplace()
         .into(TestTables.TEST)
         .values("nani", "pepe")
@@ -200,12 +232,25 @@ public class TestDeleteThis {
         .createTable(TestTables.COMP, DataSourceType.H2)
         .ifNotExist()
         .build());
+    System.out.println(dsl
+        .createTable(TestTables.COMP, DataSourceType.POSTGRESQL)
+        .ifNotExist()
+        .build());
+    System.out.println(dsl
+        .createTable(TestTables.COMP, DataSourceType.MYSQL)
+        .ifNotExist()
+        .build());
 
-    System.out.println();
-    System.out.println("Test:");
-    initSql();
-    testSql();
-    System.out.println(master.getStatementsCached());
+    try {
+      Class.forName("com.zaxxer.hikari");
+      System.out.println();
+      System.out.println("Test:");
+      initSql();
+      testSql();
+      System.out.println(master.getStatementsCached());
+    } catch (ClassNotFoundException e) {
+      System.out.println("HikariCP not enabled.");
+    }
   }
 
   public static void initSql() {
@@ -223,7 +268,7 @@ public class TestDeleteThis {
         .build();
     SqlStatementProcessor statementProcessor =
         new SqlStatementProcessorImpl(
-        new SqlProcessorImpl(true, dataSource));
+            new SqlProcessorImpl(true, dataSource));
     master = new SqlProcessorCacheImpl(
         cache.asMap(),
         dsl,
@@ -244,7 +289,7 @@ public class TestDeleteThis {
         select1.apply(dsl).getModifiableData()), select1);
     query(getMetaDataOfFunction(select2), select2);
     query(new StatementBasicDataImpl(
-        select3.apply(dsl).getModifiableData()),
+            select3.apply(dsl).getModifiableData()),
         select3);
     query(getMetaDataOfFunction(select_all), select_all);
     StatementBasicData metaData =
@@ -263,24 +308,44 @@ public class TestDeleteThis {
   }
 
   public static void query(StatementBasicData metaData,
-                           Function<SqlDsl, PreparedStatement> function)  {
-    ResultMap map =  master
+                           Function<SqlDsl, PreparedStatement> function) {
+    ResultMap map = master
         .queryMap("query-" + ints.getAndIncrement(),
             metaData,
             function);
-    if (map == null) { return; }
-    for (SqlObject sqlObject : map.values()) {
-      if (!sqlObject.isEmpty()) {
+    if (map == null) {
+      return;
+    }
+    for (Map<String, SqlObject> row : map.getRows()) {
+      if (row.isEmpty()) {
+        System.out.println("row is null.");
+        continue;
+      }
+      for (SqlObject sqlObject : row.values()) {
+        if (sqlObject.isEmpty()) {
+          System.out.println("sqlObject is null.");
+          continue;
+        }
         try {
           System.out.println(sqlObject.getInteger() + " - " +
               sqlObject.getMetadata().toString());
         } catch (SQLCastException e) {
           e.printStackTrace();
         }
-      } else {
-        System.out.println("sqlObject is null.");
+
       }
     }
+  }
+
+  public static void testResolver() throws InterruptedException, ExecutionException, TimeoutException {
+    AsyncMojangResolver resolver = MojangResolver
+        .newAsyncResolver(Executors.newSingleThreadExecutor());
+    MojangAccount oczi = resolver.resolveAccount("_oczi");
+    System.out.println("oczi = " + oczi);
+    HistoryNameEntry[] historyName = resolver
+        .resolveHistoryName(oczi.getId());
+    System.out.println("historyName = " + Arrays.toString(historyName));
+    resolver.shutdown();
   }
 
   public static void update(StatementBasicData metaData,

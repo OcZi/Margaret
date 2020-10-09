@@ -6,7 +6,7 @@
 
     <groupId>me.oczi</groupId>
     <artifactId>Margaret</artifactId>
-    <version>0.9.7-SNAPSHOT</version>
+    <version>0.9.8-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>

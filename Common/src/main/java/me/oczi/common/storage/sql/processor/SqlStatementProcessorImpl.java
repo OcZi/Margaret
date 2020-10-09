@@ -6,10 +6,9 @@ import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.storage.sql.dsl.statements.data.StatementBasicData;
 import me.oczi.common.storage.sql.dsl.statements.data.StatementMetadata;
 import me.oczi.common.storage.sql.dsl.statements.prepared.PreparedStatement;
-import me.oczi.common.storage.sql.dsl.statements.prepared.SqlPreparedStatementCompiled;
+import me.oczi.common.storage.sql.dsl.statements.prepared.PreparedStatementCompiled;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SqlStatementProcessorImpl implements SqlStatementProcessor {
   private final SqlProcessor delegate;
@@ -27,41 +26,49 @@ public class SqlStatementProcessorImpl implements SqlStatementProcessor {
   }
 
   @Override
-  public <T> Map<String, T> queryCast(PreparedStatement preparedStatement,
+  public <T> Map<String, T> queryCast(PreparedStatement statement,
                                       Class<T> type) {
-    SqlPreparedStatementCompiled compiled = preparedStatement.compile();
+    PreparedStatementCompiled compiled = statement.compile();
     return delegate.queryCast(compiled.getStatement(),
         type,
         compiled.getParams());
   }
 
   @Override
-  public ResultMap queryMap(PreparedStatement preparedStatement) {
-    SqlPreparedStatementCompiled compiled = preparedStatement.compile();
+  public ResultMap queryMap(PreparedStatement statement) {
+    PreparedStatementCompiled compiled = statement.compile();
     return delegate.queryMap(
         compiled.getStatement(),
         compiled.getParams());
   }
 
   @Override
-  public SqlObject queryFirst(PreparedStatement preparedStatement) {
-    SqlPreparedStatementCompiled compiled = preparedStatement.compile();
-    return delegate.queryFirst(
+  public SqlObject queryFirstObject(PreparedStatement statement) {
+    PreparedStatementCompiled compiled = statement.compile();
+    return delegate.queryFirstObject(
         compiled.getStatement(),
         compiled.getParams());
   }
 
   @Override
-  public boolean queryExist(PreparedStatement preparedStatement) {
-    SqlPreparedStatementCompiled compiled = preparedStatement.compile();
+  public Map<String, SqlObject> queryFirstRow(PreparedStatement statement) {
+    PreparedStatementCompiled compiled = statement.compile();
+    return delegate.queryFirstRow(
+        compiled.getStatement(),
+        compiled.getParams());
+  }
+
+  @Override
+  public boolean queryExist(PreparedStatement statement) {
+    PreparedStatementCompiled compiled = statement.compile();
     return delegate.queryExist(
         compiled.getStatement(),
         compiled.getParams());
   }
 
   @Override
-  public void update(PreparedStatement preparedStatement) {
-    SqlPreparedStatementCompiled compiled = preparedStatement.compile();
+  public void update(PreparedStatement statement) {
+    PreparedStatementCompiled compiled = statement.compile();
     delegate.update(
         compiled.getStatement(),
         compiled.getParams());

@@ -13,31 +13,44 @@ public interface SqlStatementProcessor {
   /**
    * Execute a query to Sql DataSource
    * and get the result as Map.
-   * @param statementPackage - Statement to execute.
+   * @param statement - Statement to execute.
    * @param t - Type to return.
    * @return Result cast to Map of type.
    */
-  <T> Map<String, T> queryCast(PreparedStatement statementPackage,
+  <T> Map<String, T> queryCast(PreparedStatement statement,
                                Class<T> t);
 
   /**
    * Execute a query to Sql DataSource
    * and get the result as ResultMap.
-   * @param statementPackage - Statement to execute.
+   * @param statement - Statement to execute.
    * @return Result as ResultMap.
    */
-  ResultMap queryMap(PreparedStatement statementPackage);
+  ResultMap queryMap(PreparedStatement statement);
 
-  SqlObject queryFirst(PreparedStatement statementPackage);
+  /**
+   * Execute a Query to SQL DataSource.
+   * @param statement - Statement to execute.
+   * @return Get first value of object.
+   */
+  SqlObject queryFirstObject(PreparedStatement statement);
 
-  boolean queryExist(PreparedStatement statementPackage);
+  /**
+   * Execute a Query to SQL DataSource
+   * and map the first row.
+   * @param statement - Statement to execute.
+   * @return Result as QueryMap.
+   */
+  Map<String, SqlObject> queryFirstRow(PreparedStatement statement);
+
+  boolean queryExist(PreparedStatement statement);
 
 
   /**
    * Execute a update to SQL DataSource.
-   * @param statementPackage - Statement to execute
+   * @param statement - Statement to execute
    */
-  void update(PreparedStatement statementPackage);
+  void update(PreparedStatement statement);
 
   /**
    * Execute a batch to SQL DataSource.

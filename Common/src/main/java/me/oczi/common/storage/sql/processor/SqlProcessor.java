@@ -17,8 +17,8 @@ public interface SqlProcessor {
    * @param params - Parameters to apply to PreparedStatement.
    * @return Get first value of object.
    */
-  SqlObject queryFirst(String expression,
-                       List<Object> params);
+  SqlObject queryFirstObject(String expression,
+                             List<Object> params);
 
   /**
    * Execute a Query to SQL DataSource.
@@ -26,12 +26,32 @@ public interface SqlProcessor {
    * @param params - Parameters to apply to PreparedStatement.
    * @return Get first value of object.
    */
-  SqlObject queryFirst(String expression,
-                       Object... params);
+  SqlObject queryFirstObject(String expression,
+                             Object... params);
 
   /**
    * Execute a Query to SQL DataSource
-   * and map the result.
+   * and map the first row.
+   * @param expression - Expression to execute
+   * @param params - Parameters to apply to PreparedStatement.
+   * @return Result as QueryMap.
+   */
+  Map<String, SqlObject> queryFirstRow(String expression,
+                          List<Object> params);
+
+  /**
+   * Execute a Query to SQL DataSource
+   * and map the first row.
+   * @param expression - Expression to execute
+   * @param params - Parameters to apply to PreparedStatement.
+   * @return Result as QueryMap.
+   */
+  Map<String, SqlObject> queryFirstRow(String expression,
+                          Object... params);
+
+  /**
+   * Execute a Query to SQL DataSource
+   * and map all the rows.
    * @param expression - Expression to execute
    * @param params - Parameters to apply to PreparedStatement.
    * @return Result as QueryMap.

@@ -1,8 +1,8 @@
 package me.oczi.common.storage.sql.processor;
 
+import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
 import me.oczi.common.storage.sql.dsl.result.ResultMap;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
-import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
 import me.oczi.common.storage.sql.dsl.statements.data.StatementMetadata;
 import me.oczi.common.storage.sql.dsl.statements.prepared.PreparedStatement;
 
@@ -21,9 +21,13 @@ public interface SqlProcessorCache {
                                Class<T> type,
                                Function<SqlDsl, PreparedStatement> function);
 
-  SqlObject queryFirst(String idStatement,
-                       StatementMetadata metaData,
-                       Function<SqlDsl, PreparedStatement> function);
+  SqlObject queryFirstObject(String idStatement,
+                             StatementMetadata metaData,
+                             Function<SqlDsl, PreparedStatement> function);
+
+  Map<String, SqlObject> queryFirstRow(String idStatement,
+                                       StatementMetadata metaData,
+                                       Function<SqlDsl, PreparedStatement> function);
 
   boolean queryExist(String idStatement,
                      StatementMetadata metaData,

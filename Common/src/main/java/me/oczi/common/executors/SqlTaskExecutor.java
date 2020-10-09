@@ -2,14 +2,14 @@ package me.oczi.common.executors;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
 import me.oczi.common.storage.sql.dsl.result.ResultMap;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
-import me.oczi.common.storage.sql.dsl.expressions.SqlDsl;
 import me.oczi.common.storage.sql.dsl.statements.data.StatementMetadata;
 import me.oczi.common.storage.sql.dsl.statements.prepared.PreparedStatement;
+import me.oczi.common.storage.sql.processor.SqlProcessor;
 import me.oczi.common.storage.sql.processor.SqlProcessorCache;
 import me.oczi.common.storage.sql.processor.SqlStatementProcessor;
-import me.oczi.common.storage.sql.processor.SqlProcessor;
 
 import java.util.Map;
 import java.util.Set;
@@ -58,12 +58,23 @@ public class SqlTaskExecutor extends TaskExecutor implements SqlProcessorCache {
   }
 
   @Override
-  public SqlObject queryFirst(String idStatement,
-                              StatementMetadata metaData,
-                              Function<SqlDsl, PreparedStatement> function) {
+  public SqlObject queryFirstObject(String idStatement,
+                                    StatementMetadata metaData,
+                                    Function<SqlDsl, PreparedStatement> function) {
     ListenableFuture<SqlObject> future =
         executorService.submit(
-            () -> processor.queryFirst(idStatement, metaData, function));
+            () -> processor.queryFirstObject(idStatement, metaData, function));
+
+    return getFutureValue(future);
+  }
+
+  @Override
+  public Map<String, SqlObject> queryFirstRow(String idStatement,
+                                              StatementMetadata metaData,
+                                              Function<SqlDsl, PreparedStatement> function) {
+    ListenableFuture<Map<String, SqlObject>> future =
+        executorService.submit(
+            () -> processor.queryFirstRow(idStatement, metaData, function));
 
     return getFutureValue(future);
   }
