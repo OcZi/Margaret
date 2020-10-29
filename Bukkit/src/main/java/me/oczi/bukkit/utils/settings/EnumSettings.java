@@ -1,6 +1,6 @@
 package me.oczi.bukkit.utils.settings;
 
-import me.oczi.bukkit.utils.PartnerPermission;
+import me.oczi.bukkit.utils.PartnershipPermission;
 
 public interface EnumSettings {
 
@@ -12,5 +12,5 @@ public interface EnumSettings {
 
   boolean getDefaultValue();
 
-  PartnerPermission getPermissionEquivalent();
+  PartnershipPermission getPermissionEquivalent();
 }

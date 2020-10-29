@@ -2,10 +2,10 @@ package me.oczi.bukkit.internal.objectcycle.partner;
 
 import me.oczi.bukkit.internal.MemoryManager;
 import me.oczi.bukkit.internal.objectcycle.AbstractObjectLoader;
-import me.oczi.bukkit.objects.partner.Partner;
-import me.oczi.bukkit.objects.partner.PartnerData;
-import me.oczi.bukkit.objects.partner.PartnerImpl;
-import me.oczi.bukkit.objects.partner.PartnerProperties;
+import me.oczi.bukkit.objects.partnership.Partnership;
+import me.oczi.bukkit.objects.partnership.PartnershipData;
+import me.oczi.bukkit.objects.partnership.PartnershipImpl;
+import me.oczi.bukkit.objects.partnership.PartnershipProperties;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.MessageUtils;
 
@@ -30,32 +30,32 @@ public class PartnerObjectLoader extends AbstractObjectLoader<String> {
       return;
     }
 
-    PartnerData partnerData = builder.initPartnerData(id);
-    if (partnerData == null) {
+    PartnershipData partnershipData = builder.initPartnerData(id);
+    if (partnershipData == null) {
       MessageUtils.warning("Partner " + id + " data is null.");
       return;
     }
 
-    PartnerProperties partnerProperties = builder.initPartnerProperties(id);
-    Partner partner = new PartnerImpl(partnerData, partnerProperties);
-    persistenceCache.putPartner(partner.getId(), partner);
+    PartnershipProperties partnershipProperties = builder.initPartnerProperties(id);
+    Partnership partnership = new PartnershipImpl(partnershipData, partnershipProperties);
+    persistenceCache.putPartner(partnership.getId(), partnership);
   }
 
   public void newPartner(MargaretPlayer margaretPlayer1,
                          MargaretPlayer margaretPlayer2) {
-    Partner partner = builder.newPartner(
+    Partnership partnership = builder.newPartner(
         margaretPlayer1,
         margaretPlayer2);
-    if (partner != null) {
-      persistenceCache.putPartner(partner.getId(), partner);
+    if (partnership != null) {
+      persistenceCache.putPartner(partnership.getId(), partnership);
     }
   }
 
   @Override
   public void close(String id) {
     if (cache.isGarbageCache()) {
-      Partner partner = persistenceCache.getPartner(id);
-      garbageCache.putPartner(id, partner);
+      Partnership partnership = persistenceCache.getPartner(id);
+      garbageCache.putPartner(id, partnership);
       MessageUtils.debug(id + " Partner swap from Persistence to Garbage");
     }
 
@@ -65,8 +65,8 @@ public class PartnerObjectLoader extends AbstractObjectLoader<String> {
 
   @Override
   public void swapObject(String id) {
-    Partner partner = garbageCache.getPartner(id);
-    persistenceCache.putPartner(id, partner);
+    Partnership partnership = garbageCache.getPartner(id);
+    persistenceCache.putPartner(id, partnership);
     garbageCache.removePartner(id);
     MessageUtils.debug(id + " Partner swap from Garbage to Persistence");
   }

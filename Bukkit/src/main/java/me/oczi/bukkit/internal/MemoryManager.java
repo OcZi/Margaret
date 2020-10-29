@@ -1,6 +1,6 @@
 package me.oczi.bukkit.internal;
 
-import me.oczi.bukkit.objects.collections.PartnerTop;
+import me.oczi.bukkit.objects.collections.PartnershipTop;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,5 +26,5 @@ public interface MemoryManager {
    */
   @Nullable ObjectCachePlugin getGarbageCache();
 
-  PartnerTop getPartnerTop();
+  PartnershipTop getPartnerTop();
 }

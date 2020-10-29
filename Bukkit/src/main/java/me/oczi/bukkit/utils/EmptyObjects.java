@@ -1,11 +1,13 @@
 package me.oczi.bukkit.utils;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import me.oczi.bukkit.objects.*;
+import me.oczi.bukkit.objects.Gender;
+import me.oczi.bukkit.objects.Home;
+import me.oczi.bukkit.objects.Proposal;
 import me.oczi.bukkit.objects.collections.CacheSet;
 import me.oczi.bukkit.objects.collections.HomeList;
-import me.oczi.bukkit.objects.collections.PartnerPermissionSet;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.collections.PartnershipPermissionSet;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.objects.player.MargaretPlayerMeta;
 import me.oczi.bukkit.utils.settings.EnumSettings;
@@ -30,7 +32,7 @@ public final class EmptyObjects {
 
   private static final CacheSet<Proposal> EMPTY_PROPOSALS = new EmptyCacheSet<>();
 
-  private static final Partner EMPTY_PARTNER = new EmptyPartner();
+  private static final Partnership EMPTY_PARTNER = new EmptyPartnership();
 
   private static final MargaretPlayer EMPTY_MARGARET_PLAYER = new EmptyMargaretPlayer(EMPTY_PARTNER);
 
@@ -43,7 +45,7 @@ public final class EmptyObjects {
     return EMPTY_MARGARET_PLAYER;
   }
 
-  public static Partner getEmptyPartner() {
+  public static Partnership getEmptyPartner() {
     return EMPTY_PARTNER;
   }
 
@@ -64,10 +66,10 @@ public final class EmptyObjects {
   }
 
   private static class EmptyMargaretPlayer implements MargaretPlayer {
-    private final Partner EMPTY_PARTNER;
+    private final Partnership EMPTY_PARTNER;
     private final Proposal EMPTY_PROPOSAL = new EmptyProposal();
 
-    private EmptyMargaretPlayer(Partner EMPTY_PARTNER) {
+    private EmptyMargaretPlayer(Partnership EMPTY_PARTNER) {
       this.EMPTY_PARTNER = EMPTY_PARTNER;
     }
 
@@ -94,7 +96,7 @@ public final class EmptyObjects {
     }
 
     @Override
-    public void setPartner(Partner partner) {}
+    public void setPartnership(Partnership partnership) {}
 
     @Override
     public void setGender(Gender gender) {}
@@ -147,7 +149,7 @@ public final class EmptyObjects {
     }
 
     @Override
-    public Partner getPartner() {
+    public Partnership getPartnership() {
       return EMPTY_PARTNER;
     }
 
@@ -162,8 +164,8 @@ public final class EmptyObjects {
     }
   }
 
-  private static class EmptyPartner implements Partner {
-    private final PartnerPermissionSet PERMISSION_SET = new PartnerPermissionSet();
+  private static class EmptyPartnership implements Partnership {
+    private final PartnershipPermissionSet PERMISSION_SET = new PartnershipPermissionSet();
 
     @Override
     public String getId() {
@@ -181,7 +183,7 @@ public final class EmptyObjects {
     }
 
     @Override
-    public PartnerPermissionSet getPermissions() {
+    public PartnershipPermissionSet getPermissions() {
       return PERMISSION_SET;
     }
 
@@ -189,7 +191,7 @@ public final class EmptyObjects {
     public void setRelation(String relation) {}
 
     @Override
-    public boolean hasPermission(PartnerPermission perm) {
+    public boolean hasPermission(PartnershipPermission perm) {
       return false;
     }
 

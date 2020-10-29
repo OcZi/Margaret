@@ -1,8 +1,8 @@
 package me.oczi.bukkit.internal.database.tasks;
 
 import me.oczi.bukkit.objects.Home;
-import me.oczi.bukkit.objects.partner.Partner;
-import me.oczi.bukkit.objects.partner.PartnerProperties;
+import me.oczi.bukkit.objects.partnership.Partnership;
+import me.oczi.bukkit.objects.partnership.PartnershipProperties;
 import me.oczi.bukkit.objects.player.PlayerData;
 
 import java.util.List;
@@ -14,10 +14,10 @@ public interface DbTaskSetup {
 
   void setupPlayerSettings(UUID id, List<Object> defaultValues);
 
-  void setupPartnerData(Partner partner);
+  void setupPartnershipData(Partnership partnership);
 
-  void setupPartnerProperties(String id,
-                              PartnerProperties properties);
+  void setupPartnershipProperties(String id,
+                                  PartnershipProperties properties);
 
-  void setupPartnerHome(String partnerId, Home home);
+  void setupPartnershipHome(String partnerId, Home home);
 }

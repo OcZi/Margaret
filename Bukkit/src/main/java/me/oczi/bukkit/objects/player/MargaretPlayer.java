@@ -3,7 +3,7 @@ package me.oczi.bukkit.objects.player;
 import me.oczi.bukkit.objects.Gender;
 import me.oczi.bukkit.objects.Proposal;
 import me.oczi.bukkit.objects.collections.CacheSet;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.utils.settings.EnumSettings;
 import me.oczi.common.api.Emptyble;
 
@@ -51,9 +51,9 @@ public interface MargaretPlayer extends Emptyble {
 
   /**
    * Set partner of MargaretPlayer.
-   * @param partner Partner to set.
+   * @param partnership Partner to set.
    */
-  void setPartner(Partner partner);
+  void setPartnership(Partnership partnership);
 
   /**
    * Set gender of MargaretPlayer.
@@ -124,7 +124,7 @@ public interface MargaretPlayer extends Emptyble {
    * Get Partner of MargaretPlayer.
    * @return Their partner, or a EmptyPartner if not exist.
    */
-  Partner getPartner();
+  Partnership getPartnership();
 
   /**
    * Get settings of MargaretPlayer.

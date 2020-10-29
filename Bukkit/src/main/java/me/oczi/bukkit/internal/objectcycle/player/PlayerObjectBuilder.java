@@ -7,7 +7,7 @@ import me.oczi.bukkit.internal.database.DbTasks;
 import me.oczi.bukkit.objects.Proposal;
 import me.oczi.bukkit.objects.collections.CacheSet;
 import me.oczi.bukkit.objects.collections.CacheSetImpl;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.objects.player.MargaretPlayerImpl;
 import me.oczi.bukkit.objects.player.MargaretPlayerMeta;
@@ -18,13 +18,13 @@ import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.DefaultGender;
 import me.oczi.bukkit.utils.EmptyObjects;
 import me.oczi.bukkit.utils.MessageUtils;
-import me.oczi.bukkit.utils.Partners;
+import me.oczi.bukkit.utils.Partnerships;
 import me.oczi.bukkit.utils.settings.EnumSettings;
 import me.oczi.bukkit.utils.settings.PlayerSettings;
 import me.oczi.common.api.mojang.MojangAccount;
 import me.oczi.common.exceptions.SQLCastException;
-import me.oczi.common.request.AsyncMojangResolver;
-import me.oczi.common.request.MojangResolver;
+import me.oczi.common.request.mojang.AsyncMojangResolver;
+import me.oczi.common.request.mojang.MojangResolver;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.utils.CommonsUtils;
 import me.oczi.common.utils.Statements;
@@ -110,13 +110,13 @@ public class PlayerObjectBuilder {
     String playerName = MargaretYamlStorage.isPlayerAuthentication()
         ? checkName(player, name.getString())
         : updateNameAndGet(player.getUniqueId(), name.getString());
-    Partner partner = createPartner(
+    Partnership partnership = createPartner(
         player,
         partnerId.getString());
     return new PlayerData(
         player.getUniqueId(),
         playerName,
-        partner,
+        partnership,
         gender.getString());
   }
 
@@ -157,21 +157,21 @@ public class PlayerObjectBuilder {
     return name;
   }
 
-  public Partner createPartner(Player player,
-                               String partnerId) {
-    Partner partner;
+  public Partnership createPartner(Player player,
+                                   String partnerId) {
+    Partnership partnership;
     if (!partnerId.equalsIgnoreCase(
         EmptyObjects.getEmptyPartnerId())) {
-      Partners.loadPartner(partnerId);
-      partner = core.getPartner(partnerId);
-      if (!partner.isEmpty()) {
-        Partners.reloadPartnerPermission(
-            player, partner, true);
+      Partnerships.loadPartner(partnerId);
+      partnership = core.getPartner(partnerId);
+      if (!partnership.isEmpty()) {
+        Partnerships.reloadPartnerPermission(
+            player, partnership, true);
       }
     } else {
-      partner = EmptyObjects.getEmptyPartner();
+      partnership = EmptyObjects.getEmptyPartner();
     }
-    return partner;
+    return partnership;
   }
 
   private PlayerData defaultPlayerData(Player player) {

@@ -19,11 +19,11 @@ public interface DbTaskUpdate {
                            Object param,
                            Object id);
 
-  void updatePartnerData(String columnName,
-                         Object param,
-                         String id);
-
-  void updatePartnerProperty(String settingName,
+  void updatePartnershipData(String columnName,
                              Object param,
                              String id);
+
+  void updatePartnershipProperty(String settingName,
+                                 Object param,
+                                 String id);
 }

@@ -7,10 +7,10 @@ import me.oczi.bukkit.internal.database.DbTasks;
 import me.oczi.bukkit.internal.objectcycle.player.PlayerObjectLoader;
 import me.oczi.bukkit.objects.Gender;
 import me.oczi.bukkit.objects.Proposal;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
+import me.oczi.bukkit.objects.player.MargaretPlayerPair;
 import me.oczi.bukkit.objects.player.MargaretPlayerProposal;
-import me.oczi.bukkit.objects.player.MargaretPlayerTypePair;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.settings.CacheSettings;
 import me.oczi.bukkit.utils.settings.EnumSettings;
@@ -171,25 +171,25 @@ public final class MargaretPlayers {
   }
 
   /**
-   * Get the pair of {@link MargaretPlayer} of a {@link Partner}.
-   * @param partner Partner to get pair.
+   * Get the pair of {@link MargaretPlayer} of a {@link Partnership}.
+   * @param partnership Partner to get pair.
    * @return Pair of MargaretPlayer.
    */
-  public static TypePair<MargaretPlayer> getMargaretPlayerAsPair(Partner partner) {
-    return new MargaretPlayerTypePair(
-        getAsMargaretPlayer(partner.getUuid1()),
-        getAsMargaretPlayer(partner.getUuid2()));
+  public static TypePair<MargaretPlayer> getMargaretPlayerAsPair(Partnership partnership) {
+    return new MargaretPlayerPair(
+        getAsMargaretPlayer(partnership.getUuid1()),
+        getAsMargaretPlayer(partnership.getUuid2()));
   }
 
   /**
-   * Get the pair of {@link Player} of a {@link Partner}.
-   * @param partner Partner to get pair.
+   * Get the pair of {@link Player} of a {@link Partnership}.
+   * @param partnership Partner to get pair.
    * @return Pair of MargaretPlayer.
    */
-  public static TypePair<Player> getPlayerAsPair(Partner partner) {
+  public static TypePair<Player> getPlayerAsPair(Partnership partnership) {
     return new TypePairImpl<>(
-        Bukkit.getPlayer(partner.getUuid1()),
-        Bukkit.getPlayer(partner.getUuid2()));
+        Bukkit.getPlayer(partnership.getUuid1()),
+        Bukkit.getPlayer(partnership.getUuid2()));
   }
 
   /**

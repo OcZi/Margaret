@@ -20,10 +20,10 @@ public class CacheConfigImpl implements CacheConfig {
     this.playerTimeout = config.getInt(
         "cache.cache-player-timeout", 120);
     this.partnerTimeout = config.getInt(
-        "cache.cache-partner-timeout", 120);
+        "cache.cache-partnership-timeout", 120);
 
     this.partnerTopRefresh = config.getLong(
-        "cache.cache-partner-top-refresh",
+        "cache.cache-partnership-top-refresh",
         Duration.ofMinutes(5).getSeconds());
     this.partnerTopEntriesPerPage = config.getInt(
         "cache-entries-per-page", 10);

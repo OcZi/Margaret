@@ -1,8 +1,9 @@
 package me.oczi.bukkit.utils.settings;
 
-import me.oczi.bukkit.utils.PartnerPermission;
+import me.oczi.bukkit.utils.PartnershipPermission;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public enum BasicSettings implements EnumSettings {
 
@@ -30,7 +31,7 @@ public enum BasicSettings implements EnumSettings {
   }
 
   @Override
-  public PartnerPermission getPermissionEquivalent() {
+  public PartnershipPermission getPermissionEquivalent() {
     return null;
   }
 

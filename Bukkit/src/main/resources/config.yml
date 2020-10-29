@@ -12,7 +12,7 @@ player:
   ## Time out to evict proposal from player's proposal list.
   proposal-time-out: 60
 
-  ## Cooldown to send proposals after end a partner
+  ## Cooldown to send proposals after end a partnership
   ## or their proposal be declined.
   proposal-cooldown: 30
 
@@ -33,10 +33,10 @@ chat:
   ##  {1}: Partner prefix
   chat-format: "{0}{1}"
 
-partner:
+partnership:
 
   ## Broadcast the start/end of every partner.
-  announce-partner: true
+  announce-partnership: true
 
   ## Maximum homes for any player without exceptions.
   ## will be the number of columns available for homes in table database.
@@ -69,7 +69,7 @@ partner:
 cache:
 
   ## Create a Garbage Cache that retains the
-  ## information of the players and the partners
+  ## information of the players and the partnerships
   ## that are disconnected.
 
   ## This can be useful to reuse the information
@@ -77,15 +77,15 @@ cache:
   ## a request to the database.
 
   ## All objects in Garbage Cache will be
-  ## removed after the timeout of each object.
+  ## removed after the time out of each object.
   create-garbage-cache: true
 
   ## Time out to remove objects in seconds.
   cache-player-timeout: 120
-  cache-partner-timeout: 120
+  cache-partnership-timeout: 120
 
   ## Time out to refresh the Partner's top in seconds.
-  cache-partner-top-refresh: 300
+  cache-partnership-top-refresh: 300
 
   ## The amount of entries per page.
   cache-entries-per-page: 10

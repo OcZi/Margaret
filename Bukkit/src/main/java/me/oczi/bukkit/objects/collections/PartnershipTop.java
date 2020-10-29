@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-public interface PartnerTop extends Set<PlayerDataPair> {
+public interface PartnershipTop extends Set<PlayerDataPair> {
 
   PlayerDataPair get(int index);
 

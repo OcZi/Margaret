@@ -3,7 +3,7 @@ package me.oczi.bukkit.objects.player;
 import me.oczi.bukkit.objects.Gender;
 import me.oczi.bukkit.objects.Proposal;
 import me.oczi.bukkit.objects.collections.CacheSet;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.utils.EmptyObjects;
 import me.oczi.bukkit.utils.settings.EnumSettings;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +16,7 @@ public class MargaretPlayerImpl implements MargaretPlayer {
   private final UUID uuid;
   private final String name;
   private Gender gender;
-  private Partner partner;
+  private Partnership partnership;
   private final MargaretPlayerMeta settingsPlayer;
 
   private Proposal currentProposal = EmptyObjects.getEmptyProposal();
@@ -32,7 +32,7 @@ public class MargaretPlayerImpl implements MargaretPlayer {
     this.uuid = data.getUniqueId();
     this.name = data.getName();
     this.gender = data.getGender();
-    this.partner = data.getPartner();
+    this.partnership = data.getPartnership();
     this.settingsPlayer = metaSettings;
     this.proposals = cacheSet;
   }
@@ -54,12 +54,12 @@ public class MargaretPlayerImpl implements MargaretPlayer {
 
   @Override
   public boolean havePartner() {
-    return !partner.isEmpty();
+    return !partnership.isEmpty();
   }
 
   @Override
   public void clearPartner() {
-    setPartner(EmptyObjects.getEmptyPartner());
+    setPartnership(EmptyObjects.getEmptyPartner());
   }
 
   @Override
@@ -77,8 +77,8 @@ public class MargaretPlayerImpl implements MargaretPlayer {
   }
 
   @Override
-  public void setPartner(Partner partner) {
-    this.partner = partner;
+  public void setPartnership(Partnership partnership) {
+    this.partnership = partnership;
   }
 
   @Override
@@ -145,8 +145,8 @@ public class MargaretPlayerImpl implements MargaretPlayer {
   }
 
   @Override
-  public Partner getPartner() {
-    return partner;
+  public Partnership getPartnership() {
+    return partnership;
   }
 
   @Override
@@ -169,7 +169,7 @@ public class MargaretPlayerImpl implements MargaretPlayer {
         ", uuid=" + uuid +
         ", name='" + name + '\'' +
         ", gender=" + gender +
-        ", partner=" + partner +
+        ", partner=" + partnership +
         ", settingsPlayer=" + settingsPlayer +
         ", currentProposal=" + currentProposal +
         '}';

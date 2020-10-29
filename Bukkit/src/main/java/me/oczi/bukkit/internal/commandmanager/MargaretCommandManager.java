@@ -9,7 +9,8 @@ import me.oczi.bukkit.PluginCore;
 import me.oczi.bukkit.commands.*;
 import org.bukkit.plugin.Plugin;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MargaretCommandManager implements CommandManager {
   private final static Map<String, DispatcherNode> registeredNodes = new HashMap<>();
@@ -47,8 +48,8 @@ public class MargaretCommandManager implements CommandManager {
 
   public void registerPartnerCommands() {
     registerCommands(partnerNode,
-        new CommandPartner(),
-        new SubCommandPartner());
+        new CommandPartnership(),
+        new SubCommandPartnership());
     homeNode.registerCommands(new CommandHome());
   }
 
@@ -90,7 +91,7 @@ public class MargaretCommandManager implements CommandManager {
     this.permNode = registerNode(margaretNode,
         "permission", "perm");
     this.partnerNode = registerNode(margaretNode,
-        "partner", "pr");
+        "partnership", "partner", "pr");
     this.homeNode = registerNode(partnerNode,
         "home", "h");
   }

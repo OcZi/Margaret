@@ -1,62 +1,62 @@
-package me.oczi.bukkit.objects.partner;
+package me.oczi.bukkit.objects.partnership;
 
 import me.oczi.bukkit.objects.collections.HomeList;
-import me.oczi.bukkit.objects.collections.PartnerPermissionSet;
-import me.oczi.bukkit.utils.PartnerPermission;
+import me.oczi.bukkit.objects.collections.PartnershipPermissionSet;
+import me.oczi.bukkit.utils.PartnershipPermission;
 import me.oczi.common.api.Emptyble;
 
 import java.util.UUID;
 
 /**
- * A interpretation of a Relationship.
+ * A Partnership between two players.
  */
-public interface Partner extends Emptyble {
+public interface Partnership extends Emptyble {
 
   /**
    * Check if Partner has permission.
    * @param perm Permission to check
    * @return Has permission or not.
    */
-  boolean hasPermission(PartnerPermission perm);
+  boolean hasPermission(PartnershipPermission perm);
 
   /**
-   * Set relation of Partner.
+   * Set relation of Partnership.
    * @param relation Relation to set.
    */
   void setRelation(String relation);
 
   /**
-   * Get ID of Partner.
+   * Get ID of Partnership.
    * @return Partner's ID.
    */
   String getId();
 
   /**
-   * Get first UUID of Partner.
+   * Get first UUID of Partnership.
    * @return Partner's first UUID.
    */
   UUID getUuid1();
 
   /**
-   * Get second UUID of Partner.
+   * Get second UUID of Partnership.
    * @return Partner's second UUID.
    */
   UUID getUuid2();
 
   /**
-   * Get all the permissions of Partner.
+   * Get all the permissions of Partnership.
    * @return A EnumSet of permissions.
    */
-  PartnerPermissionSet getPermissions();
+  PartnershipPermissionSet getPermissions();
 
   /**
-   * Get the relation of Partner.
+   * Get the relation of Partnership.
    * @return Partner's relation.
    */
   String getRelation();
 
   /**
-   * Get all the homes of Partner.
+   * Get all the homes of Partnership.
    * @return A list of homes.
    */
   HomeList getHomeList();

@@ -3,7 +3,7 @@ package me.oczi.bukkit.objects.collections;
 import com.google.common.collect.ForwardingList;
 import me.oczi.bukkit.objects.Home;
 import me.oczi.bukkit.utils.EmptyObjects;
-import me.oczi.bukkit.utils.Partners;
+import me.oczi.bukkit.utils.Partnerships;
 import me.oczi.common.utils.CommonsUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,7 +116,7 @@ public class HomeList extends ForwardingList<Home> {
   }
 
   private void update() {
-    Partners.updateHomeList(partnerId, this);
+    Partnerships.updateHomeList(partnerId, this);
   }
 
   public void setMaxHomes(int maxHomes) {

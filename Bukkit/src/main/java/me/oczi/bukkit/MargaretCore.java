@@ -8,7 +8,7 @@ import me.oczi.bukkit.internal.database.DbTasks;
 import me.oczi.bukkit.internal.database.sql.SqlManagerImpl;
 import me.oczi.bukkit.listeners.ChatListener;
 import me.oczi.bukkit.listeners.PlayerListener;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.PluginInitializationException;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
@@ -19,8 +19,8 @@ import me.oczi.bukkit.utils.MessageUtils;
 import me.oczi.bukkit.utils.lib.LibraryLoader;
 import me.oczi.bukkit.utils.lib.MargaretLibrary;
 import me.oczi.common.api.configuration.CacheConfig;
-import me.oczi.common.dependency.DependencyManager;
 import me.oczi.common.dependency.Dependency;
+import me.oczi.common.dependency.DependencyManager;
 import me.oczi.common.storage.sql.datasource.DataSourceType;
 import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.Bukkit;
@@ -38,6 +38,8 @@ import static me.oczi.common.storage.sql.datasource.DataSourceType.SQLITE;
 
 /**
  * Margaret's core.
+ * Initialize all the components in order and
+ * expose them in getters.
  */
 public class MargaretCore implements PluginCore {
   private final MargaretMain plugin;
@@ -75,7 +77,6 @@ public class MargaretCore implements PluginCore {
       initListeners();
       initCooldown();
       initCommand();
-      // Before finish, start database scripts
       initFinished();
     } catch (Exception e) {
       throw new PluginInitializationException("Plugin initialization failed.", e);
@@ -150,6 +151,8 @@ public class MargaretCore implements PluginCore {
   }
 
   private void initFinished() {
+    // Hardcoded messages
+    // This will never be necessary to translate, right?
     MessageUtils.console
         ("Database type: "
             + dbManager.getDatabaseTypeName(), true);
@@ -175,7 +178,7 @@ public class MargaretCore implements PluginCore {
   }
 
   @Override
-  public Partner getPartner(String id) {
+  public Partnership getPartner(String id) {
     return memoryManager.getPersistenceCache().getPartner(id);
   }
 

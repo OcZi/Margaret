@@ -6,8 +6,8 @@ import app.ashcon.intake.dispatcher.Dispatcher;
 import app.ashcon.intake.parametric.annotation.Default;
 import me.oczi.bukkit.internal.commandmanager.CommandManager;
 import me.oczi.bukkit.objects.Gender;
-import me.oczi.bukkit.objects.collections.PartnerPermissionSet;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.collections.PartnershipPermissionSet;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.utils.*;
@@ -34,9 +34,9 @@ public class CommandAdmin {
   }
 
   @Command(
-      aliases = "op-partner",
-      desc = "Op partner.",
-      perms = "margaret.admin.op-partner")
+      aliases = {"op-partner", "op-partnership"},
+      desc = "Op partnership.",
+      perms = "margaret.admin.op-partnership")
   public void op(@Sender CommandSender sender)
       throws ConditionException {
     checkInstanceOfPlayer(sender);
@@ -44,12 +44,24 @@ public class CommandAdmin {
         .getAsMargaretPlayer(sender);
     checkHavePartner(margaretPlayer);
 
-    Partner partner = margaretPlayer.getPartner();
-    PartnerPermissionSet permissions = partner.getPermissions();
-    permissions.setPermissions(PartnerPermission.class);
+    Partnership partnership = margaretPlayer.getPartnership();
+    PartnershipPermissionSet permissions = partnership.getPermissions();
+    permissions.setPermissions(PartnershipPermission.class);
     MessageUtils.compose(sender,
         Messages.ALL_PERMISSION_ADDED,
         true);
+  }
+
+  @Command(
+      aliases = {"partner-info", "partnership-info", "p-info"},
+      desc = "Partner information.")
+  public void partnerInfo(@Sender CommandSender sender,
+                          MargaretPlayer margaretPlayer)
+      throws ConditionException {
+    checkHavePartner(margaretPlayer,
+        Messages.PLAYER_NOT_HAVE_PARTNER,
+        margaretPlayer.getName());
+    Partnerships.sendInfo(sender, margaretPlayer);
   }
 
   @Command(
@@ -64,11 +76,11 @@ public class CommandAdmin {
       MargaretPlayer margaretPlayer = MargaretPlayers
           .getAsMargaretPlayer(sender);
       checkHavePartner(margaretPlayer);
-      setMaxHomesOf(margaretPlayer.getPartner(), i);
+      setMaxHomesOf(margaretPlayer.getPartnership(), i);
     } else {
-      Partner partner = Partners.getAsPartner(partnerId);
-      checkIsEmpty(partner, Messages.INVALID_PARTNER, partnerId);
-      setMaxHomesOf(partner, i);
+      Partnership partnership = Partnerships.getAsPartner(partnerId);
+      checkIsEmpty(partnership, Messages.INVALID_PARTNER, partnerId);
+      setMaxHomesOf(partnership, i);
       MessageUtils.compose(sender,
           Messages.MAX_HOMES_SET_TO,
           true,
@@ -76,9 +88,9 @@ public class CommandAdmin {
     }
   }
 
-  private void setMaxHomesOf(Partner partner, int i) {
-    partner.getHomeList().setMaxHomes(i);
-    MessageUtils.compose(partner,
+  private void setMaxHomesOf(Partnership partnership, int i) {
+    partnership.getHomeList().setMaxHomes(i);
+    MessageUtils.compose(partnership,
         Messages.MAX_HOMES_CHANGED,
         true,
         i);

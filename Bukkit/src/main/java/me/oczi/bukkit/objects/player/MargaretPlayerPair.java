@@ -7,14 +7,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-public class MargaretPlayerTypePair
-    implements TypePair<MargaretPlayer> {
+public class MargaretPlayerPair
+    implements TypePair<MargaretPlayer>, Iterable<MargaretPlayer> {
   private final Iterator<MargaretPlayer> iterator;
   private final MargaretPlayer left;
   private final MargaretPlayer right;
 
-  public MargaretPlayerTypePair(MargaretPlayer left,
-                                MargaretPlayer right) {
+  public MargaretPlayerPair(MargaretPlayer left,
+                            MargaretPlayer right) {
     this.left = left;
     this.right = right;
     this.iterator = Lists.newArrayList(left, right).iterator();

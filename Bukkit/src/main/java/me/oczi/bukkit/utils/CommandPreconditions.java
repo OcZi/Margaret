@@ -1,13 +1,13 @@
 package me.oczi.bukkit.utils;
 
 import com.google.common.base.Strings;
-import me.oczi.bukkit.objects.partner.Partner;
-import me.oczi.common.api.Emptyble;
-import me.oczi.bukkit.objects.collections.HomeList;
 import me.oczi.bukkit.objects.Proposal;
+import me.oczi.bukkit.objects.collections.HomeList;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.utils.settings.EnumSettings;
+import me.oczi.common.api.Emptyble;
 import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -220,10 +220,10 @@ public interface CommandPreconditions {
         Messages.PARTNER_OFFLINE);
   }
 
-  static void checkPartnerPermission(Partner partner,
-                                     PartnerPermission permission)
+  static void checkPartnerPermission(Partnership partnership,
+                                     PartnershipPermission permission)
       throws ConditionException {
-    throwIf(partner,
+    throwIf(partnership,
         p -> !p.hasPermission(permission),
         Messages.YOUR_PARTNER_NO_PERMISSION);
   }

@@ -2,15 +2,15 @@ package me.oczi.bukkit.other;
 
 import com.github.benmanes.caffeine.cache.CacheWriter;
 import com.github.benmanes.caffeine.cache.RemovalCause;
-import me.oczi.bukkit.objects.collections.PartnerTop;
+import me.oczi.bukkit.objects.collections.PartnershipTop;
 import me.oczi.bukkit.objects.player.PlayerDataPair;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-public class PartnerTopWriter implements CacheWriter<Integer, PlayerDataPair> {
-  private final PartnerTop top;
+public class PartnershipTopWriter implements CacheWriter<Integer, PlayerDataPair> {
+  private final PartnershipTop top;
 
-  public PartnerTopWriter(PartnerTop top) {
+  public PartnershipTopWriter(PartnershipTop top) {
     this.top = top;
   }
 

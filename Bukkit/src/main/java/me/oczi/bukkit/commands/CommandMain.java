@@ -6,7 +6,7 @@ import app.ashcon.intake.dispatcher.Dispatcher;
 import app.ashcon.intake.parametric.annotation.Default;
 import me.oczi.bukkit.internal.commandmanager.CommandManager;
 import me.oczi.bukkit.objects.Gender;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.utils.Commands;
@@ -14,7 +14,7 @@ import me.oczi.bukkit.utils.MargaretPlayers;
 import me.oczi.bukkit.utils.MessageUtils;
 import me.oczi.bukkit.utils.Messages;
 import me.oczi.bukkit.utils.settings.EnumSettings;
-import me.oczi.bukkit.utils.settings.PartnerSettings;
+import me.oczi.bukkit.utils.settings.PartnershipSettings;
 import org.bukkit.command.CommandSender;
 
 import static me.oczi.bukkit.utils.CommandPreconditions.checkInstanceOfPlayer;
@@ -63,15 +63,15 @@ public class CommandMain {
     checkInstanceOfPlayer(sender);
     MargaretPlayer margaretPlayer = MargaretPlayers
         .getAsMargaretPlayer(sender);
-    if (setting instanceof PartnerSettings) {
+    if (setting instanceof PartnershipSettings) {
       if (!margaretPlayer.havePartner()) {
         MessageUtils.compose(sender,
             Messages.SETTING_PARTNER_ONLY,
             true);
         return;
       } else {
-        Partner partner = margaretPlayer.getPartner();
-        if (!partner.hasPermission(setting.getPermissionEquivalent())) {
+        Partnership partnership = margaretPlayer.getPartnership();
+        if (!partnership.hasPermission(setting.getPermissionEquivalent())) {
           MessageUtils.compose(sender,
               Messages.SETTING_PARTNER_NOT_APPLY,
               true);

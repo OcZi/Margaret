@@ -2,14 +2,14 @@ package me.oczi.bukkit.commands;
 
 import app.ashcon.intake.Command;
 import app.ashcon.intake.bukkit.parametric.annotation.Sender;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
 import me.oczi.bukkit.utils.settings.CacheSettings;
 import me.oczi.bukkit.utils.settings.EnumSettings;
-import me.oczi.bukkit.utils.settings.PartnerSettings;
+import me.oczi.bukkit.utils.settings.PartnershipSettings;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,12 +19,12 @@ import java.util.List;
 
 import static me.oczi.bukkit.utils.CommandPreconditions.*;
 
-public class SubCommandPartner {
+public class SubCommandPartnership {
 
   // Legacy commands to switch settings.
   @Command(
       aliases = {"chat", "ch"},
-      desc = "Partner chat.")
+      desc = "Partnership chat.")
   public void chat(@Sender CommandSender sender)
       throws ConditionException {
     executeGenericSetting(sender, CacheSettings.CHAT);
@@ -32,35 +32,35 @@ public class SubCommandPartner {
 
   @Command(
       aliases = "pvp",
-      desc = "Partner pvp.")
+      desc = "Partnership pvp.")
   public void pvp(@Sender CommandSender sender)
       throws ConditionException {
-    executeGenericSetting(sender, PartnerSettings.ALLOW_PVP);
+    executeGenericSetting(sender, PartnershipSettings.ALLOW_PVP);
   }
 
   @Command(
       aliases = {"mount", "mt"},
-      desc = "Partner mount.")
+      desc = "Partnership mount.")
   public void mount(@Sender CommandSender sender)
       throws ConditionException {
-    executeGenericSetting(sender, PartnerSettings.ALLOW_MOUNT);
+    executeGenericSetting(sender, PartnershipSettings.ALLOW_MOUNT);
   }
 
   @Command(
       aliases = {"teleport", "tpa", "tp"},
-      desc = "Partner teleport.")
+      desc = "Partnership teleport.")
   public void teleport(@Sender CommandSender sender)
       throws ConditionException {
     MargaretPlayer margaretPlayer1 = getCheckedMargaretPlayer(
-        sender, PartnerPermission.TP);
-    MargaretPlayer margaretPlayer2 = Partners
+        sender, PartnershipPermission.TP);
+    MargaretPlayer margaretPlayer2 = Partnerships
         .foundPartnerAsMargaretPlayer(margaretPlayer1);
     checkPartnerOnline(margaretPlayer2);
 
     checkSetting(margaretPlayer2,
-        PartnerSettings.ALLOW_TELEPORT,
+        PartnershipSettings.ALLOW_TELEPORT,
         Messages.SETTING_ERROR,
-        PartnerSettings.ALLOW_TELEPORT.getName(),
+        PartnershipSettings.ALLOW_TELEPORT.getName(),
         true);
     MargaretPlayers.teleport(
         margaretPlayer1, margaretPlayer2);
@@ -74,30 +74,30 @@ public class SubCommandPartner {
 
   @Command(
       aliases = {"gift", "give"},
-      desc = "Gift something to partner.")
+      desc = "Gift something to your partnership.")
   public void gift(@Sender CommandSender sender)
       throws ConditionException {
     MargaretPlayer margaretPlayer = getCheckedMargaretPlayer(
-        sender, PartnerPermission.GIFT);
-    Partners.sendGift(margaretPlayer);
+        sender, PartnershipPermission.GIFT);
+    Partnerships.sendGift(margaretPlayer);
   }
 
   @Command(
       aliases = {"heal", "health"},
-      desc = "Give health to your partner.")
+      desc = "Give health to your partnership.")
   public void heal(@Sender CommandSender sender,
                    int health)
       throws ConditionException {
     MargaretPlayer margaretPlayer = getCheckedMargaretPlayer(
-        sender, PartnerPermission.HEAL);
-    Player player2 = Partners
+        sender, PartnershipPermission.HEAL);
+    Player player2 = Partnerships
         .foundPartnerAsPlayer(margaretPlayer);
     checkPartnerOnline(player2);
 
     Player player1 = (Player) sender;
     checkPlayerGamemode(player1, GameMode.SURVIVAL);
 
-    Partners.sendHealth(player1, player2, health);
+    Partnerships.sendHealth(player1, player2, health);
   }
 
   @Command(
@@ -107,9 +107,9 @@ public class SubCommandPartner {
                        String relation)
       throws ConditionException {
     MargaretPlayer margaretPlayer = getCheckedMargaretPlayer(
-        sender, PartnerPermission.RELATION);
-    Partner partner = margaretPlayer.getPartner();
-    if (!partner.hasPermission(PartnerPermission.CUSTOM_RELATION)) {
+        sender, PartnershipPermission.RELATION);
+    Partnership partnership = margaretPlayer.getPartnership();
+    if (!partnership.hasPermission(PartnershipPermission.CUSTOM_RELATION)) {
       List<String> relations = MargaretYamlStorage.getAllowedRelations();
       // If (!relations.contains(relation)) equivalent
       throwIf(relations,
@@ -121,7 +121,7 @@ public class SubCommandPartner {
         r -> r.length() > 16,
         Messages.INVALID_RELATION,
         relation);
-    Partners.setRelation(partner, relation);
+    Partnerships.setRelation(partnership, relation);
     MessageUtils.compose(sender,
         Messages.RELATION_SET,
         true,
@@ -145,7 +145,7 @@ public class SubCommandPartner {
   }
 
   private MargaretPlayer getCheckedMargaretPlayer(CommandSender sender,
-                                                  @Nullable PartnerPermission permission)
+                                                  @Nullable PartnershipPermission permission)
       throws ConditionException {
     checkInstanceOfPlayer(sender);
 
@@ -155,7 +155,7 @@ public class SubCommandPartner {
 
     if (permission != null) {
       checkPartnerPermission(
-          margaretPlayer.getPartner(),
+          margaretPlayer.getPartnership(),
           permission);
     }
     return margaretPlayer;

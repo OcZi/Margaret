@@ -6,7 +6,7 @@ import me.oczi.bukkit.internal.ObjectCycleManager;
 import me.oczi.bukkit.internal.commandmanager.CommandManager;
 import me.oczi.bukkit.internal.database.DatabaseManager;
 import me.oczi.bukkit.internal.database.DbTasks;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.GenderManager;
 import me.oczi.common.dependency.Dependency;
@@ -30,11 +30,11 @@ public interface PluginCore {
   void callEvent(Event event);
 
   /**
-   * Get partner by id.
-   * @param id ID of partner.
+   * Get a partnership by id.
+   * @param id ID of partnership.
    * @return Partner, or EmptyPartner if not exists.
    */
-  Partner getPartner(String id);
+  Partnership getPartner(String id);
 
   /**
    * Get MargaretPlayer by UUID.
@@ -99,9 +99,21 @@ public interface PluginCore {
    */
   List<Dependency> getLoadedDependencies();
 
+  /**
+   * Get command manager of plugin.
+   * @return Command manager.
+   */
   CommandManager getCommandManager();
 
+  /**
+   * Get gender manager of plugin.
+   * @return Gender manager.
+   */
   GenderManager getGenderManager();
 
+  /**
+   * Get the Object Cycle Manager of plugin.
+   * @return Object Cycle Manager.
+   */
   ObjectCycleManager getObjectCycleManager();
 }

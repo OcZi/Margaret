@@ -5,10 +5,11 @@ import app.ashcon.intake.argument.CommandArgs;
 import app.ashcon.intake.argument.Namespace;
 import app.ashcon.intake.bukkit.parametric.provider.BukkitProvider;
 import app.ashcon.intake.parametric.ProvisionException;
+import me.oczi.bukkit.MargaretMain;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.utils.Messages;
-import me.oczi.bukkit.utils.PartnerPermission;
-import me.oczi.common.utils.CommonsUtils;
+import me.oczi.bukkit.utils.Partnerships;
 import org.bukkit.command.CommandSender;
 
 import java.lang.annotation.Annotation;
@@ -16,26 +17,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class PartnerPermissionProvider implements BukkitProvider<PartnerPermission> {
-  private final Set<String> permissions =
-      PartnerPermission.getPermissions().keySet();
+public class PartnershipProvider implements BukkitProvider<Partnership> {
+  private final Set<String> partnersId = MargaretMain.getCore()
+      .getMemoryManager()
+      .getPersistenceCache()
+      .partnerCacheAsMap()
+      .keySet();
 
   @Override
-  public PartnerPermission get(CommandSender commandSender,
-                               CommandArgs commandArgs,
-                               List<? extends Annotation> list)
-      throws ArgumentException, ProvisionException {
+  public Partnership get(CommandSender commandSender,
+                         CommandArgs commandArgs,
+                         List<? extends Annotation> list) throws ArgumentException, ProvisionException {
     final String arg = commandArgs.next();
-    if (CommonsUtils.enumExist(arg, PartnerPermission.class)) {
-      return PartnerPermission.valueOf(arg.toUpperCase());
+    Partnership partnership = Partnerships.getAsPartner(arg);
+    if (!partnership.isEmpty()) {
+      return partnership;
     }
     throw ConditionException.newRuntimeException(
-        Messages.INVALID_PARTNER_PERMISSION, arg);
+        Messages.INVALID_PARTNER, arg);
   }
 
   @Override
   public String getName() {
-    return "partner permission";
+    return "partner";
   }
 
   @Override
@@ -43,9 +47,9 @@ public class PartnerPermissionProvider implements BukkitProvider<PartnerPermissi
                                      Namespace namespace,
                                      List<? extends Annotation> modifiers) {
     List<String> suggestions = new ArrayList<>();
-    for (String permission : permissions) {
-      if (permission.startsWith(prefix)) {
-        suggestions.add(permission);
+    for (String id : partnersId) {
+      if (id.startsWith(prefix)) {
+        suggestions.add(id);
       }
     }
     return suggestions;

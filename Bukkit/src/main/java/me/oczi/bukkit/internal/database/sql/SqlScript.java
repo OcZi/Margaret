@@ -58,7 +58,7 @@ public class SqlScript implements DbScript {
     List<PreparedStatement> batches = new ArrayList<>(
         MargaretSqlTable.values().length);
     for (MargaretSqlTable table : MargaretSqlTable.values()) {
-      if (table == MargaretSqlTable.PARTNER_HOMES_LIST) {
+      if (table == MargaretSqlTable.PARTNERSHIP_HOMES_LIST) {
         continue;
       }
       batches.add(dsl
@@ -99,7 +99,7 @@ public class SqlScript implements DbScript {
 
   private void initHomeList() {
     statementProcessor.batch(dsl
-        .createTable(MargaretSqlTable.PARTNER_HOMES_LIST)
+        .createTable(MargaretSqlTable.PARTNERSHIP_HOMES_LIST)
         .ifNotExist()
         .defaultCharSet("utf8mb4")
         .build());
@@ -114,7 +114,7 @@ public class SqlScript implements DbScript {
   private void alterHomeList(int addCount) {
     sqlManager.createTableHomesId(maxPossibleHomes);
     List<String> homesId = sqlManager.getTableHomesId();
-    String constraint = MargaretSqlTable.PARTNER_HOMES_LIST.getConstraint();
+    String constraint = MargaretSqlTable.PARTNERSHIP_HOMES_LIST.getConstraint();
 
     int beforeMaxPossibleHomes = maxPossibleHomes - addCount;
     List<String> subList = homesId.subList(
@@ -126,7 +126,7 @@ public class SqlScript implements DbScript {
     }
 
     statementProcessor.update(dsl
-        .alterTable(MargaretSqlTable.PARTNER_HOMES_LIST)
+        .alterTable(MargaretSqlTable.PARTNERSHIP_HOMES_LIST)
         .addColumns(params.toArray(ArrayUtils.EMPTY_STRING_ARRAY))
         .build());
     statementProcessor.update(dsl
@@ -159,7 +159,7 @@ public class SqlScript implements DbScript {
       if (!partnerid.equals(EmptyObjects.getEmptyPartnerId())) {
         ResultMap query = statementProcessor.queryMap(dsl
             .select("player1", "player2")
-            .from(MargaretSqlTable.PARTNER_DATA)
+            .from(MargaretSqlTable.PARTNERSHIP_DATA)
             .where("id", partnerid)
             .build());
         if (!CommonsUtils.isNullOrEmpty(query)) {
@@ -215,31 +215,31 @@ public class SqlScript implements DbScript {
   private void deleteOutdatedPartners(List<StatementBasicData> partnerIdWrapper) {
     if (!partnerIdWrapper.isEmpty()) {
       statementProcessor.reuseLargeBatch(dsl
-              .deleteFrom(MargaretSqlTable.PARTNER_DATA)
+              .deleteFrom(MargaretSqlTable.PARTNERSHIP_DATA)
               .where("id", 0)
               .build(),
           partnerIdWrapper,
           1);
       statementProcessor.reuseLargeBatch(dsl
-              .deleteFrom(MargaretSqlTable.PARTNER_PROPERTIES)
+              .deleteFrom(MargaretSqlTable.PARTNERSHIP_PROPERTIES)
               .where("id", 0)
               .build(),
           partnerIdWrapper,
           1);
       statementProcessor.reuseLargeBatch(dsl
-              .deleteFrom(MargaretSqlTable.PARTNER_HOME)
+              .deleteFrom(MargaretSqlTable.PARTNERSHIP_HOME)
               .where("id", 0)
               .build(),
           partnerIdWrapper,
           1);
       statementProcessor.reuseLargeBatch(dsl
-              .deleteFrom(MargaretSqlTable.PARTNER_HOMES_LIST)
+              .deleteFrom(MargaretSqlTable.PARTNERSHIP_HOMES_LIST)
               .where("id", 0)
               .build(),
           partnerIdWrapper,
           1);
       statementProcessor.reuseLargeBatch(dsl
-              .deleteFrom(MargaretSqlTable.PARTNER_HOME)
+              .deleteFrom(MargaretSqlTable.PARTNERSHIP_HOME)
               .where("id", 0)
               .build(),
           partnerIdWrapper,

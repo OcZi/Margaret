@@ -1,6 +1,6 @@
 package me.oczi.bukkit.internal.database.tasks;
 
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 
 import java.util.UUID;
 
@@ -10,17 +10,17 @@ public interface DbTaskDelete {
 
   void deletePlayerSettings(UUID uuid);
 
-  void deletePartnerData(Partner partner);
+  void deletePartnershipData(Partnership partnership);
 
-  void deletePartnerData(String id);
+  void deletePartnershipData(String id);
 
-  void deletePartnerProperties(Partner partner);
+  void deletePartnershipProperties(Partnership partnership);
 
-  void deletePartnerProperties(String id);
+  void deletePartnershipProperties(String id);
 
-  void deletePartnerHomeList(Partner partner);
+  void deletePartnershipHomeList(Partnership partnership);
 
-  void deletePartnerHomeList(String id);
+  void deletePartnershipHomeList(String id);
 
-  void deletePartnerHome(String id);
+  void deletePartnershipHome(String id);
 }

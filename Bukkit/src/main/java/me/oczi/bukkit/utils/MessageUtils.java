@@ -2,7 +2,7 @@ package me.oczi.bukkit.utils;
 
 import com.google.common.base.Strings;
 import me.oczi.bukkit.MargaretMain;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.common.api.collections.TypePair;
@@ -113,7 +113,7 @@ public interface MessageUtils {
    * @param message - Message to format and send.
    * @param prefix  - Prefix use.
    */
-  static void compose(Partner sender,
+  static void compose(Partnership sender,
                       Object message,
                       boolean prefix) {
     compose(sender, message, prefix,
@@ -127,7 +127,7 @@ public interface MessageUtils {
    * @param message Message to format and send.
    * @param prefix Prefix use.
    */
-  static void compose(Partner sender,
+  static void compose(Partnership sender,
                       Object message,
                       boolean prefix,
                       Object... format) {
@@ -326,7 +326,7 @@ public interface MessageUtils {
     sendMessage(player, send);
   }
 
-  static void sendMessage(Partner sender, String send) {
+  static void sendMessage(Partnership sender, String send) {
     TypePair<Player> pair = MargaretPlayers.getPlayerAsPair(sender);
     for (Player player : pair) {
       if (player != null) {

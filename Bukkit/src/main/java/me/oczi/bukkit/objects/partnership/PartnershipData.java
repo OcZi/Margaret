@@ -1,18 +1,18 @@
-package me.oczi.bukkit.objects.partner;
+package me.oczi.bukkit.objects.partnership;
 
 import java.util.UUID;
 
-public class PartnerData {
+public class PartnershipData {
 
   private final String id;
   private final UUID uuid1;
   private final UUID uuid2;
   private final String relation;
 
-  public PartnerData(String id,
-                     UUID uuid1,
-                     UUID uuid2,
-                     String relation) {
+  public PartnershipData(String id,
+                         UUID uuid1,
+                         UUID uuid2,
+                         String relation) {
     this.id = id;
     this.uuid1 = uuid1;
     this.uuid2 = uuid2;

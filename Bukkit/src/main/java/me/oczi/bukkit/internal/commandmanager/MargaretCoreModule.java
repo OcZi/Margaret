@@ -8,13 +8,12 @@ import me.oczi.bukkit.internal.MemoryManager;
 import me.oczi.bukkit.internal.commandmanager.providers.*;
 import me.oczi.bukkit.internal.database.DatabaseManager;
 import me.oczi.bukkit.internal.database.DbTasks;
-import me.oczi.bukkit.objects.CooldownPlayer;
 import me.oczi.bukkit.objects.Gender;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.GenderManager;
 import me.oczi.bukkit.utils.Genders;
-import me.oczi.bukkit.utils.PartnerPermission;
+import me.oczi.bukkit.utils.PartnershipPermission;
 import me.oczi.bukkit.utils.settings.EnumSettings;
 import org.bukkit.plugin.Plugin;
 
@@ -40,10 +39,10 @@ public class MargaretCoreModule extends AbstractModule {
     bind(DatabaseManager.class).toInstance(core.getDatabaseManager());
     bind(DbTasks.class).toInstance(core.getDatabaseTask());
     bind(MargaretPlayer.class).toProvider(new MargaretPlayerProvider());
-    bind(Partner.class).toProvider(new PartnerProvider());
+    bind(Partnership.class).toProvider(new PartnershipProvider());
     bind(Gender.class).toProvider(new GenderProvider());
     bind(Logger.class).toInstance(core.getLogger());
     bind(EnumSettings.class).toProvider(new SettingProvider());
-    bind(PartnerPermission.class).toProvider(new PartnerPermissionProvider());
+    bind(PartnershipPermission.class).toProvider(new PartnershipPermissionProvider());
   }
 }

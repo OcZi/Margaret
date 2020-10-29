@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import me.oczi.bukkit.internal.database.DbTasks;
 import me.oczi.bukkit.objects.player.PlayerData;
 import me.oczi.bukkit.objects.player.PlayerDataPair;
-import me.oczi.bukkit.other.PartnerTopWriter;
+import me.oczi.bukkit.other.PartnershipTopWriter;
 import me.oczi.common.api.collections.TypePair;
 import me.oczi.common.api.collections.TypePairImpl;
 import me.oczi.common.storage.sql.dsl.result.ResultMap;
@@ -14,13 +14,12 @@ import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.utils.CommonsUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Date;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-public class PartnerTopImpl
-    implements PartnerTop {
+public class PartnershipTopImpl
+    implements PartnershipTop {
   private final LoadingCache<Integer, PlayerDataPair> entries;
   private final int ENTRIES_PER_PAGE;
   private final int MAX_ENTRIES;
@@ -28,16 +27,16 @@ public class PartnerTopImpl
   private final DbTasks dbTasks;
   private List<List<PlayerDataPair>> pages;
 
-  public PartnerTopImpl(int maxEntries,
-                        int entriesPerPage,
-                        long timeout,
-                        DbTasks dbTasks) {
+  public PartnershipTopImpl(int maxEntries,
+                            int entriesPerPage,
+                            long timeout,
+                            DbTasks dbTasks) {
     this.MAX_ENTRIES = maxEntries;
     this.ENTRIES_PER_PAGE = entriesPerPage;
     this.entries = Caffeine.newBuilder()
         .expireAfterWrite(timeout, TimeUnit.SECONDS)
         .maximumSize(MAX_ENTRIES)
-        .writer(new PartnerTopWriter(this))
+        .writer(new PartnershipTopWriter(this))
         .build(this::loader);
     this.dbTasks = dbTasks;
     renovate();
@@ -123,8 +122,8 @@ public class PartnerTopImpl
    */
   private List<PlayerDataPair> getFirstPartners(int maxEntries) {
     ResultMap firstPartners = maxEntries > 0
-        ? dbTasks.getTopOfPartners(maxEntries)
-        : dbTasks.getAnythingOfPartnerData();
+        ? dbTasks.getTopOfPartnerships(maxEntries)
+        : dbTasks.getAnythingOfPartnershipData();
     Map<String, TypePair<String>> namePairs = new HashMap<>();
     List<String> values = new ArrayList<>();
     for (Map<String, SqlObject> row : firstPartners.getRows()) {

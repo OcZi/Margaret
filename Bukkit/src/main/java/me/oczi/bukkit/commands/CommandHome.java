@@ -6,7 +6,7 @@ import app.ashcon.intake.parametric.annotation.Default;
 import me.oczi.bukkit.internal.database.DatabaseManager;
 import me.oczi.bukkit.objects.Home;
 import me.oczi.bukkit.objects.collections.HomeList;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.utils.*;
@@ -59,8 +59,8 @@ public class CommandHome {
     checkIsNotNumeric(alias,
         Messages.INVALID_HOME_ALIAS);
 
-    Partner partner = margaretPlayer.getPartner();
-    HomeList homeList = partner.getHomeList();
+    Partnership partnership = margaretPlayer.getPartnership();
+    HomeList homeList = partnership.getHomeList();
     Player player = (Player) sender;
     checkMaxHomes(homeList, player);
     checkGreaterOrEquals(homeList.size(),
@@ -69,8 +69,8 @@ public class CommandHome {
 
     Location location = player.getLocation();
     homeList.add(
-        Partners
-            .newHome(partner.getId(),
+        Partnerships
+            .newHome(partnership.getId(),
                 alias,
                 location));
     if (alias.isEmpty()) {
@@ -99,9 +99,9 @@ public class CommandHome {
         .getAsMargaretPlayer(sender);
     checkHavePartner(margaretPlayer);
 
-    HomeList homeList = margaretPlayer.getPartner().getHomeList();
+    HomeList homeList = margaretPlayer.getPartnership().getHomeList();
     Home home = getHome(homeList, i);
-    Partners.deleteHome(homeList, home);
+    Partnerships.deleteHome(homeList, home);
     MessageUtils.compose(sender,
         Messages.HOME_DELETED,
         true,
@@ -110,7 +110,7 @@ public class CommandHome {
 
   private Home getHome(MargaretPlayer margaretPlayer, int i )
       throws ConditionException {
-    return getHome(margaretPlayer.getPartner().getHomeList(), i);
+    return getHome(margaretPlayer.getPartnership().getHomeList(), i);
   }
 
   private Home getHome(HomeList homeList, int i)
@@ -123,7 +123,7 @@ public class CommandHome {
   private Home getHomeByName(MargaretPlayer margaretPlayer,
                              String alias)
       throws ConditionException {
-    HomeList homeList = margaretPlayer.getPartner().getHomeList();
+    HomeList homeList = margaretPlayer.getPartnership().getHomeList();
     Home home = homeList.get(alias);
     checkIsEmpty(home, Messages.HOME_NOT_EXIST, alias);
     return home;

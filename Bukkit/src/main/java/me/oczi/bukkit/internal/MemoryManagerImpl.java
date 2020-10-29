@@ -2,8 +2,8 @@ package me.oczi.bukkit.internal;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import me.oczi.bukkit.MargaretMain;
-import me.oczi.bukkit.objects.collections.PartnerTop;
-import me.oczi.bukkit.objects.collections.PartnerTopImpl;
+import me.oczi.bukkit.objects.collections.PartnershipTop;
+import me.oczi.bukkit.objects.collections.PartnershipTopImpl;
 import me.oczi.common.api.configuration.CacheConfig;
 
 import java.util.concurrent.TimeUnit;
@@ -12,7 +12,7 @@ public class MemoryManagerImpl implements MemoryManager {
   private final ObjectCachePlugin persistenceCache;
   private ObjectCachePlugin garbageCache;
 
-  private final PartnerTop top;
+  private final PartnershipTop top;
 
   public MemoryManagerImpl(CacheConfig config) {
     this.persistenceCache = new ObjectCachePluginImpl(
@@ -25,7 +25,7 @@ public class MemoryManagerImpl implements MemoryManager {
     if (config.isGarbage()) {
       createGarbageCache(config);
     }
-    this.top = new PartnerTopImpl(
+    this.top = new PartnershipTopImpl(
         config.getPartnerTopMaxEntries(),
         config.getPartnerTopEntriesPerPage(),
         config.getPartnerTimeOut(),
@@ -62,7 +62,7 @@ public class MemoryManagerImpl implements MemoryManager {
   }
 
   @Override
-  public PartnerTop getPartnerTop() {
+  public PartnershipTop getPartnerTop() {
     return top;
   }
 }

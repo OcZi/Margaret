@@ -50,7 +50,7 @@ public final class PlayerSettings {
       basicSettings.put(value.getName(), value);
     }
 
-    for (PartnerSettings value : PartnerSettings.values()) {
+    for (PartnershipSettings value : PartnershipSettings.values()) {
       partnerSettings.put(value.getName(), value);
     }
 

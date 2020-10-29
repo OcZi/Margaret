@@ -3,13 +3,13 @@ package me.oczi.bukkit.internal.objectcycle.player;
 import me.oczi.bukkit.MargaretMain;
 import me.oczi.bukkit.internal.MemoryManager;
 import me.oczi.bukkit.internal.objectcycle.AbstractObjectLoader;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.objects.player.MargaretPlayerMeta;
 import me.oczi.bukkit.objects.player.PlayerData;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.MessageUtils;
-import me.oczi.bukkit.utils.Partners;
+import me.oczi.bukkit.utils.Partnerships;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -57,12 +57,12 @@ public class PlayerObjectLoader extends AbstractObjectLoader<Player> {
     MargaretPlayer margaretPlayer1 = persistenceCache.getMargaretPlayer(uuid);
     if (!margaretPlayer1.isEmpty()) {
       if (margaretPlayer1.havePartner()) {
-        Partner partner = margaretPlayer1.getPartner();
+        Partnership partnership = margaretPlayer1.getPartnership();
         MargaretPlayer margaretPlayer2 =
             persistenceCache.getMargaretPlayer(
-                Partners.foundUuidOfPartner(margaretPlayer1));
+                Partnerships.foundUuidOfPartner(margaretPlayer1));
         if (margaretPlayer2.isEmpty()) {
-          Partners.closePartner(partner);
+          Partnerships.closePartner(partnership);
         }
       }
 

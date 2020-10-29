@@ -6,9 +6,9 @@ import me.oczi.bukkit.internal.database.DatabaseManager;
 import me.oczi.bukkit.internal.database.DbTasks;
 import me.oczi.bukkit.objects.Home;
 import me.oczi.bukkit.objects.id.ID;
-import me.oczi.bukkit.objects.id.PartnerID;
-import me.oczi.bukkit.objects.partner.Partner;
-import me.oczi.bukkit.objects.partner.PartnerProperties;
+import me.oczi.bukkit.objects.id.PartnershipID;
+import me.oczi.bukkit.objects.partnership.Partnership;
+import me.oczi.bukkit.objects.partnership.PartnershipProperties;
 import me.oczi.bukkit.objects.player.PlayerData;
 import me.oczi.bukkit.other.exceptions.IdCollisionException;
 import me.oczi.bukkit.utils.settings.PlayerSettings;
@@ -18,7 +18,6 @@ import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.storage.sql.dsl.statements.data.StatementBasicData;
 import me.oczi.common.storage.sql.processor.SqlProcessorCache;
 import me.oczi.common.utils.CommonsUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.bukkit.Location;
 
 import java.sql.Date;
@@ -46,7 +45,7 @@ public class SqlTask implements DbTasks {
   public void setupPlayerData(PlayerData playerData, int days) {
     String uuid = playerData.getUniqueId().toString();
     String name = playerData.getName();
-    String partnerId = playerData.getPartner().getId();
+    String partnerId = playerData.getPartnership().getId();
     String gender = playerData.getGender().getRealName();
 
     List<Object> params = Lists.newArrayList(
@@ -63,30 +62,30 @@ public class SqlTask implements DbTasks {
   }
 
   @Override
-  public void setupPartnerData(Partner partner) {
-    String id = partner.getId();
-    String uuid1 = partner.getUuid1().toString();
-    String uuid2 = partner.getUuid2().toString();
-    String relation = partner.getRelation();
+  public void setupPartnershipData(Partnership partnership) {
+    String id = partnership.getId();
+    String uuid1 = partnership.getUuid1().toString();
+    String uuid2 = partnership.getUuid2().toString();
+    String relation = partnership.getRelation();
     Date date = createSqlDate();
 
     List<Object> params = Lists.newArrayList(
         id, uuid1, uuid2, relation, date);
 
-    insertValues("partner-data-insert", PARTNER_DATA, params);
+    insertValues("partnership-data-insert", PARTNERSHIP_DATA, params);
   }
 
   @Override
-  public void setupPartnerProperties(String id,
-                                     PartnerProperties properties) {
+  public void setupPartnershipProperties(String id,
+                                         PartnershipProperties properties) {
     List<Object> params = Lists.newArrayList(id,
         properties.getHomeList().getMaxHomes(),
         properties.getBitsOfPermissions());
-    insertValues("partner-properties-insert", PARTNER_PROPERTIES, params);
+    insertValues("partnership-properties-insert", PARTNERSHIP_PROPERTIES, params);
   }
 
   @Override
-  public void setupPartnerHome(String partnerId, Home home) {
+  public void setupPartnershipHome(String partnerId, Home home) {
     String id = home.getId();
     String alias = CommonsUtils.isNullOrEmpty(home.getAlias())
         ? "unknown-" + home.getId()
@@ -102,7 +101,7 @@ public class SqlTask implements DbTasks {
     List<Object> params = Lists.newArrayList(
         id, alias, partnerId,
         world, x, y, z, date);
-    insertValues(partnerId, PARTNER_HOME, params);
+    insertValues(partnerId, PARTNERSHIP_HOME, params);
   }
 
   @Override
@@ -150,22 +149,22 @@ public class SqlTask implements DbTasks {
   }
 
   @Override
-  public void updatePartnerData(String columnName,
-                                Object param,
-                                String id) {
+  public void updatePartnershipData(String columnName,
+                                    Object param,
+                                    String id) {
     updateColumnOfRow("", // No cache
-        PARTNER_DATA,
+        PARTNERSHIP_DATA,
         columnName,
         param,
         id);
   }
 
   @Override
-  public void updatePartnerProperty(String settingName,
-                                    Object param,
-                                    String id) {
+  public void updatePartnershipProperty(String settingName,
+                                        Object param,
+                                        String id) {
     updateColumnOfRow("", // No cache
-        PARTNER_PROPERTIES,
+        PARTNERSHIP_PROPERTIES,
         settingName,
         param,
         id);
@@ -173,8 +172,8 @@ public class SqlTask implements DbTasks {
 
   @Override
   public void setHomeList(String id, List<Object> params) {
-    insertOrReplaceRow("partner-home-merge",
-        PARTNER_HOMES_LIST,
+    insertOrReplaceRow("partnership-home-merge",
+        PARTNERSHIP_HOMES_LIST,
         params);
   }
 
@@ -247,37 +246,37 @@ public class SqlTask implements DbTasks {
   }
 
   @Override
-  public ResultMap getTopOfPartners(int limit) {
+  public ResultMap getTopOfPartnerships(int limit) {
     return getRowsByColumn("",
-        PARTNER_DATA,
+        PARTNERSHIP_DATA,
         limit,
         "creation_date",
         Lists.newArrayList("id", "player1", "player2"));
   }
 
   @Override
-  public int getCountOfPartners() {
+  public int getCountOfPartnerships() {
     StatementBasicData data = StatementBasicData.newData(
-        PARTNER_DATA,
+        PARTNERSHIP_DATA,
         null,
         null);
-    return sqlExecutor.queryFirstObject("partner-count-get",
+    return sqlExecutor.queryFirstObject("partnership-count-get",
         data,
         dsl -> dsl.select(COUNT)
-            .from(PARTNER_DATA)
+            .from(PARTNERSHIP_DATA)
             .build()).getInteger();
   }
 
   @Override
-  public Map<String, SqlObject> getPartnerData(String id) {
-    return getRow("partner-data-get",
-        PARTNER_DATA,
+  public Map<String, SqlObject> getPartnershipData(String id) {
+    return getRow("partnership-data-get",
+        PARTNERSHIP_DATA,
         id,
         Collections.singletonList("*"));
   }
 
   @Override
-  public ResultMap getAnythingOfPartnerData() {
+  public ResultMap getAnythingOfPartnershipData() {
     StatementBasicData data = StatementBasicData
         .newData(PLAYER_DATA,
             Arrays.asList("id", "player1", "player2"),
@@ -286,33 +285,33 @@ public class SqlTask implements DbTasks {
         .queryMap("", // Empty statement id to bypass cache
             data,
             dsl -> dsl.select("*")
-                .from(PARTNER_DATA)
+                .from(PARTNERSHIP_DATA)
                 .build());
   }
 
   @Override
-  public Map<String, SqlObject> getPartnerHomeList(String id) {
+  public Map<String, SqlObject> getPartnershipHomeList(String id) {
     List<String> columns = Lists.newArrayList(databaseManager.getTableHomesId());
-    return getRow("partner-home-list-get",
-        PARTNER_HOMES_LIST,
+    return getRow("partnership-home-list-get",
+        PARTNERSHIP_HOMES_LIST,
         id,
         columns);
   }
 
   @Override
   public Map<String, SqlObject> getHome(String id) {
-    return getRow("partner-home-get",
-        PARTNER_HOME,
+    return getRow("partnership-home-get",
+        PARTNERSHIP_HOME,
         id,
         Collections.singletonList("*"));
   }
 
   @Override
-  public Map<String, SqlObject> getPartnerProperties(String id) {
+  public Map<String, SqlObject> getPartnershipProperties(String id) {
     List<String> params = Lists.newArrayList(
         "bitpermissions", "maxhomes");
-    return getRow("partner-properties-get",
-        PARTNER_PROPERTIES,
+    return getRow("partnership-properties-get",
+        PARTNERSHIP_PROPERTIES,
         id,
         params);
   }
@@ -332,46 +331,46 @@ public class SqlTask implements DbTasks {
   }
 
   @Override
-  public void deletePartnerData(Partner partner) {
-    deletePartnerData(partner.getId());
+  public void deletePartnershipData(Partnership partnership) {
+    deletePartnershipData(partnership.getId());
   }
 
   @Override
-  public void deletePartnerData(String id) {
-    deleteRow("partner-data-delete", PARTNER_DATA, id);
+  public void deletePartnershipData(String id) {
+    deleteRow("partnership-data-delete", PARTNERSHIP_DATA, id);
   }
 
 
   @Override
-  public void deletePartnerProperties(Partner partner) {
-    deletePartnerProperties(partner.getId());
+  public void deletePartnershipProperties(Partnership partnership) {
+    deletePartnershipProperties(partnership.getId());
   }
 
   @Override
-  public void deletePartnerProperties(String id) {
-    deleteRow("partner-properties-delete",
-        PARTNER_PROPERTIES,
+  public void deletePartnershipProperties(String id) {
+    deleteRow("partnership-properties-delete",
+        PARTNERSHIP_PROPERTIES,
         id);
   }
 
   @Override
-  public void deletePartnerHomeList(Partner partner) {
-    deletePartnerHomeList(partner.getId());
+  public void deletePartnershipHomeList(Partnership partnership) {
+    deletePartnershipHomeList(partnership.getId());
   }
 
   @Override
-  public void deletePartnerHomeList(String id) {
-    deleteRow("partner-homes-delete",
-        PARTNER_HOME,
+  public void deletePartnershipHomeList(String id) {
+    deleteRow("partnership-homes-delete",
+        PARTNERSHIP_HOME,
         id);
-    deleteRow("partner-home-list-delete",
-        PARTNER_HOMES_LIST,
+    deleteRow("partnership-home-list-delete",
+        PARTNERSHIP_HOMES_LIST,
         id);
   }
 
   @Override
-  public void deletePartnerHome(String id) {
-    deleteRow("partner-home-delete", PARTNER_HOME, id);
+  public void deletePartnershipHome(String id) {
+    deleteRow("partnership-home-delete", PARTNERSHIP_HOME, id);
   }
 
   @Override
@@ -383,29 +382,29 @@ public class SqlTask implements DbTasks {
 
   @Override
   public boolean playerSettingsExist(UUID uuid) {
-    return rowExist("partner-settings-exist",
+    return rowExist("partnership-settings-exist",
         PLAYER_SETTINGS,
         uuid.toString());
   }
 
   @Override
   public boolean partnerDataExist(String id) {
-    return rowExist("partner-data-exist", PARTNER_DATA, id);
+    return rowExist("partnership-data-exist", PARTNERSHIP_DATA, id);
   }
 
   @Override
   public boolean partnerHomeListExist(String id) {
-    return rowExist("partner-home-list-exist", PARTNER_HOMES_LIST, id);
+    return rowExist("partnership-home-list-exist", PARTNERSHIP_HOMES_LIST, id);
   }
 
   @Override
   public boolean partnerPropertiesExist(String id) {
-    return rowExist("partner-properties-exist", PARTNER_PROPERTIES, id);
+    return rowExist("partnership-properties-exist", PARTNERSHIP_PROPERTIES, id);
   }
 
   @Override
   public boolean partnerHomeExist(String id) {
-    return rowExist("partner-home-exist", PARTNER_HOME, id);
+    return rowExist("partnership-home-exist", PARTNERSHIP_HOME, id);
   }
 
   private void insertValues(String id,
@@ -600,7 +599,7 @@ public class SqlTask implements DbTasks {
 
   @Override
   public String foundUnusedPartnerId() {
-    return foundUnusedId(new PartnerID());
+    return foundUnusedId(new PartnershipID());
   }
 
   @Override
@@ -609,10 +608,10 @@ public class SqlTask implements DbTasks {
     while (true) {
       if (trying.get() >= 5) {
         throw new IdCollisionException
-            ("Too much colliisions of id " + id.getID());
+            ("Too much collisions of id " + id.getID());
       }
       id.generateNewId();
-      if (!rowExist("partner-exist", PARTNER_DATA, id.getID())) {
+      if (!rowExist("partnership-exist", PARTNERSHIP_DATA, id.getID())) {
         break;
       }
       trying.getAndIncrement();
@@ -622,13 +621,7 @@ public class SqlTask implements DbTasks {
   }
 
   public Date createSqlDate() {
-    if (cacheDay == null ||
-        !DateUtils.isSameDay(cacheDay,
-            new Date(System.currentTimeMillis()))) {
-      return new Date(System.currentTimeMillis());
-    }
-
-    return cacheDay;
+    return new Date(System.currentTimeMillis());
   }
 
   public SqlTaskExecutor getSqlExecutor() {

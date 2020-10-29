@@ -28,12 +28,12 @@ table:
   sql_properties: margaret_sql_properties
 
   player_data: margaret_player_data
-  partner_data: margaret_partner_data
+  partnership_data: margaret_partnership_data
 
   player_settings: margaret_player_settings
-  partner_settings: margaret_partner_settings
+  partnership_properties: margaret_partnership_properties
 
-  partner_homes_list: margaret_partner_homes_list
+  partnership_homes_list: margaret_partnership_homes_list
 
 ## Database credentials.
 ## Only for remote Databases.

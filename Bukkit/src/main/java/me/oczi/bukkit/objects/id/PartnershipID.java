@@ -1,14 +1,16 @@
 package me.oczi.bukkit.objects.id;
 
+import me.oczi.bukkit.objects.partnership.Partnership;
+
 /**
  * {@link ID} implementation with {@link ApacheID}
  * as delegate to generate
- * {@link me.oczi.bukkit.objects.partner.Partner}'s ID.
+ * {@link Partnership}'s ID.
  */
-public class PartnerID implements ID{
+public class PartnershipID implements ID{
   private final ID delegate;
 
-  public PartnerID() {
+  public PartnershipID() {
     this.delegate = new ApacheID(8);
   }
 

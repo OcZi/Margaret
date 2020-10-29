@@ -1,11 +1,11 @@
 package me.oczi.bukkit.listeners;
 
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.MargaretPlayers;
-import me.oczi.bukkit.utils.PartnerPermission;
-import me.oczi.bukkit.utils.Partners;
-import me.oczi.bukkit.utils.settings.PartnerSettings;
+import me.oczi.bukkit.utils.PartnershipPermission;
+import me.oczi.bukkit.utils.Partnerships;
+import me.oczi.bukkit.utils.settings.PartnershipSettings;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,12 +39,12 @@ public class PlayerListener implements Listener {
       return;
     }
 
-    MargaretPlayer margaretPlayer2 = Partners
+    MargaretPlayer margaretPlayer2 = Partnerships
         .foundPartnerAsMargaretPlayer(margaretPlayer1);
     if (margaretPlayer2.isEmpty()) {
       return;
     }
-    if (margaretPlayer2.isSetting(PartnerSettings.ALLOW_MOUNT)) {
+    if (margaretPlayer2.isSetting(PartnershipSettings.ALLOW_MOUNT)) {
       Player player2 = MargaretPlayers
           .getAsPlayer(margaretPlayer2);
       if (player1.getPassenger() == null) {
@@ -61,13 +61,13 @@ public class PlayerListener implements Listener {
         .getAsMargaretPlayer(player1);
     if (!margaretPlayer1.havePartner()) { return; }
 
-    Partner partner = margaretPlayer1.getPartner();
-    UUID partnerUuid = Partners.foundUuidOfPartner(margaretPlayer1);
+    Partnership partnership = margaretPlayer1.getPartnership();
+    UUID partnerUuid = Partnerships.foundUuidOfPartner(margaretPlayer1);
     MargaretPlayer margaretPlayer2 = MargaretPlayers
         .getAsMargaretPlayer(partnerUuid);
     if (margaretPlayer2.isEmpty()) { return; }
-    if (partner.hasPermission(PartnerPermission.PVP) &&
-        !margaretPlayer2.isSetting(PartnerSettings.ALLOW_PVP)) {
+    if (partnership.hasPermission(PartnershipPermission.PVP) &&
+        !margaretPlayer2.isSetting(PartnershipSettings.ALLOW_PVP)) {
       e.setCancelled(true);
     }
   }

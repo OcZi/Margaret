@@ -1,17 +1,17 @@
 package me.oczi.bukkit.events;
 
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class PartnerEndEvent extends Event
+public class PartnershipEndEvent extends Event
     implements Cancellable {
-  private final Partner partner;
+  private final Partnership partnership;
   private boolean cancel;
 
-  public PartnerEndEvent(Partner partner) {
-    this.partner = partner;
+  public PartnershipEndEvent(Partnership partnership) {
+    this.partnership = partnership;
   }
 
   private static final HandlerList handlers = new HandlerList();
@@ -35,7 +35,7 @@ public class PartnerEndEvent extends Event
     return handlers;
   }
 
-  public Partner getPartner() {
-    return partner;
+  public Partnership getPartnership() {
+    return partnership;
   }
 }

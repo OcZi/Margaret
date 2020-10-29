@@ -3,14 +3,14 @@ package me.oczi.bukkit.internal.objectcycle.partner;
 import com.google.common.collect.Lists;
 import me.oczi.bukkit.internal.database.DbTasks;
 import me.oczi.bukkit.objects.Home;
-import me.oczi.bukkit.objects.PartnerHome;
+import me.oczi.bukkit.objects.PartnershipHome;
 import me.oczi.bukkit.objects.Proposal;
 import me.oczi.bukkit.objects.collections.HomeList;
-import me.oczi.bukkit.objects.collections.PartnerPermissionSet;
-import me.oczi.bukkit.objects.partner.Partner;
-import me.oczi.bukkit.objects.partner.PartnerData;
-import me.oczi.bukkit.objects.partner.PartnerImpl;
-import me.oczi.bukkit.objects.partner.PartnerProperties;
+import me.oczi.bukkit.objects.collections.PartnershipPermissionSet;
+import me.oczi.bukkit.objects.partnership.Partnership;
+import me.oczi.bukkit.objects.partnership.PartnershipData;
+import me.oczi.bukkit.objects.partnership.PartnershipImpl;
+import me.oczi.bukkit.objects.partnership.PartnershipProperties;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.oczi.bukkit.utils.Partners.callPartnerStartEvent;
+import static me.oczi.bukkit.utils.Partnerships.callPartnerStartEvent;
 
 public class PartnerObjectBuilder {
   private final DbTasks dbTasks;
@@ -39,8 +39,8 @@ public class PartnerObjectBuilder {
     this.dbTasks = dbTasks;
   }
 
-  public Partner newPartner(MargaretPlayer margaretPlayer1,
-                            MargaretPlayer margaretPlayer2) {
+  public Partnership newPartner(MargaretPlayer margaretPlayer1,
+                                MargaretPlayer margaretPlayer2) {
     if (callPartnerStartEvent(
         margaretPlayer1, margaretPlayer2)) {
       return null;
@@ -49,31 +49,31 @@ public class PartnerObjectBuilder {
     String id = dbTasks.foundUnusedPartnerId();
 
     Proposal proposal = margaretPlayer2.getCurrentProposal();
-    PartnerData partnerData = new PartnerData(id,
+    PartnershipData partnershipData = new PartnershipData(id,
         margaretPlayer1.getUniqueId(),
         margaretPlayer2.getUniqueId(),
         proposal.getRelation());
 
-    PartnerProperties partnerProperties =
+    PartnershipProperties partnershipProperties =
         createPartnerProperties(id,
             partnerMaxHomes,
             -1,
             MargaretPlayers
                 .getAsPlayer(
                     margaretPlayer1, margaretPlayer2));
-    Partner partner = new PartnerImpl(partnerData, partnerProperties);
+    Partnership partnership = new PartnershipImpl(partnershipData, partnershipProperties);
 
-    dbTasks.setupPartnerData(partner);
-    dbTasks.setupPartnerProperties(id, partnerProperties);
+    dbTasks.setupPartnershipData(partnership);
+    dbTasks.setupPartnershipProperties(id, partnershipProperties);
 
-    Partners.clearAndSetPartner(partner,
+    Partnerships.clearAndSetPartner(partnership,
         margaretPlayer1,
         margaretPlayer2);
-    return partner;
+    return partnership;
   }
 
-  public PartnerData initPartnerData(String id) {
-    Map<String, SqlObject> metadata = dbTasks.getPartnerData(id);
+  public PartnershipData initPartnerData(String id) {
+    Map<String, SqlObject> metadata = dbTasks.getPartnershipData(id);
     if (CommonsUtils.isNullOrEmpty(metadata)) {
       MessageUtils.warning(
           "Partner ID "
@@ -84,16 +84,16 @@ public class PartnerObjectBuilder {
     return createPartnerData(metadata);
   }
 
-  public PartnerProperties initPartnerProperties(String id) {
+  public PartnershipProperties initPartnerProperties(String id) {
     Map<String, SqlObject> partnerProperties =
-        dbTasks.getPartnerProperties(id);
+        dbTasks.getPartnershipProperties(id);
     if (CommonsUtils.isNullOrEmpty(partnerProperties)) {
       MessageUtils.warning(
           "Partner " + id + " properties doesn't exist. " +
               "Creating default properties...");
-      PartnerProperties properties =
+      PartnershipProperties properties =
           createPartnerProperties(id, partnerMaxHomes, -1);
-      dbTasks.setupPartnerProperties(id, properties);
+      dbTasks.setupPartnershipProperties(id, properties);
       return properties;
     }
 
@@ -104,7 +104,7 @@ public class PartnerObjectBuilder {
     return createPartnerProperties(id, partnerMaxHomes, bits);
   }
 
-  public PartnerData createPartnerData(Map<String, SqlObject> metadata) {
+  public PartnershipData createPartnerData(Map<String, SqlObject> metadata) {
     SqlObject id = metadata.get("id");
     SqlObject player1 = metadata.get("player1");
     SqlObject player2 = metadata.get("player2");
@@ -115,7 +115,7 @@ public class PartnerObjectBuilder {
 
     UUID uuid1 = UUID.fromString(player1.getString());
     UUID uuid2 = UUID.fromString(player2.getString());
-    return new PartnerData(
+    return new PartnershipData(
         id.getString(),
         uuid1,
         uuid2,
@@ -123,36 +123,38 @@ public class PartnerObjectBuilder {
   }
 
 
-  public PartnerProperties createPartnerProperties(String id,
-                                                   int maxHomes,
-                                                   int bits) {
+  public PartnershipProperties createPartnerProperties(String id,
+                                                       int maxHomes,
+                                                       int bits) {
     return createPartnerProperties(id, maxHomes, bits, null);
   }
+
   /**
    * Create partner's properties.
    * <p>If bits is -1, will be refilled.</p>
-   * @param id ID of partner.
+   *
+   * @param id       ID of partner.
    * @param maxHomes Maximum homes of partner.
-   * @param bits Partner's permission in bits.
+   * @param bits     Partner's permission in bits.
    * @return Partner properties.
    */
-  public PartnerProperties createPartnerProperties(String id,
-                                                   int maxHomes,
-                                                   int bits,
-                                                   @Nullable List<Player> players) {
+  public PartnershipProperties createPartnerProperties(String id,
+                                                       int maxHomes,
+                                                       int bits,
+                                                       @Nullable Iterable<Player> players) {
     if (bits == -1) {
       bits = refillPartnerPermission();
     }
     if (!CommonsUtils.isNullOrEmpty(players)) {
-      bits = Partners.transformPermissions(bits, players);
+      bits = Partnerships.transformPermissions(bits, players);
     }
 
-    PartnerPermissionSet partnerPermissionSet =
-        new PartnerPermissionSet(bits);
+    PartnershipPermissionSet partnershipPermissionSet =
+        new PartnershipPermissionSet(bits);
     HomeList homeList =
         createHomeList(id, maxHomes);
-    return new PartnerProperties(
-        partnerPermissionSet, homeList);
+    return new PartnershipProperties(
+        partnershipPermissionSet, homeList);
   }
 
   public int refillPartnerPermission() {
@@ -160,13 +162,13 @@ public class PartnerObjectBuilder {
     List<String> defaultPermissions = MargaretYamlStorage
         .getDefaultPartnerPermissions();
     if (defaultPermissions.contains("*")) {
-      return BitMasks.sumEnumClass(newBit, PartnerPermission.class);
+      return BitMasks.sumEnumClass(newBit, PartnershipPermission.class);
     }
 
     List<Integer> sumBits = new ArrayList<>();
     for (String defaultPerm : defaultPermissions) {
-      if (CommonsUtils.enumExist(defaultPerm, PartnerPermission.class)) {
-        PartnerPermission perm = PartnerPermission
+      if (CommonsUtils.enumExist(defaultPerm, PartnershipPermission.class)) {
+        PartnershipPermission perm = PartnershipPermission
             .valueOf(defaultPerm.toUpperCase());
         sumBits.add(BitMasks.mask(perm));
       }
@@ -179,26 +181,28 @@ public class PartnerObjectBuilder {
                                  int partnerMaxHomes) {
     List<Home> homeList = Lists.newArrayList();
     List<SqlObject> query = Lists.newArrayList(
-        dbTasks.getPartnerHomeList(partnerId).values());
+        dbTasks.getPartnershipHomeList(partnerId).values());
 
     // Remove all null entries of query
     query.removeIf(Emptyble::isEmpty);
     for (SqlObject homeId : query) {
-      PartnerHome home = createHome(homeId.getString());
-      if (home == null)  { continue; }
+      PartnershipHome home = createHome(homeId.getString());
+      if (home == null) {
+        continue;
+      }
       homeList.add(home);
     }
     return new HomeList(partnerId, homeList, partnerMaxHomes);
   }
 
   @Nullable
-  public PartnerHome createHome(String id) {
+  public PartnershipHome createHome(String id) {
     Map<String, SqlObject> query = dbTasks.getHome(id);
     if (CommonsUtils.isNullOrEmpty(query)) {
       return null;
     }
     String alias = query.get("alias").getString();
-    return new PartnerHome(id, alias, newLocation(query));
+    return new PartnershipHome(id, alias, newLocation(query));
   }
 
   public Location newLocation(Map<String, SqlObject> map) {

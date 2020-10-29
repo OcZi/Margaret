@@ -11,8 +11,8 @@ import me.oczi.bukkit.objects.Gender;
 import me.oczi.bukkit.objects.Home;
 import me.oczi.bukkit.objects.Proposal;
 import me.oczi.bukkit.objects.collections.HomeList;
-import me.oczi.bukkit.objects.collections.PartnerTop;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.collections.PartnershipTop;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.objects.player.PlayerData;
 import me.oczi.bukkit.objects.player.PlayerDataPair;
@@ -22,6 +22,8 @@ import me.oczi.bukkit.utils.*;
 import me.oczi.bukkit.utils.settings.EnumSettings;
 import me.oczi.bukkit.utils.settings.PlayerSettings;
 import me.oczi.common.utils.CommonsUtils;
+import net.kyori.text.TextComponent;
+import net.kyori.text.event.ClickEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -54,7 +56,7 @@ public class CommandList {
   public void partners(@Sender CommandSender sender,
                        MemoryManager memoryManager,
                        @Default("") String numPage) {
-    PartnerTop partnerTop = memoryManager.getPartnerTop();
+    PartnershipTop partnershipTop = memoryManager.getPartnerTop();
     int page = CommonsUtils.isNullOrEmpty(numPage)
         ? 1
         : CommonsUtils.parseInt(numPage);
@@ -65,8 +67,8 @@ public class CommandList {
         Messages.LIST_PARTNER_HEADER,
         true,
         page);
-    List<PlayerDataPair> listPage = partnerTop.getPage(page);
-    int slot = partnerTop.getEntryStartedOfPage(page);
+    List<PlayerDataPair> listPage = partnershipTop.getPage(page);
+    int slot = partnershipTop.getEntryStartedOfPage(page);
     for (int i = 0; i < listPage.size(); i++, slot++) {
       PlayerDataPair pair = listPage.get(i);
       if (CommonsUtils.isNullOrEmpty(page)) {
@@ -164,8 +166,8 @@ public class CommandList {
         .getAsMargaretPlayer(sender);
     checkHavePartner(margaretPlayer);
 
-    Partner partner = margaretPlayer.getPartner();
-    HomeList homes = partner.getHomeList();
+    Partnership partnership = margaretPlayer.getPartnership();
+    HomeList homes = partnership.getHomeList();
     MessageUtils.compose(sender,
         Messages.LIST_HOME_HEADER,
         true,
@@ -196,18 +198,27 @@ public class CommandList {
         true,
         values.size());
     for (EnumSettings setting : values) {
+      boolean isSetting = margaretPlayer.isSetting(setting);
       String settingName = setting.getName()
           .replace("_", "-");
       if (!margaretPlayer.isEmpty()) {
-        settingName = (margaretPlayer.isSetting(setting)
+        settingName = (isSetting
             ? ChatColor.GREEN
             : ChatColor.RED)
             + settingName;
       }
-      MessageUtils.compose(sender,
+      TextComponent component = TextComponent.of(settingName)
+          .clickEvent(
+              ClickEvent.runCommand(
+                  "/mr setting " + settingName))
+          .hoverEvent(
+              MessageUtils.hoverTextOf(
+                  Messages.LIST_SETTING_ENTRY_HOVER,
+                  settingName, isSetting));
+      MessageUtils.composeInteractive(sender,
           Messages.LIST_ENTRY,
           false,
-          settingName);
+          component);
     }
   }
 

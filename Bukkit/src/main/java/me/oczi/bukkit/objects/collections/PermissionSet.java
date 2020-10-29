@@ -1,4 +1,4 @@
-package me.oczi.bukkit.objects;
+package me.oczi.bukkit.objects.collections;
 
 import com.google.common.collect.ForwardingSet;
 import me.oczi.common.utils.BitMasks;
@@ -7,8 +7,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * A Synchronized {@link EnumSet} with the bytes of enums.
- * @param <E>
+ * A {@link EnumSet} of enums synchronized with their bytes.
+ * @param <E> Element type.
  */
 public abstract class PermissionSet<E extends Enum<E>>
     extends ForwardingSet<E> {

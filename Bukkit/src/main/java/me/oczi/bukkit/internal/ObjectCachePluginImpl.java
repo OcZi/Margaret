@@ -1,18 +1,13 @@
 package me.oczi.bukkit.internal;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.EmptyObjects;
-import me.oczi.bukkit.utils.MessageUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.logging.Logger;
 
 /**
  * Two {@link LoadingCache} to collect all
@@ -20,11 +15,11 @@ import java.util.logging.Logger;
  */
 public class ObjectCachePluginImpl implements ObjectCachePlugin {
   private final Cache<UUID, MargaretPlayer> playerCache;
-  private final Cache<String, Partner> partnerCache;
+  private final Cache<String, Partnership> partnerCache;
 
   public ObjectCachePluginImpl(
                Cache<UUID, MargaretPlayer> playerCache,
-               Cache<String, Partner> partnerCache) {
+               Cache<String, Partnership> partnerCache) {
     this.playerCache = playerCache;
     this.partnerCache = partnerCache;
   }
@@ -37,7 +32,7 @@ public class ObjectCachePluginImpl implements ObjectCachePlugin {
   }
 
   @Override
-  public Partner getPartner(String id) {
+  public Partnership getPartner(String id) {
     return partnerCacheAsMap()
         .getOrDefault(id,
             EmptyObjects.getEmptyPartner());
@@ -49,8 +44,8 @@ public class ObjectCachePluginImpl implements ObjectCachePlugin {
   }
 
   @Override
-  public void putPartner(String id, Partner partner) {
-    partnerCacheAsMap().put(id, partner);
+  public void putPartner(String id, Partnership partnership) {
+    partnerCacheAsMap().put(id, partnership);
   }
 
   @Override
@@ -79,7 +74,7 @@ public class ObjectCachePluginImpl implements ObjectCachePlugin {
   }
 
   @Override
-  public Map<String, Partner> partnerCacheAsMap() {
+  public Map<String, Partnership> partnerCacheAsMap() {
     return partnerCache.asMap();
   }
 }

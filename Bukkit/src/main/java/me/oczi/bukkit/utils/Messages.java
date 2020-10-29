@@ -21,7 +21,7 @@ public enum Messages {
   WAIT_COOLDOWN("$4Wait $3{0} $4seconds before execute this action.", "error"),
 
   PLAYER_NO_PERMISSION("$4You don't have permissions to perform this command.", "error"),
-  YOUR_PARTNER_NO_PERMISSION("$4Your partner doesn't have permissions to perform this command.'", "error"),
+  YOUR_PARTNER_NO_PERMISSION("$4Your partnership doesn't have permissions to perform this command.'", "error"),
   PARTNER_HAVE_PERMISSION("$4Partner {0} already have this permission.", "error"),
   PARTNER_NOT_HAVE_PERMISSION("$4Partner {0} doesn't have this permission.", "error"),
 
@@ -41,7 +41,7 @@ public enum Messages {
   PARTNER_OFFLINE("$4Your partner is offline.", "error"),
 
   PLAYER_HAVE_PARTNER("$4{0} already has a partner!", "error"),
-  PLAYER_NOT_HAVE_PARTNER("$4{0} has no partner!", "error"),
+  PLAYER_NOT_HAVE_PARTNER("$4{0} doesn't have a partner!", "error"),
   YOU_HAVE_A_PARTNER("$4You have a partner!", "error"),
   YOU_NOT_HAVE_A_PARTNER("$4You don't have a partner!", "error"),
 
@@ -68,32 +68,41 @@ public enum Messages {
 
   SETTING_ERROR("$4Setting {0} is not {1}.", "error"),
   SETTING_PARTNER_NOT_APPLY("$4This setting will not be applied due to Partner's permission.", "error"),
-  SETTING_PARTNER_ONLY("$4This setting will not have effects without a partner.", "error"),
+  SETTING_PARTNER_ONLY("$4This setting will not have effects without a partnership.", "error"),
   RELATION_TOO_LONG("$4Relation $3{0} $4too long!", "error"),
 
   //Partner messages
-  CURRENT_PARTNER("Partner: {0}", "partner"),
-  PARTNER_STARTED("$3{0} $5and $3{1} $5are now partners!", "partner"),
-  PARTNER_ENDED("$3{0} $5and $3{1} $5are no longer partners.", "partner"),
-  PARTNER_TELEPORT_TO_YOU("$1Your partner has teleported to you.", "partner"),
-  PARTNER_TELEPORT_SUCCESS("$1Teleported successfully.", "partner"),
+  CURRENT_PARTNER("Partner: {0}", "partnership"),
+  PARTNER_STARTED("$3{0} $5and $3{1} $5are now partners!", "partnership"),
+  PARTNER_ENDED("$3{0} $5and $3{1} $5are no longer partners.", "partnership"),
+  PARTNER_TELEPORT_TO_YOU("$1Your partnership has teleported to you.", "partnership"),
+  PARTNER_TELEPORT_SUCCESS("$1Teleported successfully.", "partnership"),
 
   //Health messages
-  HEALTH_SENT("$1You sent $3{0} $1of your health to you partner.", "partner"),
-  HEALTH_RECEIVED("$1You received $3{0} $1of health from your partner.", "partner"),
+  HEALTH_SENT("$1You sent $3{0} $1of your health to you partner.", "partnership"),
+  HEALTH_RECEIVED("$1You received $3{0} $1of health from your partnership.", "partnership"),
 
   //Gift messages
-  GIFT_SENT("$1You gift $3{0} $1to your partner!", "partner"),
-  GIFT_RECEIVED("$1You receive d$3{0} $1from your partner!", "partner"),
+  GIFT_SENT("$1You gift $3{0} $1to your partner!", "partnership"),
+  GIFT_RECEIVED("$1You receive d$3{0} $1from your partner!", "partnership"),
 
   //Relation messages
-  RELATION_SET("$2Relation set to: $3{0}", "partner"),
+  RELATION_SET("$2Relation set to: $3{0}", "partnership"),
 
   //Home messages
   HOME_CREATED("$2Home created in {0}.", "home"),
   HOME_CREATED_AS("$2Home created in {0} as {1}.", "home"),
   HOME_DELETED("$4Home {0} deleted.", "home"),
   HOME_TELEPORT("$2Teleported to home {0}.", "home"),
+
+  //Partner's information messages
+  PARTNER_ID("Partner's ID: $3{0}", "partner-info"),
+  PARTNER_PLAYER_1("Player 1: $3{0}", "partner-info"),
+  PARTNER_PLAYER_2("Player 2: $3{0}", "partner-info"),
+  PARTNER_RELATION("Relation: $3{0}", "partner-info"),
+  PARTNER_PERMISSIONS("Permissions: $3{0}", "partner-info"),
+  PARTNER_HOMES("Homes: $3{0}", "partner-info"),
+  PARTNER_MAX_HOMES("Maximum homes: $3{0}", "partner-info"),
 
   //Partner Chat messages
   CHAT_MESSAGE_SENT("$2[$3{0} $2>> $3{1}$2] $2» $5{2}", "chat"),
@@ -118,6 +127,8 @@ public enum Messages {
   // Interactive messages will have hardcoded colors.
   PROPOSAL_ACCEPT("Accept", "proposal"),
   PROPOSAL_DENY("Deny", "proposal"),
+
+  // Hover Proposal
   PROPOSAL_ACCEPT_HOVER("$1Click to accept the proposal of $3'{0}'", "proposal"),
   PROPOSAL_DENY_HOVER("$1Click to decline the proposal of $3'{0}'", "proposal"),
   PROPOSAL_ACTION_ENTRY("{0} - {1}", "proposal"),
@@ -133,11 +144,12 @@ public enum Messages {
   LIST_RELATIONS_HEADER("Relations[{0}]", "list"),
   LIST_SETTINGS_HEADER("Settings[{0}]", "list"),
   LIST_GENDERS_HEADER("Genders[{0}]", "list"),
-  LIST_PARTNER_HEADER("Top partners[Page {0}]", "list"),
+  LIST_PARTNER_HEADER("Top partnerships[{0} of {1}]", "list"),
 
   LIST_ENTRY("- {0}", "list"),
   LIST_ENUM_ENTRY("{0}. {1}", "list"),
   LIST_HOME_ENTRY("{0}. {1}: $1{2}", "list"),
+  LIST_SETTING_ENTRY_HOVER("$1Click to set $3{0} $1to $3{1}!", "list"),
   LIST_PARTNER_ENTRY("$1{0}. {1} $1- {2}", "list"),
   LIST_PARTNER_ENTRY_EMPTY("$1{0}. Nothing $1- here!", "list"),
 
@@ -145,8 +157,8 @@ public enum Messages {
   COMMAND_LIST_PAGE_HEADER("$0-------$2[$3{0} {1}$2]$0-------", "help"),
   COMMAND_LIST_PAGE_FOOTER("$0--------------------------------", "help"),
 
-  ALL_PERMISSION_ADDED("$1All Partner's Permission added to this partner session.",  "admin"),
-  MAX_HOMES_SET_TO("$1Max homes set to $3'{0}' $1for this partner session.", "admin"),
+  ALL_PERMISSION_ADDED("$1All Partner's Permission added to this partnership session.",  "admin"),
+  MAX_HOMES_SET_TO("$1Max homes set to $3'{0}' $1for this partnership session.", "admin"),
   MAX_HOMES_CHANGED("$1Your Partner now has a maximum of $3'{0}' $1homes.", "admin"),
 
   COMMAND_LIST_ENTRY("/{0} {1} - {2}", "help"),
@@ -156,8 +168,8 @@ public enum Messages {
 
   USAGE_ENTRY("Usage: $1/{0} - {1}", "help"),
 
-  PERMISSION_ADDED("$1Permission $3{0} $1added to partner $1'{1}'", "partner-permission"),
-  PERMISSION_REMOVE("$1Permission $3{0} $1removed from partner $1'{1}'", "partner-permission"),
+  PERMISSION_ADDED("$1Permission $3{0} $1added to partnership $1'{1}'", "partnership-permission"),
+  PERMISSION_REMOVE("$1Permission $3{0} $1removed from partnership $1'{1}'", "partnership-permission"),
 
   //Reload messages
   CONFIGURATION_RELOADED("$1Configuration $3{0} $1has been reloaded.", "reload"),
@@ -166,7 +178,7 @@ public enum Messages {
   MARGARET_INFO("Margaret: $1{0}", "other"),
   AUTHORS("Author(s): $1{0}", "other"),
   GITHUB_URL("Github: {0}", "other"),
-  GITHUB_HOVER("$1Click to go to the repository", "other"),
+  GITHUB_HOVER("$1Click to go Github's repository", "other"),
   SETTING_ENTRY("{0}: $1{1}", "other"),
   SETTING_ENTRY_OF("{0}'s {1}: $1{2}", "other"),
   CURRENT_GENDER("Current Gender: {0}", "list"),

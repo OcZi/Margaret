@@ -6,15 +6,15 @@ import org.bukkit.entity.Player;
 /**
  * A {@link Home} implementation.
  */
-public class PartnerHome implements Home {
+public class PartnershipHome implements Home {
   private final String id;
   private String alias;
 
   private final Location location;
 
-  public PartnerHome(String id,
-                     String alias,
-                     Location location) {
+  public PartnershipHome(String id,
+                         String alias,
+                         Location location) {
     this.id = id;
     this.alias = alias;
     this.location = location;

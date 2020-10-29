@@ -25,18 +25,17 @@ public interface DbTaskGet {
   boolean getPlayerSetting(UUID uuid,
                            String settingName);
   
-  ResultMap getTopOfPartners(int limit);
+  ResultMap getTopOfPartnerships(int limit);
 
-  int getCountOfPartners();
+  int getCountOfPartnerships();
 
-  Map<String, SqlObject> getPartnerData(String id);
+  Map<String, SqlObject> getPartnershipData(String id);
 
-  ResultMap getAnythingOfPartnerData();
+  ResultMap getAnythingOfPartnershipData();
 
-  Map<String, SqlObject> getPartnerHomeList(String id);
+  Map<String, SqlObject> getPartnershipHomeList(String id);
 
   Map<String, SqlObject> getHome(String id);
 
-  Map<String, SqlObject> getPartnerProperties(String id);
-
+  Map<String, SqlObject> getPartnershipProperties(String id);
 }

@@ -12,7 +12,9 @@ import me.oczi.common.api.sql.SqlTable;
 import me.oczi.common.storage.sql.interoperability.ConstraintsComp;
 import me.oczi.common.storage.sql.interoperability.SqlConstraints;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public enum MargaretSqlTable implements SqlTable {
 
@@ -26,7 +28,7 @@ public enum MargaretSqlTable implements SqlTable {
       "partnerid VARCHAR(8)",
       "gender VARCHAR(16)",
       "last_date DATE"),
-  PARTNER_DATA("margaret_partner_data",
+  PARTNERSHIP_DATA("margaret_partnership_data",
       "id VARCHAR(8) NOT NULL PRIMARY KEY",
       "player1 VARCHAR(36)",
       "player2 VARCHAR(36)",
@@ -59,7 +61,7 @@ public enum MargaretSqlTable implements SqlTable {
     }
   },
 
-  PARTNER_HOMES_LIST("margaret_partner_homes_list",
+  PARTNERSHIP_HOMES_LIST("margaret_partnership_homes_list",
       "id VARCHAR(8) PRIMARY KEY NOT NULL",
       " VARCHAR(12)")  // Only constraints to concat
       {
@@ -93,13 +95,13 @@ public enum MargaretSqlTable implements SqlTable {
       }
     },
 
-  PARTNER_PROPERTIES("margaret_partner_properties",
+  PARTNERSHIP_PROPERTIES("margaret_partnership_properties",
       "id VARCHAR(8) NOT NULL PRIMARY KEY",
       "maxhomes INTEGER",
       "bitpermissions INTEGER"),
 
   @SqlConstraints(expression = ConstraintsComp.DOUBLE)
-  PARTNER_HOME("margaret_partner_home",
+  PARTNERSHIP_HOME("margaret_partnership_home",
       "id VARCHAR(12) PRIMARY KEY",
       "alias VARCHAR(20)",
       "partnerid VARCHAR(8)",

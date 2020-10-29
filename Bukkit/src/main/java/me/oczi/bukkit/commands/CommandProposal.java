@@ -47,7 +47,7 @@ public class CommandProposal {
     throwIf(relation,
         r -> !r.isEmpty() ||
              !sender.hasPermission(
-                 PartnerPermission.CUSTOM_RELATION.getNode()),
+                 PartnershipPermission.CUSTOM_RELATION.getNode()),
         Messages.PLAYER_NO_PERMISSION);
 
     checkMargaretPlayerHavePartner(margaretPlayer2);
@@ -101,7 +101,7 @@ public class CommandProposal {
         Messages.CANNOT_PROPOSE_YOURSELF);
     checkProposalList(margaretPlayer1, margaretPlayer2);
 
-    Partners.newPartner(margaretPlayer1, margaretPlayer2);
+    Partnerships.newPartner(margaretPlayer1, margaretPlayer2);
   }
 
   @Command(

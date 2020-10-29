@@ -4,7 +4,6 @@ import app.ashcon.intake.Command;
 import app.ashcon.intake.bukkit.parametric.annotation.Sender;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.*;
-import me.oczi.common.utils.CommonsUtils;
 import net.kyori.text.TextComponent;
 import net.kyori.text.event.ClickEvent;
 import net.kyori.text.format.TextColor;
@@ -26,8 +25,8 @@ public class CommandVersion {
         Messages.MARGARET_INFO,
         true,
         description.getVersion());
-    String authors = CommonsUtils.joinIterable(
-        description.getAuthors());
+    String authors = String.join(
+        ", ", description.getAuthors());
     MessageUtils.compose(sender,
         Messages.AUTHORS,
         true,

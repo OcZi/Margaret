@@ -1,29 +1,29 @@
-package me.oczi.bukkit.objects.partner;
+package me.oczi.bukkit.objects.partnership;
 
 import me.oczi.bukkit.objects.collections.HomeList;
-import me.oczi.bukkit.objects.collections.PartnerPermissionSet;
-import me.oczi.bukkit.utils.PartnerPermission;
+import me.oczi.bukkit.objects.collections.PartnershipPermissionSet;
+import me.oczi.bukkit.utils.PartnershipPermission;
 
 import java.util.UUID;
 
-public class PartnerImpl implements Partner{
+public class PartnershipImpl implements Partnership {
   private final String id;
 
   private final UUID uuid1;
   private final UUID uuid2;
 
-  private final PartnerPermissionSet permissions;
+  private final PartnershipPermissionSet permissions;
   private final HomeList homes;
 
   private String relation;
 
-  public PartnerImpl(PartnerData partnerData,
-                     PartnerProperties properties) {
-    this.id = partnerData.getId();
-    this.uuid1 = partnerData.getPlayerUUID1();
-    this.uuid2 = partnerData.getPlayerUUID2();
-    this.relation = partnerData.getRelation();
-    this.permissions = properties.getPartnerPermissionSet();
+  public PartnershipImpl(PartnershipData partnershipData,
+                         PartnershipProperties properties) {
+    this.id = partnershipData.getId();
+    this.uuid1 = partnershipData.getPlayerUUID1();
+    this.uuid2 = partnershipData.getPlayerUUID2();
+    this.relation = partnershipData.getRelation();
+    this.permissions = properties.getPartnershipPermissionSet();
     this.homes = properties.getHomeList();
   }
 
@@ -33,7 +33,7 @@ public class PartnerImpl implements Partner{
   }
 
   @Override
-  public boolean hasPermission(PartnerPermission perm) {
+  public boolean hasPermission(PartnershipPermission perm) {
     return permissions.getPermissions().contains(perm);
   }
 
@@ -58,7 +58,7 @@ public class PartnerImpl implements Partner{
   }
 
   @Override
-  public PartnerPermissionSet getPermissions() {
+  public PartnershipPermissionSet getPermissions() {
     return permissions;
   }
 

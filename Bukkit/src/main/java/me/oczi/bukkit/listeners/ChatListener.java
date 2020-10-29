@@ -1,6 +1,6 @@
 package me.oczi.bukkit.listeners;
 
-import me.oczi.bukkit.objects.partner.Partner;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
@@ -91,7 +91,7 @@ public class ChatListener implements Listener {
 
   private void sendPartnerChat(MargaretPlayer margaretPlayer1,
                                String message) {
-    UUID uuid = Partners.foundUuidOfPartner(margaretPlayer1);
+    UUID uuid = Partnerships.foundUuidOfPartner(margaretPlayer1);
     MargaretPlayer margaretPlayer2 = MargaretPlayers
         .getAsMargaretPlayer(uuid);
     if (margaretPlayer2.isEmpty()) {
@@ -131,7 +131,7 @@ public class ChatListener implements Listener {
     MessageUtils.sendMessage(margaretPlayer2, receive,
         MargaretSound.NOTIFICATION);
 
-    Partner partner = margaretPlayer1.getPartner();
+    Partnership partnership = margaretPlayer1.getPartnership();
     List<Player> playerList = new ArrayList<>(
         Bukkit.getOnlinePlayers());
     for (Player player : playerList) {
@@ -149,7 +149,7 @@ public class ChatListener implements Listener {
           MessageUtils.compose(player,
               Messages.CHAT_SPY_RECEIVED,
               false,
-              partner.getId(),
+              partnership.getId(),
               margaretPlayerName1,
               margaretPlayerName2,
               message);
