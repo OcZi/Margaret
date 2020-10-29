@@ -5,13 +5,15 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
 import me.oczi.common.api.configuration.DataSourceConfig;
 import me.oczi.common.api.configuration.HkDataSourceConfig;
+import me.oczi.common.api.github.GithubRelease;
 import me.oczi.common.api.mojang.HistoryNameEntry;
 import me.oczi.common.api.mojang.MojangAccount;
 import me.oczi.common.api.sql.SqlTable;
 import me.oczi.common.exceptions.SQLCastException;
 import me.oczi.common.executors.SqlTaskExecutor;
-import me.oczi.common.request.AsyncMojangResolver;
-import me.oczi.common.request.MojangResolver;
+import me.oczi.common.request.github.GithubReleaseResolver;
+import me.oczi.common.request.mojang.AsyncMojangResolver;
+import me.oczi.common.request.mojang.MojangResolver;
 import me.oczi.common.storage.sql.datasource.DataSource;
 import me.oczi.common.storage.sql.datasource.DataSourceType;
 import me.oczi.common.storage.sql.datasource.DataSourceTypePackage;
@@ -30,6 +32,9 @@ import me.oczi.common.storage.sql.interoperability.SqlConstraints;
 import me.oczi.common.storage.sql.processor.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -87,7 +92,7 @@ public class TestDeleteThis {
   public static void main(String[] args)
       throws InterruptedException,
       ExecutionException,
-      TimeoutException {
+      TimeoutException, IOException {
     testResolver();
     System.out.println("Select:");
     System.out.println("1:" + dsl
@@ -337,7 +342,7 @@ public class TestDeleteThis {
     }
   }
 
-  public static void testResolver() throws InterruptedException, ExecutionException, TimeoutException {
+  public static void testResolver() throws InterruptedException, ExecutionException, TimeoutException, IOException {
     AsyncMojangResolver resolver = MojangResolver
         .newAsyncResolver(Executors.newSingleThreadExecutor());
     MojangAccount oczi = resolver.resolveAccount("_oczi");
@@ -346,6 +351,12 @@ public class TestDeleteThis {
         .resolveHistoryName(oczi.getId());
     System.out.println("historyName = " + Arrays.toString(historyName));
     resolver.shutdown();
+    GithubReleaseResolver releaseResolver = GithubReleaseResolver.newResolver();
+    GithubRelease[] releases = releaseResolver.getReleases("OcZi", "Margaret");
+    System.out.println(Arrays.toString(releases));
+    Instant parse = Instant.parse(releases[0].getPublishedDate());
+    System.out.println("parse = " + parse);
+    System.out.println("date = " + new Date(parse.toEpochMilli()));
   }
 
   public static void update(StatementBasicData metaData,

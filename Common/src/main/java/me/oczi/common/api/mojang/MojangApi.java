@@ -1,6 +1,6 @@
 package me.oczi.common.api.mojang;
 
-import me.oczi.common.request.MojangResolverImpl;
+import me.oczi.common.request.mojang.MojangResolverImpl;
 
 /**
  * Mojang's api URLs for {@link MojangResolverImpl}.

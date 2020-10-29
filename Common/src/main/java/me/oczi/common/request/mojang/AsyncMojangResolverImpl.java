@@ -1,4 +1,4 @@
-package me.oczi.common.request;
+package me.oczi.common.request.mojang;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;

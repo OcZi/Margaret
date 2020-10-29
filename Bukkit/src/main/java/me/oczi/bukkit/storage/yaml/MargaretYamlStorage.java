@@ -43,6 +43,7 @@ public final class MargaretYamlStorage {
   private static boolean announcePartner;
   private static boolean playerAuthentication;
   private static boolean validatePlayerAuthentication;
+  private static boolean updateCheck;
 
   public static void generateYamlFiles(JavaPlugin plugin) {
     MargaretYamlStorage.plugin = plugin;
@@ -87,21 +88,22 @@ public final class MargaretYamlStorage {
 
   private static void newMainConfigVar() {
     FileConfiguration access = mainConfig.getAccess();
-    allowedRelations = access.getStringList("partner.relation.allowed-relations");
+    allowedRelations = access.getStringList("partnership.relation.allowed-relations");
     checkRelations();
 
-    defaultPartnerPermissions = access.getStringList("partner.permission.default-settings");
+    defaultPartnerPermissions = access.getStringList("partnership.permission.default-settings");
 
-    maxPossibleHomes = access.getInt("partner.max-possible-homes", 1);
+    maxPossibleHomes = access.getInt("partnership.max-possible-homes", 1);
 
     maxProposals = access.getInt("player.maximum-proposals", 10);
     proposalTimeout = access.getInt("player.proposal-time-out", 30);
     commandTimeout = access.getInt("command.command-cooldown", 30);
     daysToExpire = access.getInt("player.player-expire", 30);
-    partnerMaxHomes = access.getInt("partner.permission.default-max-homes", 5);
+    partnerMaxHomes = access.getInt("partnership.permission.default-max-homes", 5);
 
     debugMode = access.getBoolean("other.debug-mode", false);
-    announcePartner = access.getBoolean("partner.announce-partner", false);
+    updateCheck = access.getBoolean("other.update-check", false);
+    announcePartner = access.getBoolean("partnership.announce-partnership", false);
   }
 
   /**
@@ -165,6 +167,10 @@ public final class MargaretYamlStorage {
       validatePlayerAuthentication = true;
     }
     return playerAuthentication;
+  }
+
+  public static boolean isUpdateCheck() {
+    return updateCheck;
   }
 
   public static List<String> getAllowedRelations() {

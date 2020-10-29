@@ -1,13 +1,12 @@
-package me.oczi.common.request;
+package me.oczi.common.request.mojang;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import me.oczi.common.api.mojang.HistoryNameEntry;
 import me.oczi.common.api.mojang.MojangAccount;
 import me.oczi.common.api.mojang.MojangApi;
+import me.oczi.common.request.HttpUrlConnectionBuilder;
 import me.oczi.common.utils.CommonsUtils;
+import me.oczi.common.utils.Gsons;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -15,9 +14,6 @@ import java.util.UUID;
  * Implementation of {@link MojangResolver}.
  */
 public class MojangResolverImpl implements MojangResolver {
-  private final Gson gson = new GsonBuilder()
-      .serializeNulls()
-      .create();
 
   /**
    * Get data of Mojang's account.
@@ -78,14 +74,6 @@ public class MojangResolverImpl implements MojangResolver {
             .setMethod("GET")
             .setConnectionTimeout(8000)
             .setReadTimeout(8000);
-    StringBuilder builder = new StringBuilder();
-    try (final BufferedReader request = connection.request()) {
-      String line;
-      while ((line = request.readLine()) != null) {
-        builder.append(line.trim());
-      }
-    }
-    return gson.fromJson(
-        builder.toString(), clazz);
+    return Gsons.parseConnection(connection, clazz);
   }
 }

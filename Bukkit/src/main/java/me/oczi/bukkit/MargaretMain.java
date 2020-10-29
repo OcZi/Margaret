@@ -1,7 +1,10 @@
 package me.oczi.bukkit;
 
+import me.oczi.bukkit.other.exceptions.CheckUpdateException;
 import me.oczi.bukkit.other.exceptions.PluginInitializationException;
+import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.MessageUtils;
+import me.oczi.bukkit.utils.update.MargaretVersionChecker;
 import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 public final class MargaretMain extends JavaPlugin {
   private static Plugin plugin;
   private static MargaretCore core;
+  private static MargaretVersionChecker checker;
 
   private static boolean loadFailed;
   private static boolean isCompatible;
@@ -56,6 +60,27 @@ public final class MargaretMain extends JavaPlugin {
       loadFailed = true;
       disableByFail("onEnable()");
     }
+
+    if (!MargaretYamlStorage.isUpdateCheck()) {
+      MessageUtils.console("Update checker disabled.", true);
+      return;
+    }
+    checker = MargaretVersionChecker.newChecker(getVersion());
+    try {
+      checker.checkUpdate();
+      if (checker.hasUpdate()) {
+        MessageUtils.console("** IMPORTANT **", true);
+        MessageUtils.console("A new version is available! ({0})", true,
+            checker.getRelease().getVersion());
+        MessageUtils.console("Github URL: {0}", true,
+            // Hardcoded /releases for github
+            getDescription().getWebsite() + "/releases");
+      } else {
+        MessageUtils.console("No new versions found.", true);
+      }
+    } catch (CheckUpdateException e) {
+      e.printStackTrace();
+    }
   }
 
   public void disableByIncompatibility() {
@@ -95,6 +120,10 @@ public final class MargaretMain extends JavaPlugin {
 
   public static String getVersion() {
     return plugin.getDescription().getVersion();
+  }
+
+  public static MargaretVersionChecker getUpdateChecker() {
+    return checker;
   }
 
   public static PluginCore getCore() {

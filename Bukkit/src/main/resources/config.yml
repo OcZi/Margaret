@@ -99,3 +99,6 @@ other:
   ## Activates debugging tools and other things
   ## to test the plugin.
   debug-mode: false
+
+  ## Check new updates in Github's repository.
+  update-check: true

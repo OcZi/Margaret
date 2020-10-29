@@ -1,4 +1,4 @@
-package me.oczi.common.request;
+package me.oczi.common.request.mojang;
 
 import me.oczi.common.api.mojang.HistoryNameEntry;
 import me.oczi.common.api.mojang.MojangAccount;

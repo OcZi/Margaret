@@ -407,6 +407,17 @@ public interface CommonsUtils {
     return new UUID(decimal1.longValue(), decimal2.longValue());
   }
 
+  static int filterIntegers(String string) {
+    List<String> list = new ArrayList<>();
+    for (Character c : string.toCharArray()) {
+      if (Character.isDigit(c)) {
+        list.add(c.toString());
+      }
+    }
+    return Integer.parseInt(
+        String.join("", list));
+  }
+
   /**
    * Iterate all the elements
    * to format with the next value.
@@ -511,7 +522,7 @@ public interface CommonsUtils {
   }
 
   /**
-   * Check is string contains only numbers.
+   * Check is string contains a number.
    * @param string String to check.
    * @return result of check.
    */
