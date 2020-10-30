@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * A inflexible collection-like to create {@link Cache} as a Set.
+ */
 public interface CacheSet<K> extends Set<K> {
 
   Long getDateOf(K key);
@@ -23,9 +26,21 @@ public interface CacheSet<K> extends Set<K> {
   @Deprecated
   Set<K> valuesByDate();
 
+  /**
+   * Get map size.
+   * @return Size of map.
+   */
   long mapSize();
 
+  /**
+   * Get CatheSet as {@link Cache}.
+   * @return A caffeine cache.
+   */
   Cache<K, Long> asCache();
 
+  /**
+   * Get CacheSet as {@link ConcurrentMap} of {@link Cache}.
+   * @return ConcurrentMap of cache.
+   */
   ConcurrentMap<K, Long> asMap();
 }

@@ -23,11 +23,13 @@ public class MargaretVersionCheckerImpl implements MargaretVersionChecker {
   @Override
   public MargaretRelease checkUpdate() throws CheckUpdateException {
     try {
-      GithubRelease latestRelease = resolver.getLatestRelease("OcZi", "Margaret");
+      GithubRelease latestRelease = resolver.getLatestRelease(
+          "OcZi", "Margaret");
       this.release = new MargaretRelease(
           checkNotNull(latestRelease));
     } catch (Exception e) {
-      throw new CheckUpdateException("Cannot check new updates from Github's repository", e);
+      throw new CheckUpdateException(
+          "Cannot check new updates from Github's repository", e);
     }
     int checkVersion = CommonsUtils.filterIntegers(release.getVersion());
     int actualVersion = CommonsUtils.filterIntegers(this.actualVersion);

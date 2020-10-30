@@ -2,7 +2,6 @@ package me.oczi.bukkit.storage.yaml;
 
 import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -14,11 +13,10 @@ import java.util.Map;
 /**
  * Basic YamlConfiguration file representation.
  */
-public class YamlFile {
+public class YamlFile extends YamlConfiguration{
   private final JavaPlugin plugin;
   private final Map<String, String> mapRefill;
 
-  private final FileConfiguration fileConfig;
   private String fileName;
   private final File file;
 
@@ -46,7 +44,6 @@ public class YamlFile {
     this.plugin = plugin;
     this.mapRefill = mapRefill;
     this.file = file;
-    this.fileConfig = new YamlConfiguration();
     this.fileName = file.getName();
     saveDefault();
     loadFileConfiguration();
@@ -63,7 +60,7 @@ public class YamlFile {
         fileName += ".yml";
       }
 
-      fileConfig.load(file);
+      load(file);
     } catch (IOException | InvalidConfigurationException e) {
       e.printStackTrace();
     }
@@ -71,8 +68,8 @@ public class YamlFile {
 
   public void refillNodes() {
     for (Map.Entry<String, String> mapEntry : mapRefill.entrySet()) {
-      if (!fileConfig.isSet(mapEntry.getKey())) {
-        fileConfig.set(mapEntry.getKey(), mapEntry.getValue());
+      if (!isSet(mapEntry.getKey())) {
+        set(mapEntry.getKey(), mapEntry.getValue());
       }
     }
     save();
@@ -80,7 +77,7 @@ public class YamlFile {
 
   public void save() {
     try {
-      fileConfig.save(file);
+      save(file);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -92,15 +89,19 @@ public class YamlFile {
     }
   }
 
+  /**
+   * Get file of YamlConfiguration.
+   * @return File.
+   */
   public File getFile() {
     return file;
   }
 
+  /**
+   * Get file name of YamlConfiguration.
+   * @return File name.
+   */
   public String getFileName() {
     return fileName;
-  }
-
-  public FileConfiguration getAccess() {
-    return fileConfig;
   }
 }

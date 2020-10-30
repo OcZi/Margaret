@@ -18,7 +18,7 @@ player:
 
   ## Days to expire all the player data (including partner)
   ## in database for absence.
-  player-expire: 30
+  player-days-expire: 30
 
 command:
 

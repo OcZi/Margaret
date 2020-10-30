@@ -10,9 +10,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * A inflexible collection-like to create {@link Cache} as a Set.
- */
 public class CacheSetImpl<K> implements CacheSet<K> {
   private final Cache<K, Long> cooldownMap;
   private final long millisecondsToExpire;

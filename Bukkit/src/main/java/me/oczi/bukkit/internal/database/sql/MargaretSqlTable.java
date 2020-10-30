@@ -121,9 +121,7 @@ public enum MargaretSqlTable implements SqlTable {
   }
 
   private final TableConfig tables = new TableConfigImpl(
-      MargaretYamlStorage
-          .getDatabaseConfig()
-          .getAccess());
+      MargaretYamlStorage.getDatabaseConfig());
 
   @Override
   public String getName() {

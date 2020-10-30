@@ -112,7 +112,7 @@ public class MargaretCore implements PluginCore {
 
   private void initObjectManager() {
     CacheConfig config = new CacheConfigImpl(
-        MargaretYamlStorage.getMainConfig().getAccess());
+        MargaretYamlStorage.getMainConfig());
     this.memoryManager = new MemoryManagerImpl(config);
     this.objectCycleManager = new ObjectCycleManagerImpl(memoryManager);
   }
@@ -141,9 +141,7 @@ public class MargaretCore implements PluginCore {
   private void initGenders() {
     // Load lazy initialization
     this.genderManager = new GenderManagerImpl(
-            MargaretYamlStorage
-                    .getGendersConfig()
-                    .getAccess());
+            MargaretYamlStorage.getGendersConfig());
   }
 
   private void initCommand() {

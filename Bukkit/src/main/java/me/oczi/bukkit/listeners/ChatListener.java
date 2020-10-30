@@ -26,8 +26,7 @@ import static me.oczi.common.utils.CommonsUtils.isNullOrEmpty;
 
 public class ChatListener implements Listener {
   private final FileConfiguration mainConfig = MargaretYamlStorage
-      .getMainConfig()
-      .getAccess();
+      .getMainConfig();
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {

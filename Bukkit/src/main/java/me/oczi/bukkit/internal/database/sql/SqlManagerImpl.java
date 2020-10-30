@@ -101,7 +101,7 @@ public class SqlManagerImpl implements SqlManager {
 
   private DataSource createDataSource() {
     FileConfiguration config = MargaretYamlStorage
-        .getDatabaseConfig().getAccess();
+        .getDatabaseConfig();
     DataSourceConfig dsConfig =
         new DataSourceConfigImpl(config);
     HkDataSourceConfig hkConfig =

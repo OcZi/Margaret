@@ -3,7 +3,6 @@ package me.oczi.bukkit.storage.yaml;
 import me.oczi.bukkit.utils.MessageUtils;
 import me.oczi.bukkit.utils.Messages;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.LinkedHashMap;
@@ -80,30 +79,29 @@ public final class MargaretYamlStorage {
 
   private static void newDatabaseConfig() {
     databaseConfig = new YamlFile(plugin, "database.yml");
-    threads = databaseConfig.getAccess()
+    threads = databaseConfig
         .getInt("general.threads", 1);
-    databaseType = databaseConfig.getAccess()
+    databaseType = databaseConfig
         .getString("general.database-type", "sqlite");
   }
 
   private static void newMainConfigVar() {
-    FileConfiguration access = mainConfig.getAccess();
-    allowedRelations = access.getStringList("partnership.relation.allowed-relations");
+    allowedRelations = mainConfig.getStringList("partnership.relation.allowed-relations");
     checkRelations();
 
-    defaultPartnerPermissions = access.getStringList("partnership.permission.default-settings");
+    defaultPartnerPermissions = mainConfig.getStringList("partnership.permission.default-settings");
 
-    maxPossibleHomes = access.getInt("partnership.max-possible-homes", 1);
+    maxPossibleHomes = mainConfig.getInt("partnership.max-possible-homes", 1);
 
-    maxProposals = access.getInt("player.maximum-proposals", 10);
-    proposalTimeout = access.getInt("player.proposal-time-out", 30);
-    commandTimeout = access.getInt("command.command-cooldown", 30);
-    daysToExpire = access.getInt("player.player-expire", 30);
-    partnerMaxHomes = access.getInt("partnership.permission.default-max-homes", 5);
+    maxProposals = mainConfig.getInt("player.maximum-proposals", 10);
+    proposalTimeout = mainConfig.getInt("player.proposal-time-out", 30);
+    commandTimeout = mainConfig.getInt("command.command-cooldown", 30);
+    daysToExpire = mainConfig.getInt("player.player-days-expire", 30);
+    partnerMaxHomes = mainConfig.getInt("partnership.permission.default-max-homes", 5);
 
-    debugMode = access.getBoolean("other.debug-mode", false);
-    updateCheck = access.getBoolean("other.update-check", false);
-    announcePartner = access.getBoolean("partnership.announce-partnership", false);
+    debugMode = mainConfig.getBoolean("other.debug-mode", false);
+    updateCheck = mainConfig.getBoolean("other.update-check", false);
+    announcePartner = mainConfig.getBoolean("partnership.announce-partnership", false);
   }
 
   /**
@@ -155,10 +153,9 @@ public final class MargaretYamlStorage {
 
   public static boolean isPlayerAuthentication() {
     if (!validatePlayerAuthentication) {
-      if (Bukkit.getOnlineMode()) {
-        playerAuthentication = mainConfig.getAccess()
-            .getBoolean("player.player-authentication", true);
-      } else {
+      playerAuthentication = mainConfig
+          .getBoolean("player.player-authentication", true);
+      if (!Bukkit.getOnlineMode() && playerAuthentication) {
         MessageUtils.warning(
             "Cannot activate player authentication in offline mode.",
             "Set Player authentication to false.");

@@ -623,8 +623,7 @@ public interface MessageUtils {
    */
   static String getMessageTranslated(Messages message, boolean colorize) {
     FileConfiguration messagesConfig = MargaretYamlStorage
-        .getMessageConfig()
-        .getAccess();
+        .getMessageConfig();
     String translated = messagesConfig == null
         ? message.getMessage()
         : messagesConfig.getString(
@@ -640,8 +639,7 @@ public interface MessageUtils {
 
   static TextColor getTextColorOf(MargaretColor margaretColor) {
     FileConfiguration colorConfig = MargaretYamlStorage
-        .getMessageColorsConfig()
-        .getAccess();
+        .getMessageColorsConfig();
     if (colorConfig == null) {
       return margaretColor.getDefaultTextColor();
     }
