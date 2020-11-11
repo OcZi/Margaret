@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -215,7 +216,7 @@ public interface CommonsUtils {
   }
 
   /**
-   * Check if a collection is null or empty.
+   * Check if an Array is null or empty.
    * @param objects - Objects to check.
    * @return is mull or empty.
    */
@@ -528,5 +529,16 @@ public interface CommonsUtils {
    */
   static boolean findNumeric(String string) {
     return regexNumber.matcher(string).find();
+  }
+
+  static boolean findAnnotation(List<? extends Annotation> annotations,
+                                Class<? extends Annotation> findAnnotation) {
+    for (Annotation annotation : annotations) {
+      if (annotation.annotationType()
+          .equals(findAnnotation)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

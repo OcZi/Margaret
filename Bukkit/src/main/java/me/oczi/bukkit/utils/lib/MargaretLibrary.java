@@ -30,19 +30,19 @@ public enum MargaretLibrary implements Dependency {
       "i5J5y/9rn4hZTvrjzwIDm2mVAw7sAj7UOSh0jEFnD+4=",
       MavenRepository.MAVEN),
 
-  // Command Frameworks
-  INTAKE_BUKKIT("app.ashcon.intake",
-      "intake-bukkit",
-      "1.2-SNAPSHOT",
-      "1.2-20200628.001852-4", // Number of snapshot in Ashcon's repository
-      "figmxo/4EmztX/+45hV0qkaoUSdQ324YCbNay6lTpdE=",
-      MavenRepository.ASHCON),
-  INTAKE_CORE("app.ashcon.intake",
-      "intake-core",
-      "1.2-SNAPSHOT",
-      "1.2-20200628.001849-4", // Number of snapshot in Ashcon's repository
-      "ujoEWKqH3eS5eEzzhDXbvBE5nsiFcf0p+ikxX5cJCt0=",
-      MavenRepository.ASHCON),
+  // Command Framework
+  COMMANDFLOW_UNIVERSAL("me.fixeddev",
+      "commandflow-universal",
+      "0.1.1-SNAPSHOT",
+      "0.1.1-20201104.001951-2",
+      "11oFmN8MXDgzS2ODG6Bjrmvo6MOPmYx+bJmYxA/AXuk=",
+      MavenRepository.UNNAMED),
+  COMMANDFLOW_BUKKIT("me.fixeddev",
+      "commandflow-bukkit",
+      "0.1.1-SNAPSHOT",
+      "0.1.1-20201104.001958-2",
+      "+Ne/yItO25rL6Xx3PTIQodYnvhkN3aCvJwFXhmK1Dpw=",
+      MavenRepository.UNNAMED),
 
   // Text Framework
   TEXT_API("net.kyori",
@@ -162,17 +162,17 @@ public enum MargaretLibrary implements Dependency {
         ? new String[]{artifactId, version}
         : new String[]{artifactId, snapshot};
     return String.format(
-            DependencyUrlFormat.JAR.getFormat(),
-            strings);
+        DependencyUrlFormat.JAR.getFormat(),
+        strings);
   }
 
   @Override
   public String getUrl() {
-    return String
-        .format(DependencyUrlFormat.MAVEN_URL.getFormat(),
-            CommonsUtils.formatUrl(groupId),
-            CommonsUtils.formatUrl(artifactId),
-            version);
+    return String.format(
+        DependencyUrlFormat.MAVEN_URL.getFormat(),
+        CommonsUtils.formatUrl(groupId),
+        CommonsUtils.formatUrl(artifactId),
+        version);
   }
 
   @Override
@@ -192,9 +192,9 @@ public enum MargaretLibrary implements Dependency {
         HIKARICP,
         SLF4J_API,
         SLF4J_SIMPLE,
-        INTAKE_CORE,
-        INTAKE_BUKKIT,
         CAFFEINE,
+        COMMANDFLOW_UNIVERSAL,
+        COMMANDFLOW_BUKKIT,
         TEXT_API,
         TEXT_BUKKIT_ADAPTER,
         TEXT_SERIALIZER_GSON,
