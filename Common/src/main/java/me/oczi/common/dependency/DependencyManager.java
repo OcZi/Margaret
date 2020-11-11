@@ -54,4 +54,12 @@ public interface DependencyManager extends Loggable {
    * @return Dependency list.
    */
   List<Dependency> getDependencyList();
+
+  /**
+   * Set DependencyManager into offline mode.
+   * Will not download any file, just get the dependency file
+   * in lib folder and check their hashes to load.
+   * @param offlineMode Set offline mode.
+   */
+  void setOfflineMode(boolean offlineMode);
 }

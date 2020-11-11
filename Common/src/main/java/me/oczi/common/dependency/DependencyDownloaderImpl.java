@@ -1,9 +1,10 @@
 package me.oczi.common.dependency;
 
 import me.oczi.common.dependency.monitor.MonitorByteChannel;
+import me.oczi.common.request.HttpUrlConnectionBuilder;
 
 import java.io.*;
-import java.net.URL;
+import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,12 +27,14 @@ public class DependencyDownloaderImpl implements DependencyDownloader {
         dependency.getFileName());
     File dependencyFile = dependencyPath.toFile();
     try {
-      URL url = new URL(dependency.getAbsoluteUrl());
-      int expectedSize = getFileSizeOf(url);
+      HttpURLConnection connection =
+          newConnection(dependency.getAbsoluteUrl());
+      int expectedSize = getFileSizeOf(connection);
+      String dependencyName = dependency.getArtifactId();
       if (dependencyFile.exists()) {
         long fileSize = Files.size(dependencyPath);
         if (fileSize == expectedSize) {
-          info(dependency.getFileName() + " [Already exist]");
+          info(dependencyName + " [Already exist]");
           return dependencyFile;
         } else {
           warning("Dependency file '" + dependency.getFileName()
@@ -44,19 +47,17 @@ public class DependencyDownloaderImpl implements DependencyDownloader {
       }
 
       dependencyFile.createNewFile();
-      try (final InputStream inputStream = url.openStream()) {
+      try (final InputStream inputStream = connection.getInputStream()) {
         try (MonitorByteChannel channel = MonitorByteChannel
             .newChannel(
-                inputStream,
-                dependency.getFileName(),
-                expectedSize,
-                logger)) {
+                inputStream, dependencyName,
+                expectedSize, logger)) {
           FileOutputStream stream = new FileOutputStream(dependencyFile);
           stream
               .getChannel()
               .transferFrom(channel, 0, expectedSize);
         }
-        info("Downloading " + dependency.getFileName() + "... [Success]");
+        info("Downloading " + dependencyName + "... [Success]");
       }
     } catch (FileNotFoundException e) {
       dependencyFile.delete();
@@ -68,9 +69,16 @@ public class DependencyDownloaderImpl implements DependencyDownloader {
     return dependencyFile;
   }
 
-  public int getFileSizeOf(URL url) throws IOException {
-    URLConnection connection = url.openConnection();
+  public int getFileSizeOf(URLConnection connection) throws IOException {
     return connection.getContentLength();
+  }
+
+  private HttpURLConnection newConnection(String url) {
+    return HttpUrlConnectionBuilder.newBuilder(url)
+        .setProperty("User-Agent", "Margaret")
+        .setReadTimeout(70000)
+        .setConnectionTimeout(70000)
+        .build();
   }
 
   private void info(String message) {
