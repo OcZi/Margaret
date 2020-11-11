@@ -21,6 +21,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -318,7 +320,7 @@ public interface MessageUtils {
   }
 
   static void sendMessage(CommandSender sender, Component send) {
-    TextAdapter.sendMessage(sender, send);
+    TextAdapter.sendComponent(sender, send);
   }
 
   static void sendMessage(MargaretPlayer sender, String send) {
@@ -370,7 +372,7 @@ public interface MessageUtils {
 
   static String toLegacy(Component textComponent) {
     return LegacyComponentSerializer
-        .legacy()
+        .INSTANCE
         .serialize(textComponent);
   }
 
@@ -425,6 +427,11 @@ public interface MessageUtils {
   static TextComponent.Builder messageBuilder(Messages message,
                                               TextColor color) {
     return messageBuilder(message).color(color);
+  }
+
+  static TextComponent.Builder messageBuilder(Messages message,
+                                              MargaretColor color) {
+    return messageBuilder(message, color.getDefaultTextColor());
   }
 
   static HoverEvent hoverTextOf(Messages message, Object... objects) {
@@ -529,6 +536,13 @@ public interface MessageUtils {
   }
 
   static Component composeComponent(String base,
+                                    List<? extends Component> components,
+                                    boolean prefix) {
+    TextComponent component = formatComponent(base, components);
+    return composeComponent(component, prefix);
+  }
+
+  static Component composeComponent(String base,
                                     Component[] components,
                                     boolean prefix) {
     TextComponent component = formatComponent(base, components);
@@ -553,10 +567,16 @@ public interface MessageUtils {
 
   static TextComponent formatComponent(String base,
                                        Component... components) {
+    return formatComponent(base, Arrays.asList(components));
+  }
+
+  static TextComponent formatComponent(String base,
+                                       List<? extends Component> components) {
     TextComponent.Builder builder = TextComponent.builder();
-    for (int i = 0; i < components.length; i++) {
-      Component component = components[i];
-      String placeholder = "{" + i + "}";
+    String format = "{%s}";
+    for (int i = 0; i < components.size(); i++) {
+      Component component = components.get(i);
+      String placeholder = String.format(format, i);
       if (base.isEmpty() || !base.contains(placeholder)) {
         break;
       }
@@ -590,8 +610,8 @@ public interface MessageUtils {
       return MessageUtils.getMessageTranslated(Messages.ERROR_FATAL);
     }
 
-    if (send instanceof TextComponent) {
-      return toLegacy((TextComponent) send);
+    if (send instanceof Component) {
+      return toLegacy((Component) send);
     }
 
     String message;
@@ -604,6 +624,14 @@ public interface MessageUtils {
     }
 
     return translateMargaretColor(message);
+  }
+
+  static boolean componentIsEmpty(Component component) {
+    return toLegacy(component).isEmpty();
+  }
+
+  static boolean isNullOrEmpty(Component component) {
+    return component == null || componentIsEmpty(component);
   }
 
   /**

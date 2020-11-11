@@ -1,12 +1,12 @@
 package me.oczi.bukkit.commands;
 
-import app.ashcon.intake.Command;
-import app.ashcon.intake.bukkit.parametric.annotation.Sender;
-import app.ashcon.intake.dispatcher.Dispatcher;
-import app.ashcon.intake.parametric.annotation.Default;
 import com.google.common.collect.Lists;
+import me.fixeddev.commandflow.annotated.CommandClass;
+import me.fixeddev.commandflow.annotated.annotation.Command;
+import me.fixeddev.commandflow.annotated.annotation.OptArg;
+import me.fixeddev.commandflow.bukkit.annotation.Sender;
 import me.oczi.bukkit.internal.MemoryManager;
-import me.oczi.bukkit.internal.commandmanager.CommandManager;
+import me.oczi.bukkit.internal.commandflow.CommandFlow;
 import me.oczi.bukkit.objects.Gender;
 import me.oczi.bukkit.objects.Home;
 import me.oczi.bukkit.objects.Proposal;
@@ -16,10 +16,9 @@ import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.objects.player.PlayerData;
 import me.oczi.bukkit.objects.player.PlayerDataPair;
-import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
-import me.oczi.bukkit.utils.settings.EnumSettings;
+import me.oczi.bukkit.utils.settings.EnumSetting;
 import me.oczi.bukkit.utils.settings.PlayerSettings;
 import me.oczi.common.utils.CommonsUtils;
 import net.kyori.text.TextComponent;
@@ -31,42 +30,47 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static me.oczi.bukkit.utils.CommandPreconditions.*;
+import static me.oczi.bukkit.utils.CommandPreconditions.checkInstanceOfPlayer;
 
-public class CommandList {
+@Command(
+    names = {"list", "ls"},
+    desc = "%translatable:list.desc%",
+    permission = "margaret.list")
+public class CommandList implements CommandClass {
 
   @Command(
-      aliases = {"help", "?", ""},
-      desc = "List command.")
-  public void mainCommand(@Sender CommandSender sender,
-                          CommandManager commandManager,
-                          @Default("") String arg) {
-    Dispatcher dispatcher = commandManager
-        .getListNode().getDispatcher();
-    Commands.composeFullHelp(sender,
-        dispatcher,
-        "list",
-        "list",
-        true);
+      names = {"help", "?", ""},
+      desc = "%translatable:list.help.desc%")
+  public void mainCommand(CommandSender sender,
+                          CommandFlow commandFlow,
+                          @OptArg("") String arg) {
+    Commands.composeFullChildrenHelp(sender,
+        commandFlow.getSubCommandsOf("list"),
+        "margaret",
+        "list");
   }
 
   @Command(
-      aliases = {"top-partner", "partners", "partner"},
-      desc = "Top partners.")
-  public void partners(@Sender CommandSender sender,
+      names = {"top-partner", "partners", "partner"},
+      desc = "%translatable:list.top.partner.desc%")
+  public void partners(CommandSender sender,
                        MemoryManager memoryManager,
-                       @Default("") String numPage) {
+                       @OptArg("") String numPage) {
     PartnershipTop partnershipTop = memoryManager.getPartnerTop();
-    int page = CommonsUtils.isNullOrEmpty(numPage)
-        ? 1
-        : CommonsUtils.parseInt(numPage);
-    if (page <= 0)  {
+    int page;
+    if (!CommonsUtils.isNullOrEmpty(numPage)) {
+      page = CommonsUtils.parseInt(numPage);
+      if (page <= 0) {
+        page = 1;
+      }
+    } else {
       page = 1;
     }
     MessageUtils.compose(sender,
         Messages.LIST_PARTNER_HEADER,
         true,
-        page);
+        page,
+        partnershipTop.getPages().size());
     List<PlayerDataPair> listPage = partnershipTop.getPage(page);
     int slot = partnershipTop.getEntryStartedOfPage(page);
     for (int i = 0; i < listPage.size(); i++, slot++) {
@@ -95,12 +99,11 @@ public class CommandList {
   }
 
   @Command(
-      aliases = {"genders", "gender", "g"},
-      desc = "List of genders.")
-  public void genders(@Sender CommandSender sender,
+      names = {"genders", "gender", "g"},
+      desc = "%translatable:list.genders.desc%")
+  public void genders(CommandSender sender,
+                      @OptArg @Sender MargaretPlayer margaretPlayer,
                       GenderManager genderManager) {
-    MargaretPlayer margaretPlayer = MargaretPlayers
-        .getAsMargaretPlayer(sender);
     List<Gender> genders = Lists
         .newArrayList(genderManager.getGenders());
     MessageUtils.compose(sender,
@@ -123,20 +126,14 @@ public class CommandList {
   }
 
   @Command(
-      aliases = {"proposals", "proposal", "prop"},
-      desc = "List of proposals.")
-  public void proposals(@Sender CommandSender sender,
-                        @Default("") String playerName)
-      throws ConditionException {
-    MargaretPlayer margaretPlayer;
-    if (playerName.isEmpty()) {
+      names = {"proposals", "proposal", "prop"},
+      desc = "%translatable:list.proposals.desc%")
+  public void proposals(CommandSender sender,
+                        @OptArg MargaretPlayer margaretPlayer) {
+    if (margaretPlayer.isEmpty()) {
       checkInstanceOfPlayer(sender, Messages.NEEDS_ARGUMENT);
       margaretPlayer = MargaretPlayers
           .getAsMargaretPlayer(sender);
-    } else {
-      margaretPlayer = MargaretPlayers
-          .getAsMargaretPlayer(playerName);
-      checkMargaretPlayerOnline(margaretPlayer, playerName);
     }
 
     sendProposals(sender, margaretPlayer);
@@ -158,15 +155,10 @@ public class CommandList {
   }
 
   @Command(
-      aliases = {"homes", "h"},
-      desc = "List of homes.")
-  public void homes(@Sender CommandSender sender)
-      throws ConditionException {
-    MargaretPlayer margaretPlayer = MargaretPlayers
-        .getAsMargaretPlayer(sender);
-    checkHavePartner(margaretPlayer);
-
-    Partnership partnership = margaretPlayer.getPartnership();
+      names = {"homes", "h"},
+      desc = "%translatable:list.homes.desc%")
+  public void homes(CommandSender sender,
+                    @Sender Partnership partnership) {
     HomeList homes = partnership.getHomeList();
     MessageUtils.compose(sender,
         Messages.LIST_HOME_HEADER,
@@ -174,38 +166,46 @@ public class CommandList {
         homes.size());
     for (int i = 0; i < homes.size(); i++) {
       Home home = homes.get(i);
-      String homeInfo = home.hasAlias()
-          ? home.getId() + " (" + home.getAlias() + ")"
-          : home.getId();
-      MessageUtils.compose(sender,
-          Messages.LIST_ENUM_ENTRY,
+      int entry = i + 1;
+      Messages message;
+      // I do not like this.
+      Object[] objects = new Object[3];
+      objects[0] = entry;
+      objects[1] = home.getId();
+      if (!home.hasAlias()) {
+        message = Messages.LIST_HOME_ENTRY;
+      } else {
+        message = Messages.LIST_HOME_WITH_ALIAS_ENTRY;
+        objects[2] = home.getAlias();
+      }
+      MessageUtils.compose(
+          sender,
+          message,
           false,
-          i + 1,
-          "ID: " + homeInfo);
+          objects);
     }
   }
 
   @Command(
-      aliases = {"settings"},
-      desc = "List of settings.")
-  public void settings(@Sender CommandSender sender) {
+      names = {"settings"},
+      desc = "%translatable:list.settings.desc%")
+  public void settings(CommandSender sender) {
     MargaretPlayer margaretPlayer = MargaretPlayers
         .getAsMargaretPlayer(sender);
-    Collection<EnumSettings> values = PlayerSettings
+    Collection<EnumSetting> values = PlayerSettings
         .getAllSettings().values();
     MessageUtils.compose(sender,
         Messages.LIST_SETTINGS_HEADER,
         true,
         values.size());
-    for (EnumSettings setting : values) {
+    for (EnumSetting setting : values) {
       boolean isSetting = margaretPlayer.isSetting(setting);
-      String settingName = setting.getName()
-          .replace("_", "-");
+      String settingName = setting.getFormalName();
       if (!margaretPlayer.isEmpty()) {
-        settingName = (isSetting
+        ChatColor colorized = isSetting
             ? ChatColor.GREEN
-            : ChatColor.RED)
-            + settingName;
+            : ChatColor.RED;
+        settingName = colorized + settingName;
       }
       TextComponent component = TextComponent.of(settingName)
           .clickEvent(
@@ -223,9 +223,9 @@ public class CommandList {
   }
 
   @Command(
-      aliases = {"relations", "rt"},
-      desc = "List of relations.")
-  public void relations(@Sender CommandSender sender) {
+      names = {"relations", "rt"},
+      desc = "%translatable:list.relations.desc%")
+  public void relations(CommandSender sender) {
     List<String> relations = MargaretYamlStorage.getAllowedRelations();
     MessageUtils.compose(sender,
         Messages.LIST_RELATIONS_HEADER,

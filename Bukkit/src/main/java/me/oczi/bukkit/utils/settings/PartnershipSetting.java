@@ -4,8 +4,10 @@ import me.oczi.bukkit.utils.PartnershipPermission;
 
 import static me.oczi.bukkit.utils.PartnershipPermission.*;
 
-// Settings only for player with partner.
-public enum PartnershipSettings implements EnumSettings {
+/**
+ * {@link EnumSetting} for Partnerships.
+ */
+public enum PartnershipSetting implements EnumSetting {
 
   ALLOW_PVP("allow-pvp", true, PVP),
   ALLOW_TELEPORT("allow-teleport", true, TP),
@@ -16,8 +18,8 @@ public enum PartnershipSettings implements EnumSettings {
   private final boolean defaultValue;
   private final PartnershipPermission permissionEquivalent;
 
-  PartnershipSettings(String formalName, boolean defaultValue,
-                      PartnershipPermission permissionEquivalent) {
+  PartnershipSetting(String formalName, boolean defaultValue,
+                     PartnershipPermission permissionEquivalent) {
     this.formalName = formalName;
     this.defaultValue = defaultValue;
     this.permissionEquivalent = permissionEquivalent;

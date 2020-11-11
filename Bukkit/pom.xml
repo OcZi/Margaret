@@ -6,12 +6,11 @@
         <relativePath>../pom.xml</relativePath>
         <artifactId>Margaret</artifactId>
         <groupId>me.oczi</groupId>
-        <version>0.9.8-SNAPSHOT</version>
+        <version>0.9.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>Bukkit</artifactId>
-    <version>0.9.7-SNAPSHOT</version>
 
     <build>
         <finalName>${project.parent.artifactId}-${project.artifactId}-${project.parent.version}</finalName>
@@ -33,10 +32,29 @@
 
         <!-- Command Framework -->
         <dependency>
-            <groupId>app.ashcon.intake</groupId>
-            <artifactId>intake-bukkit</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <groupId>me.fixeddev</groupId>
+            <artifactId>commandflow-bukkit</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
             <scope>provided</scope>
+            <exclusions>
+                <!-- Exclude all text-api libraries -->
+                <exclusion>
+                    <groupId>net.kyori</groupId>
+                    <artifactId>text-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.kyori</groupId>
+                    <artifactId>text-serializer-plain</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.kyori</groupId>
+                    <artifactId>text-serializer-gson</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.kyori</groupId>
+                    <artifactId>text-serializer-legacy</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Text Framework -->
@@ -45,6 +63,13 @@
             <artifactId>text-adapter-bukkit</artifactId>
             <version>3.0.5</version>
             <scope>provided</scope>
+            <!-- Just in case -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.spigotmc</groupId>
+                    <artifactId>spigot-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

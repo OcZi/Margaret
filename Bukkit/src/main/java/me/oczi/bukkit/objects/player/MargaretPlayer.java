@@ -4,7 +4,7 @@ import me.oczi.bukkit.objects.Gender;
 import me.oczi.bukkit.objects.Proposal;
 import me.oczi.bukkit.objects.collections.CacheSet;
 import me.oczi.bukkit.objects.partnership.Partnership;
-import me.oczi.bukkit.utils.settings.EnumSettings;
+import me.oczi.bukkit.utils.settings.EnumSetting;
 import me.oczi.common.api.Emptyble;
 
 import java.util.UUID;
@@ -76,7 +76,7 @@ public interface MargaretPlayer extends Emptyble {
    * Toggle a setting of MargaretPlayer.
    * @param setting Setting to toggle.
    */
-  void toggleSetting(EnumSettings setting);
+  void toggleSetting(EnumSetting setting);
 
   /**
    * Toggle a setting of MargaretPlayer.
@@ -88,7 +88,7 @@ public interface MargaretPlayer extends Emptyble {
    * Check the state of Setting.
    * @param setting Setting to check.
    */
-  boolean isSetting(EnumSettings setting);
+  boolean isSetting(EnumSetting setting);
 
   /**
    * Check the state of Setting.

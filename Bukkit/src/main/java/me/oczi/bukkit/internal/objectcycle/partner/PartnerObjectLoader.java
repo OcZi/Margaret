@@ -1,5 +1,6 @@
 package me.oczi.bukkit.internal.objectcycle.partner;
 
+import com.google.common.collect.Lists;
 import me.oczi.bukkit.internal.MemoryManager;
 import me.oczi.bukkit.internal.objectcycle.AbstractObjectLoader;
 import me.oczi.bukkit.objects.partnership.Partnership;
@@ -8,6 +9,10 @@ import me.oczi.bukkit.objects.partnership.PartnershipImpl;
 import me.oczi.bukkit.objects.partnership.PartnershipProperties;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.MessageUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class PartnerObjectLoader extends AbstractObjectLoader<String> {
   private final PartnerObjectBuilder builder;
@@ -36,7 +41,10 @@ public class PartnerObjectLoader extends AbstractObjectLoader<String> {
       return;
     }
 
-    PartnershipProperties partnershipProperties = builder.initPartnerProperties(id);
+    List<Player> players = Lists.newArrayList(
+        Bukkit.getPlayer(partnershipData.getPlayerUUID1()),
+        Bukkit.getPlayer(partnershipData.getPlayerUUID2()));
+    PartnershipProperties partnershipProperties = builder.initPartnerProperties(id, players);
     Partnership partnership = new PartnershipImpl(partnershipData, partnershipProperties);
     persistenceCache.putPartner(partnership.getId(), partnership);
   }

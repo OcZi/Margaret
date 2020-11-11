@@ -1,51 +1,47 @@
 package me.oczi.bukkit.commands;
 
-import app.ashcon.intake.Command;
-import app.ashcon.intake.bukkit.parametric.annotation.Sender;
-import app.ashcon.intake.dispatcher.Dispatcher;
-import app.ashcon.intake.parametric.annotation.Default;
-import me.oczi.bukkit.internal.commandmanager.CommandManager;
+import me.fixeddev.commandflow.annotated.CommandClass;
+import me.fixeddev.commandflow.annotated.annotation.Command;
+import me.fixeddev.commandflow.annotated.annotation.OptArg;
+import me.fixeddev.commandflow.bukkit.annotation.Sender;
+import me.oczi.bukkit.internal.commandflow.CommandFlow;
 import me.oczi.bukkit.objects.Gender;
 import me.oczi.bukkit.objects.collections.PartnershipPermissionSet;
 import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.utils.*;
-import me.oczi.bukkit.utils.settings.EnumSettings;
+import me.oczi.bukkit.utils.settings.EnumSetting;
 import org.bukkit.command.CommandSender;
 
 import static me.oczi.bukkit.utils.CommandPreconditions.*;
 
-public class CommandAdmin {
+@Command(
+    names = {"admin", "ad"},
+    desc = "%translatable:admin.desc%",
+    permission = "margaret.admin")
+public class CommandAdmin implements CommandClass {
 
   @Command(
-      aliases = {"help", "?", ""},
-      desc = "Admin command.")
-  public void mainCommand(@Sender CommandSender sender,
-                          CommandManager commandManager,
-                          @Default("") String arg) {
-    Dispatcher dispatcher = commandManager
-        .getAdminNode().getDispatcher();
-    Commands.composeFullHelp(sender,
-        dispatcher,
-        "admin",
-        "admin",
-        true);
+      names = {"help", "?", ""},
+      desc = "%translatable:admin.help.desc%")
+  public void mainCommand(CommandSender sender,
+                          CommandFlow commandFlow) {
+    Commands.composeFullChildrenHelp(sender,
+        commandFlow.getSubCommandsOf("admin"),
+        "margaret",
+        "admin");
   }
 
   @Command(
-      aliases = {"op-partner", "op-partnership"},
-      desc = "Op partnership.",
-      perms = "margaret.admin.op-partnership")
-  public void op(@Sender CommandSender sender)
+      names = {"op-partnership", "op-partner"},
+      desc = "%translatable:admin.op.partnership.desc%",
+      permission = "margaret.admin.op-partnership")
+  public void op(@Sender MargaretPlayer sender,
+                 @Sender Partnership partnershipSender)
       throws ConditionException {
-    checkInstanceOfPlayer(sender);
-    MargaretPlayer margaretPlayer = MargaretPlayers
-        .getAsMargaretPlayer(sender);
-    checkHavePartner(margaretPlayer);
-
-    Partnership partnership = margaretPlayer.getPartnership();
-    PartnershipPermissionSet permissions = partnership.getPermissions();
+    PartnershipPermissionSet permissions =
+        partnershipSender.getPermissions();
     permissions.setPermissions(PartnershipPermission.class);
     MessageUtils.compose(sender,
         Messages.ALL_PERMISSION_ADDED,
@@ -53,38 +49,39 @@ public class CommandAdmin {
   }
 
   @Command(
-      aliases = {"partner-info", "partnership-info", "p-info"},
-      desc = "Partner information.")
-  public void partnerInfo(@Sender CommandSender sender,
-                          MargaretPlayer margaretPlayer)
+      names = {"partnership-info", "partner-info", "p-info"},
+      desc = "%translatable:admin.partnership.info.desc%")
+  public void partnerInfo(CommandSender sender,
+                          MargaretPlayer player)
       throws ConditionException {
-    checkHavePartner(margaretPlayer,
+    checkHavePartner(player,
         Messages.PLAYER_NOT_HAVE_PARTNER,
-        margaretPlayer.getName());
-    Partnerships.sendInfo(sender, margaretPlayer);
+        player.getName());
+    Partnerships.sendInfo(sender, player);
   }
 
   @Command(
-      aliases = "max-homes",
-      desc = "Set max homes of partner.")
-  public void setMaxHomes(@Sender CommandSender sender,
-                          int i,
-                          @Default("") String partnerId)
+      names = {"max-homes"},
+      desc = "%translatable:admin.max.homes.desc%",
+      permission = "margaret.admin.max-homes")
+  public void setMaxHomes(CommandSender sender,
+                          int maxHomes,
+                          @OptArg("") String partnershipId)
       throws ConditionException {
-    if (partnerId.isEmpty()) {
+    if (partnershipId.isEmpty()) {
       checkInstanceOfPlayer(sender, Messages.NEEDS_ARGUMENT);
       MargaretPlayer margaretPlayer = MargaretPlayers
           .getAsMargaretPlayer(sender);
       checkHavePartner(margaretPlayer);
-      setMaxHomesOf(margaretPlayer.getPartnership(), i);
+      setMaxHomesOf(margaretPlayer.getPartnership(), maxHomes);
     } else {
-      Partnership partnership = Partnerships.getAsPartner(partnerId);
-      checkIsEmpty(partnership, Messages.INVALID_PARTNER, partnerId);
-      setMaxHomesOf(partnership, i);
+      Partnership partnership = Partnerships.getAsPartner(partnershipId);
+      checkIsEmpty(partnership, Messages.INVALID_PARTNER, partnershipId);
+      setMaxHomesOf(partnership, maxHomes);
       MessageUtils.compose(sender,
           Messages.MAX_HOMES_SET_TO,
           true,
-          i);
+          maxHomes);
     }
   }
 
@@ -97,33 +94,32 @@ public class CommandAdmin {
   }
 
   @Command(
-      aliases = "force-gender",
-      desc = "Set gender of player.",
-      perms = "margaret.admin.force-gender")
-  public void setGender(@Sender CommandSender sender,
-                        MargaretPlayer margaretPlayer,
+      names = "force-gender",
+      desc = "%translatable:admin.force.gender.desc%",
+      permission = "margaret.admin.force-gender")
+  public void setGender(CommandSender sender,
+                        MargaretPlayer player,
                         Gender gender) {
-    MargaretPlayers.setGender(margaretPlayer, gender);
+    MargaretPlayers.setGender(player, gender);
     MessageUtils.compose(sender,
         Messages.SET_GENDER_OF,
         true,
-        margaretPlayer.getName(),
+        player.getName(),
         gender.getFormalNameColorized());
   }
 
   @Command(
-      aliases = "force-setting",
-      desc = "Toggle setting of player.",
-      perms = "margaret.admin.force-setting")
-  public void toggleSetting(@Sender CommandSender sender,
-                            MargaretPlayer margaretPlayer,
-                            EnumSettings setting) {
+      names = "force-setting",
+      desc = "%translatable:admin.force.setting.desc%",
+      permission = "margaret.admin.force-setting")
+  public void toggleSetting(MargaretPlayer player,
+                            EnumSetting setting) {
     boolean result = MargaretPlayers
-        .toggleSetting(margaretPlayer, setting);
-    MessageUtils.compose(sender,
+        .toggleSetting(player, setting);
+    MessageUtils.compose(player,
         Messages.SETTING_ENTRY_OF,
         true,
-        margaretPlayer.getName(),
+        player.getName(),
         setting.getName(),
         result);
   }

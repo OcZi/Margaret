@@ -9,7 +9,10 @@ import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static me.oczi.bukkit.utils.DefaultGender.UNKNOWN;
 
@@ -19,6 +22,8 @@ import static me.oczi.bukkit.utils.DefaultGender.UNKNOWN;
 public class GenderManagerImpl implements GenderManager {
   private final Map<String, Gender> genders = new HashMap<>();
   private final FileConfiguration gendersConfig;
+
+  private Gender defaultGender;
 
   public GenderManagerImpl(FileConfiguration gendersConfig) {
     this.gendersConfig = gendersConfig;
@@ -42,16 +47,15 @@ public class GenderManagerImpl implements GenderManager {
 
   private void initDefaultGender(Set<String> root) {
     String nodeRoot = "unknown";
-    Gender gender;
-    if (root.contains(nodeRoot)) {
-      gender = createGenderByNode(nodeRoot);
-    } else {
-      gender = new GenderImpl(UNKNOWN.getName(),
-          UNKNOWN.getName(),
-          UNKNOWN.getColor(),
-          UNKNOWN.getPrefix());
-    }
-    registerGender(gender);
+    this.defaultGender =
+        root.contains(nodeRoot)
+            ? createGenderByNode(nodeRoot)
+            : new GenderImpl(
+            UNKNOWN.getName(),
+            UNKNOWN.getName(),
+            UNKNOWN.getColor(),
+            UNKNOWN.getPrefix());
+    registerGender(defaultGender);
   }
 
   private Gender createGenderByNode(String gender) {
@@ -71,7 +75,7 @@ public class GenderManagerImpl implements GenderManager {
       color = ChatColor.valueOf(colorName.toUpperCase());
     } else {
       MessageUtils.warning(
-          "Color name "+ "(" + colorName + ")" +
+          "Color name " + "(" + colorName + ")" +
               " of " + gender + " is invalid.",
           "Set color to WHITE.");
       color = ChatColor.WHITE;

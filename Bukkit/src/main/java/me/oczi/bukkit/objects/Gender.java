@@ -1,12 +1,11 @@
 package me.oczi.bukkit.objects;
 
-import me.oczi.common.api.Emptyble;
 import org.bukkit.ChatColor;
 
 /**
  * A Gender in Minecraft.
  */
-public interface Gender extends Emptyble {
+public interface Gender {
 
   /**
    * Get the formal name of Gender.

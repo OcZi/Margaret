@@ -51,9 +51,4 @@ public class GenderImpl implements Gender{
   public String getPrefixColorized() {
     return color + prefix;
   }
-
-  @Override
-  public boolean isEmpty() {
-    return false;
-  }
 }

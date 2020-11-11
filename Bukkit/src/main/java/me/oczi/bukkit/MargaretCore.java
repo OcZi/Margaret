@@ -1,8 +1,8 @@
 package me.oczi.bukkit;
 
 import me.oczi.bukkit.internal.*;
-import me.oczi.bukkit.internal.commandmanager.CommandManager;
-import me.oczi.bukkit.internal.commandmanager.MargaretCommandManager;
+import me.oczi.bukkit.internal.commandflow.CommandFlow;
+import me.oczi.bukkit.internal.commandflow.MargaretCommandFlow;
 import me.oczi.bukkit.internal.database.DatabaseManager;
 import me.oczi.bukkit.internal.database.DbTasks;
 import me.oczi.bukkit.internal.database.sql.SqlManagerImpl;
@@ -50,7 +50,7 @@ public class MargaretCore implements PluginCore {
   private DatabaseManager dbManager;
   private MemoryManager memoryManager;
   private GenderManager genderManager;
-  private CommandManager commandManager;
+  private CommandFlow commandManager;
   private DependencyManager libraryLoader;
   private List<Dependency> loadedDependencies;
 
@@ -132,10 +132,10 @@ public class MargaretCore implements PluginCore {
   }
 
   private void initCooldown() {
-    int cooldownEviction = MargaretYamlStorage.getCommandTimeout();
-    int proposalTimeout = MargaretYamlStorage.getProposalTimeout();
+    int cooldownEviction = MargaretYamlStorage.getCommandCooldown();
+    int proposalEviction = MargaretYamlStorage.getProposalCooldown();
     this.cooldownManager = new CooldownManagerImpl(
-        cooldownEviction, proposalTimeout);
+        cooldownEviction, proposalEviction);
   }
 
   private void initGenders() {
@@ -145,7 +145,8 @@ public class MargaretCore implements PluginCore {
   }
 
   private void initCommand() {
-    this.commandManager = new MargaretCommandManager(this, plugin);
+    this.commandManager = new MargaretCommandFlow(this, plugin);
+    this.commandManager.init();
   }
 
   private void initFinished() {
@@ -237,7 +238,7 @@ public class MargaretCore implements PluginCore {
   }
 
   @Override
-  public CommandManager getCommandManager() {
+  public CommandFlow getCommandManager() {
     return commandManager;
   }
 

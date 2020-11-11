@@ -17,7 +17,6 @@ import me.oczi.common.storage.sql.dsl.result.ResultMap;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.storage.sql.dsl.statements.data.StatementBasicData;
 import me.oczi.common.storage.sql.processor.SqlProcessorCache;
-import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.Location;
 
 import java.sql.Date;
@@ -34,7 +33,7 @@ public class SqlTask implements DbTasks {
 
   public SqlTask(DatabaseManager databaseManager,
                  SqlProcessorCache executor,
-                 ListeningExecutorService executorService){
+                 ListeningExecutorService executorService) {
     this.databaseManager = databaseManager;
     this.sqlExecutor = new SqlTaskExecutor(
         executor, executorService);
@@ -87,10 +86,7 @@ public class SqlTask implements DbTasks {
   @Override
   public void setupPartnershipHome(String partnerId, Home home) {
     String id = home.getId();
-    String alias = CommonsUtils.isNullOrEmpty(home.getAlias())
-        ? "unknown-" + home.getId()
-        : home.getAlias();
-
+    String alias = home.getAlias();
     Location location = home.getLocation();
     String world = location.getWorld().getName();
     double x = location.getX();
@@ -168,6 +164,31 @@ public class SqlTask implements DbTasks {
         settingName,
         param,
         id);
+  }
+
+  @Override
+  public void updateHomeData(String columnName, String param, String homeId) {
+    updateColumnOfRow("",
+        PARTNERSHIP_HOME,
+        columnName,
+        param,
+        homeId);
+  }
+
+  @Override
+  public void updateHomeLocation(Location location, String partnerId, Home home) {
+    List<Object> param = Arrays.asList(
+        home.getId(),
+        home.getAlias(),
+        partnerId,
+        location.getWorld().getName(),
+        location.getX(),
+        location.getY(),
+        location.getZ(),
+        home.getCreationDate());
+    insertOrReplaceRow("home-location-merge",
+        PARTNERSHIP_HOME,
+        param);
   }
 
   @Override
@@ -431,7 +452,7 @@ public class SqlTask implements DbTasks {
                             MargaretSqlTable table,
                             Object id,
                             List<String> selects) {
-    List<String> columns  = Lists.newArrayList(
+    List<String> columns = Lists.newArrayList(
         String.join(", ", selects));
     columns.add("id");
     StatementBasicData data = StatementBasicData.newData(
@@ -444,10 +465,10 @@ public class SqlTask implements DbTasks {
   }
 
   private Map<String, SqlObject> getRow(String idStatement,
-                            MargaretSqlTable table,
-                            Object id,
-                            List<String> selects) {
-    List<String> columns  = Lists.newArrayList(
+                                        MargaretSqlTable table,
+                                        Object id,
+                                        List<String> selects) {
+    List<String> columns = Lists.newArrayList(
         String.join(", ", selects));
     columns.add("id");
     StatementBasicData data = StatementBasicData.newData(
@@ -478,7 +499,7 @@ public class SqlTask implements DbTasks {
                                  int start,
                                  int end,
                                  List<String> selects) {
-    List<String> columns  = Lists.newArrayList(
+    List<String> columns = Lists.newArrayList(
         String.join(", ", selects));
     StatementBasicData data = StatementBasicData.newData(
         table, columns, null);
@@ -494,7 +515,7 @@ public class SqlTask implements DbTasks {
                                  MargaretSqlTable table,
                                  int limit,
                                  List<String> selects) {
-    List<String> columns  = Lists.newArrayList(
+    List<String> columns = Lists.newArrayList(
         String.join(", ", selects));
     StatementBasicData data = StatementBasicData.newData(
         table, columns, null);
@@ -510,7 +531,7 @@ public class SqlTask implements DbTasks {
                                     int limit,
                                     String orderColumnName,
                                     List<String> selects) {
-    List<String> columns  = Lists.newArrayList(
+    List<String> columns = Lists.newArrayList(
         String.join(", ", selects));
     columns.add(orderColumnName);
     StatementBasicData data = StatementBasicData.newData(
@@ -550,10 +571,11 @@ public class SqlTask implements DbTasks {
 
   /**
    * Update a specified column of row.
-   * @param table - SQL table
-   * @param columnName - Name of column to update
-   * @param param - Update parameter for columnName
-   * @param ids - ID of row
+   *
+   * @param table      SQL table
+   * @param columnName Name of column to update
+   * @param param      Update parameter for columnName
+   * @param ids        ID of row
    */
   private void updateColumnOfRow(String idStatement,
                                  MargaretSqlTable table,

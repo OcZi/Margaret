@@ -2,7 +2,7 @@ package me.oczi.bukkit.utils.settings;
 
 import me.oczi.bukkit.utils.PartnershipPermission;
 
-public interface EnumSettings {
+public interface EnumSetting {
 
   String getName();
 

@@ -1,114 +1,131 @@
 package me.oczi.bukkit.commands;
 
-import app.ashcon.intake.Command;
-import app.ashcon.intake.bukkit.parametric.annotation.Sender;
+import me.fixeddev.commandflow.annotated.CommandClass;
+import me.fixeddev.commandflow.annotated.annotation.Command;
+import me.fixeddev.commandflow.bukkit.annotation.Sender;
 import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
-import me.oczi.bukkit.utils.settings.CacheSettings;
-import me.oczi.bukkit.utils.settings.EnumSettings;
-import me.oczi.bukkit.utils.settings.PartnershipSettings;
+import me.oczi.bukkit.utils.settings.CacheSetting;
+import me.oczi.bukkit.utils.settings.EnumSetting;
+import me.oczi.bukkit.utils.settings.PartnershipSetting;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 
 import static me.oczi.bukkit.utils.CommandPreconditions.*;
 
-public class SubCommandPartnership {
+public class SubCommandPartnership implements CommandClass {
 
   // Legacy commands to switch settings.
   @Command(
-      aliases = {"chat", "ch"},
-      desc = "Partnership chat.")
-  public void chat(@Sender CommandSender sender)
+      names = {"chat", "ch"},
+      desc = "%translatable:partnership.chat.desc%",
+      permission = "margaret.setting")
+  public void chat(@Sender MargaretPlayer margaretSender,
+                   @Sender Partnership partnershipSender)
       throws ConditionException {
-    executeGenericSetting(sender, CacheSettings.CHAT);
+    executeGenericSetting(margaretSender,
+        partnershipSender,
+        CacheSetting.CHAT);
   }
 
   @Command(
-      aliases = "pvp",
-      desc = "Partnership pvp.")
-  public void pvp(@Sender CommandSender sender)
+      names = "pvp",
+      desc = "%translatable:partnership.pvp.desc%",
+      permission = "margaret.setting")
+  public void pvp(@Sender MargaretPlayer margaretSender,
+                  @Sender Partnership partnershipSender)
       throws ConditionException {
-    executeGenericSetting(sender, PartnershipSettings.ALLOW_PVP);
+    executeGenericSetting(margaretSender,
+        partnershipSender,
+        PartnershipSetting.ALLOW_PVP);
   }
 
   @Command(
-      aliases = {"mount", "mt"},
-      desc = "Partnership mount.")
-  public void mount(@Sender CommandSender sender)
+      names = {"mount", "mt"},
+      desc = "%translatable:partnership.mount.desc%",
+      permission = "margaret.setting")
+  public void mount(@Sender MargaretPlayer margaretPlayer,
+                    @Sender Partnership partnership)
       throws ConditionException {
-    executeGenericSetting(sender, PartnershipSettings.ALLOW_MOUNT);
+    executeGenericSetting(margaretPlayer,
+        partnership,
+        PartnershipSetting.ALLOW_MOUNT);
   }
 
   @Command(
-      aliases = {"teleport", "tpa", "tp"},
-      desc = "Partnership teleport.")
-  public void teleport(@Sender CommandSender sender)
+      names = {"teleport", "tpa", "tp"},
+      desc = "%translatable:partnership.teleport.desc%",
+      permission = "margaret.partnership.teleport")
+  public void teleport(@Sender MargaretPlayer margaretSender,
+                       @Sender Partnership partnershipSender)
       throws ConditionException {
-    MargaretPlayer margaretPlayer1 = getCheckedMargaretPlayer(
-        sender, PartnershipPermission.TP);
-    MargaretPlayer margaretPlayer2 = Partnerships
-        .foundPartnerAsMargaretPlayer(margaretPlayer1);
-    checkPartnerOnline(margaretPlayer2);
+    checkPartnerPermission(partnershipSender,
+        PartnershipPermission.TP);
+    MargaretPlayer margaretPartner = Partnerships
+        .foundPartnerAsMargaretPlayer(margaretSender);
+    checkPartnerOnline(margaretPartner);
 
-    checkSetting(margaretPlayer2,
-        PartnershipSettings.ALLOW_TELEPORT,
+    checkSetting(margaretPartner,
+        PartnershipSetting.ALLOW_TELEPORT,
         Messages.SETTING_ERROR,
-        PartnershipSettings.ALLOW_TELEPORT.getName(),
+        PartnershipSetting.ALLOW_TELEPORT.getName(),
         true);
     MargaretPlayers.teleport(
-        margaretPlayer1, margaretPlayer2);
-    MessageUtils.compose(margaretPlayer1,
+        margaretSender, margaretPartner);
+    MessageUtils.compose(margaretSender,
         Messages.PARTNER_TELEPORT_SUCCESS,
         true);
-    MessageUtils.compose(margaretPlayer2,
+    MessageUtils.compose(margaretPartner,
         Messages.PARTNER_TELEPORT_TO_YOU,
         true);
   }
 
   @Command(
-      aliases = {"gift", "give"},
-      desc = "Gift something to your partnership.")
-  public void gift(@Sender CommandSender sender)
+      names = {"gift", "give"},
+      desc = "%translatable:partnership.gift.desc%",
+      permission = "margaret.partnership.gift")
+  public void gift(@Sender MargaretPlayer margaretSender,
+                   @Sender Partnership partnershipSender)
       throws ConditionException {
-    MargaretPlayer margaretPlayer = getCheckedMargaretPlayer(
-        sender, PartnershipPermission.GIFT);
-    Partnerships.sendGift(margaretPlayer);
+    checkPartnerPermission(partnershipSender, PartnershipPermission.GIFT);
+    Partnerships.sendGift(margaretSender);
   }
 
   @Command(
-      aliases = {"heal", "health"},
-      desc = "Give health to your partnership.")
-  public void heal(@Sender CommandSender sender,
+      names = {"heal", "health"},
+      desc = "%translatable:partnership.heal.desc%",
+      permission = "margaret.partnership.heal")
+  public void heal(@Sender Player player,
+                   @Sender Partnership partnershipSender,
                    int health)
       throws ConditionException {
-    MargaretPlayer margaretPlayer = getCheckedMargaretPlayer(
-        sender, PartnershipPermission.HEAL);
-    Player player2 = Partnerships
-        .foundPartnerAsPlayer(margaretPlayer);
+    checkPartnerPermission(partnershipSender, PartnershipPermission.HEAL);
+    UUID uuid = Partnerships.getUuidOfPartner(
+        player.getUniqueId(),
+        partnershipSender.getUuid1(),
+        partnershipSender.getUuid2());
+    Player player2 = Bukkit.getPlayer(uuid);
     checkPartnerOnline(player2);
+    checkPlayerGamemode(player, GameMode.SURVIVAL);
 
-    Player player1 = (Player) sender;
-    checkPlayerGamemode(player1, GameMode.SURVIVAL);
-
-    Partnerships.sendHealth(player1, player2, health);
+    Partnerships.sendHealth(player, player2, health);
   }
 
   @Command(
-      aliases = {"relation", "rt"},
-      desc = "Set relation.")
-  public void relation(@Sender CommandSender sender,
+      names = {"relation", "rt"},
+      desc = "%translatable:partnership.relation.desc%",
+      permission = "margaret.partnership.relation")
+  public void relation(@Sender MargaretPlayer margaretPlayer,
+                       @Sender Partnership partnership,
                        String relation)
       throws ConditionException {
-    MargaretPlayer margaretPlayer = getCheckedMargaretPlayer(
-        sender, PartnershipPermission.RELATION);
-    Partnership partnership = margaretPlayer.getPartnership();
     if (!partnership.hasPermission(PartnershipPermission.CUSTOM_RELATION)) {
       List<String> relations = MargaretYamlStorage.getAllowedRelations();
       // If (!relations.contains(relation)) equivalent
@@ -116,48 +133,35 @@ public class SubCommandPartnership {
           r -> !r.contains(relation),
           Messages.INVALID_RELATION,
           relation);
+    } else {
+      throwIf(relation,
+          r -> r.length() > 16,
+          Messages.RELATION_TOO_LONG,
+          relation);
     }
-    throwIf(relation,
-        r -> r.length() > 16,
-        Messages.INVALID_RELATION,
-        relation);
     Partnerships.setRelation(partnership, relation);
-    MessageUtils.compose(sender,
+    MessageUtils.compose(margaretPlayer,
         Messages.RELATION_SET,
         true,
         relation);
   }
 
-  private void executeGenericSetting(CommandSender sender,
-                                     EnumSettings setting)
+  private void executeGenericSetting(MargaretPlayer margaretPlayer,
+                                     Partnership partnership,
+                                     EnumSetting setting)
       throws ConditionException {
-    MargaretPlayer margaretPlayer = getCheckedMargaretPlayer(
-        sender,
-        setting.getPermissionEquivalent());
+    PartnershipPermission permission =
+        setting.getPermissionEquivalent();
+    if (permission != null) {
+      checkPartnerPermission(partnership, permission);
+    }
     boolean result = MargaretPlayers.toggleSetting(
         margaretPlayer,
         setting);
-    MessageUtils.compose(sender,
+    MessageUtils.compose(margaretPlayer,
         Messages.SETTING_ENTRY,
         true,
         setting.getFormalName(),
         result);
-  }
-
-  private MargaretPlayer getCheckedMargaretPlayer(CommandSender sender,
-                                                  @Nullable PartnershipPermission permission)
-      throws ConditionException {
-    checkInstanceOfPlayer(sender);
-
-    MargaretPlayer margaretPlayer = MargaretPlayers
-        .getAsMargaretPlayer(sender);
-    checkHavePartner(margaretPlayer);
-
-    if (permission != null) {
-      checkPartnerPermission(
-          margaretPlayer.getPartnership(),
-          permission);
-    }
-    return margaretPlayer;
   }
 }

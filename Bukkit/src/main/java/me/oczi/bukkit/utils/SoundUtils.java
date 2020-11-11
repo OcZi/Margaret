@@ -1,7 +1,7 @@
 package me.oczi.bukkit.utils;
 
 import me.oczi.bukkit.objects.player.MargaretPlayer;
-import me.oczi.bukkit.utils.settings.BasicSettings;
+import me.oczi.bukkit.utils.settings.BasicSetting;
 import org.bukkit.entity.Player;
 
 /**
@@ -25,7 +25,7 @@ public interface SoundUtils {
 
   static void playSound(MargaretPlayer player,
                         MargaretSound sound) {
-    if (player.isSetting(BasicSettings.SOUND_EFFECTS)) {
+    if (player.isSetting(BasicSetting.SOUND_EFFECTS)) {
       playSound(MargaretPlayers.getAsPlayer(player),
           sound);
     }
@@ -33,7 +33,7 @@ public interface SoundUtils {
 
   static void playSound(MargaretPlayer player,
                         VersionSound sound) {
-    if (player.isSetting(BasicSettings.SOUND_EFFECTS)) {
+    if (player.isSetting(BasicSetting.SOUND_EFFECTS)) {
       playSound(MargaretPlayers.getAsPlayer(player),
           sound);
     }

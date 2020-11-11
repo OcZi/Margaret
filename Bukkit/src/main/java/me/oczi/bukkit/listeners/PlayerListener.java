@@ -5,7 +5,7 @@ import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.MargaretPlayers;
 import me.oczi.bukkit.utils.PartnershipPermission;
 import me.oczi.bukkit.utils.Partnerships;
-import me.oczi.bukkit.utils.settings.PartnershipSettings;
+import me.oczi.bukkit.utils.settings.PartnershipSetting;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -44,7 +44,7 @@ public class PlayerListener implements Listener {
     if (margaretPlayer2.isEmpty()) {
       return;
     }
-    if (margaretPlayer2.isSetting(PartnershipSettings.ALLOW_MOUNT)) {
+    if (margaretPlayer2.isSetting(PartnershipSetting.ALLOW_MOUNT)) {
       Player player2 = MargaretPlayers
           .getAsPlayer(margaretPlayer2);
       if (player1.getPassenger() == null) {
@@ -67,7 +67,7 @@ public class PlayerListener implements Listener {
         .getAsMargaretPlayer(partnerUuid);
     if (margaretPlayer2.isEmpty()) { return; }
     if (partnership.hasPermission(PartnershipPermission.PVP) &&
-        !margaretPlayer2.isSetting(PartnershipSettings.ALLOW_PVP)) {
+        !margaretPlayer2.isSetting(PartnershipSetting.ALLOW_PVP)) {
       e.setCancelled(true);
     }
   }

@@ -1,26 +1,26 @@
 package me.oczi.bukkit.other.exceptions;
 
-import app.ashcon.intake.CommandException;
+import me.fixeddev.commandflow.exception.ArgumentParseException;
 import me.oczi.bukkit.utils.MessageUtils;
 import me.oczi.bukkit.utils.Messages;
 
-public class ConditionException extends CommandException {
+public class ConditionException extends ArgumentParseException {
 
-  public ConditionException(String errMessage) {
+  protected ConditionException(String errMessage) {
     super(errMessage);
   }
 
-  public static ConditionException newException(Messages errMessage,
-                                                Object... objects) {
-    return new ConditionException(
-        MessageUtils.composeMessage(
-            errMessage, false, objects));
+  protected ConditionException(String errMessage, Throwable throwable) {
+    super(errMessage, throwable);
   }
 
-  public static InvocationConditionException newRuntimeException(Messages errMessage,
-                                                                 Object... objects) {
-    return new InvocationConditionException(
-        newException(errMessage, objects));
+  public static ConditionException newException(String errMessage,
+                                                Throwable throwable) {
+    return new ConditionException(errMessage, throwable);
+  }
+
+  public static ConditionException newException(Messages errMessage, Object... objects) {
+    return newException(MessageUtils.composeMessage(errMessage, false, objects), null);
   }
 
   @Override

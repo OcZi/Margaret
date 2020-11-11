@@ -1,149 +1,158 @@
 package me.oczi.bukkit.commands;
 
-import app.ashcon.intake.Command;
-import app.ashcon.intake.bukkit.parametric.annotation.Sender;
-import app.ashcon.intake.parametric.annotation.Default;
+import me.fixeddev.commandflow.annotated.CommandClass;
+import me.fixeddev.commandflow.annotated.annotation.Command;
+import me.fixeddev.commandflow.annotated.annotation.OptArg;
+import me.fixeddev.commandflow.bukkit.annotation.Sender;
 import me.oczi.bukkit.internal.CooldownManager;
+import me.oczi.bukkit.internal.commandflow.CommandFlow;
 import me.oczi.bukkit.objects.CooldownPlayer;
 import me.oczi.bukkit.objects.Proposal;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
-import me.oczi.bukkit.utils.settings.BasicSettings;
+import me.oczi.bukkit.utils.settings.BasicSetting;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.Set;
 import java.util.UUID;
 
 import static me.oczi.bukkit.utils.CommandPreconditions.*;
 
-public class CommandProposal {
+@Command(
+    names = {"proposal", "prop"},
+    desc = "%translatable:proposal.desc%",
+    permission = "margaret.proposal")
+public class CommandProposal implements CommandClass {
 
   @Command(
-      aliases = {"send"},
-      desc = "Propose a player to be your partner.",
-      perms = "margaret.proposal")
-  public void send(@Sender CommandSender sender,
-                   CooldownManager cooldownManager,
-                   MargaretPlayer margaretPlayer2,
-                   @Default("") String relation)
-      throws ConditionException {
-    checkInstanceOfPlayer(sender);
+      names = {"help", "h"},
+      desc = "%translatable:proposal.help.desc%")
+  public void mainCommand(CommandSender sender,
+                          CommandFlow commandFlow) {
+    Commands.composeFullChildrenHelp(sender,
+        commandFlow.getSubCommandsOf("proposal"),
+        "margaret",
+        "proposal");
+  }
 
-    MargaretPlayer margaretPlayer1 = MargaretPlayers
-        .getAsMargaretPlayer(sender);
+  @Command(
+      names = {"send"},
+      desc = "%translatable:proposal.send.desc%",
+      permission = "margaret.proposal")
+  public void send(CooldownManager cooldownManager,
+                   @Sender MargaretPlayer margaretSender,
+                   @OptArg @Sender Partnership optionalPartnership,
+                   MargaretPlayer playerTarget,
+                   @OptArg("") String relation)
+      throws ConditionException {
     CooldownPlayer cooldown = cooldownManager.getProposalCooldown();
-    UUID uuid = margaretPlayer1.getUniqueId();
+    UUID uuid = margaretSender.getUniqueId();
     checkCollectionNotContains(cooldown.getCacheSet(),
         uuid,
         Messages.WAIT_COOLDOWN,
         cooldown.getCountdownInSeconds(uuid));
-    checkNotHavePartner(margaretPlayer1);
+    throwIf(optionalPartnership, p -> !p.isEmpty(), Messages.YOU_HAVE_A_PARTNER);
 
-    checkStringEquals(margaretPlayer2.getName(), sender.getName(),
+    checkStringEquals(playerTarget.getName(), margaretSender.getName(),
         Messages.CANNOT_PROPOSE_YOURSELF);
     // If not have permission and relation is set, throw ConditionException.
+    Player player = MargaretPlayers.getAsPlayer(margaretSender);
     throwIf(relation,
-        r -> !r.isEmpty() ||
-             !sender.hasPermission(
-                 PartnershipPermission.CUSTOM_RELATION.getNode()),
+        r -> !r.isEmpty() &&
+            !player.hasPermission(
+                PartnershipPermission.CUSTOM_RELATION.getNode()),
         Messages.PLAYER_NO_PERMISSION);
 
-    checkMargaretPlayerHavePartner(margaretPlayer2);
-    checkSetting(margaretPlayer2,
-        BasicSettings.ALLOW_PROPOSALS,
+    checkMargaretPlayerHavePartner(playerTarget);
+    checkSetting(playerTarget,
+        BasicSetting.ALLOW_PROPOSALS,
         Messages.PLAYER_NOT_ACCEPT_PROPOSALS);
-    checkCurrentProposal(margaretPlayer1);
+    checkCurrentProposal(margaretSender);
 
-    if (!margaretPlayer2.getCurrentProposal().isEmpty()) {
-      if (margaretPlayer1.containsProposalOf(margaretPlayer2)) {
-        accept(sender, cooldownManager, margaretPlayer2);
+    if (!playerTarget.getCurrentProposal().isEmpty()) {
+      if (margaretSender.containsProposalOf(playerTarget)) {
+        accept(margaretSender, cooldownManager, playerTarget);
         return;
       }
     }
 
-    Set<Proposal> proposals = margaretPlayer2.getProposals();
+    Set<Proposal> proposals = playerTarget.getProposals();
     int maximumProposals = MargaretYamlStorage.getMaxProposals();
     throwIf(maximumProposals,
         maxProp -> maxProp <= proposals.size(),
         Messages.PLAYER_PROPOSAL_LIST_FULL);
 
-    MargaretPlayers.sendProposal(margaretPlayer1,
-        margaretPlayer2,
+    MargaretPlayers.sendProposal(margaretSender,
+        playerTarget,
         relation,
         !relation.isEmpty());
   }
 
   @Command(
-      aliases = "accept",
-      desc = "Accept a proposal.",
-      perms = "margaret.proposal")
-  public void accept(@Sender CommandSender sender,
+      names = "accept",
+      desc = "%translatable:proposal.help.desc%",
+      permission = "margaret.proposal")
+  public void accept(@Sender MargaretPlayer margaretSender,
                      CooldownManager cooldownManager,
-                     MargaretPlayer margaretPlayer2)
+                     MargaretPlayer playerTarget)
       throws ConditionException {
-    checkInstanceOfPlayer(sender);
-
-    MargaretPlayer margaretPlayer1 = MargaretPlayers
-        .getAsMargaretPlayer(sender);
-    checkNotHavePartner(margaretPlayer1);
+    checkNotHavePartner(margaretSender);
     CooldownPlayer cooldown = cooldownManager.getProposalCooldown();
-    UUID uuid = margaretPlayer1.getUniqueId();
+    UUID uuid = margaretSender.getUniqueId();
     checkCollectionNotContains(cooldown.getCacheSet(),
         uuid,
         Messages.WAIT_COOLDOWN,
         cooldown.getCountdownInSeconds(uuid));
-    checkNotHavePartner(margaretPlayer1);
+    checkNotHavePartner(margaretSender);
 
-    checkStringEquals(margaretPlayer2.getName(),
-        sender.getName(),
+    checkStringEquals(playerTarget.getName(),
+        margaretSender.getName(),
         Messages.CANNOT_PROPOSE_YOURSELF);
-    checkProposalList(margaretPlayer1, margaretPlayer2);
+    checkProposalList(margaretSender, playerTarget);
 
-    Partnerships.newPartner(margaretPlayer1, margaretPlayer2);
+    Partnerships.newPartner(margaretSender, playerTarget);
   }
 
   @Command(
-      aliases = "decline",
-      desc = "Decline a proposal.",
-      perms = "margaret.proposal")
-  public void decline(@Sender CommandSender sender,
-                      CooldownManager cooldownPlayer,
-                      MargaretPlayer margaretPlayer2)
+      names = "decline",
+      desc = "%translatable:proposal.decline.desc%",
+      permission = "margaret.proposal")
+  public void decline(@Sender MargaretPlayer margaretSender,
+                      CooldownManager cooldownManager,
+                      MargaretPlayer playerTarget)
       throws ConditionException {
-    checkInstanceOfPlayer(sender);
+    checkProposalList(margaretSender, playerTarget);
 
-    MargaretPlayer margaretPlayer1 = MargaretPlayers
-        .getAsMargaretPlayer(sender);
-    checkProposalList(margaretPlayer1, margaretPlayer2);
-
-    margaretPlayer1.removeProposal(margaretPlayer2.getCurrentProposal());
-    MessageUtils.compose(sender, Messages.PROPOSAL_DECLINED,
+    margaretSender.removeProposal(
+        playerTarget.getCurrentProposal());
+    MessageUtils.compose(margaretSender,
+        Messages.PROPOSAL_DECLINED,
         true,
-        margaretPlayer1.getName());
-    MessageUtils.compose(margaretPlayer2,
+        playerTarget.getName());
+    MessageUtils.compose(playerTarget,
         Messages.PROPOSAL_DENIED,
         true,
-        sender.getName());
-    cooldownPlayer.setProposalCooldown(margaretPlayer2.getUniqueId());
+        margaretSender.getName());
+    cooldownManager.setProposalCooldown
+        (playerTarget.getUniqueId());
   }
 
   @Command(
-      aliases = "cancel",
-      desc = "Cancel your actual proposal.",
-      perms = "margaret.proposal")
-  public void cancel(@Sender CommandSender sender,
-                     CooldownManager cooldownPlayer)
+      names = "cancel",
+      desc = "%translatable:proposal.cancel.desc%",
+      permission = "margaret.proposal")
+  public void cancel(CooldownManager cooldownPlayer,
+                     @Sender MargaretPlayer margaretSender)
       throws ConditionException {
-    checkInstanceOfPlayer(sender);
-    MargaretPlayer margaretPlayer1 = MargaretPlayers
-        .getAsMargaretPlayer(sender);
-    Proposal actualProposal = margaretPlayer1.getCurrentProposal();
+    Proposal actualProposal = margaretSender.getCurrentProposal();
     checkProposal(actualProposal, Messages.NO_HAVE_CURRENT_PROPOSAL);
 
     MargaretPlayer margaretPlayer2 = actualProposal.getReceiver();
     margaretPlayer2.removeProposal(actualProposal);
-    cooldownPlayer.setProposalCooldown(margaretPlayer1.getUniqueId());
+    cooldownPlayer.setProposalCooldown(margaretSender.getUniqueId());
   }
 }
