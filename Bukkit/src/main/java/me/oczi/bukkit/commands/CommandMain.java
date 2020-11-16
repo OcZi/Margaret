@@ -29,7 +29,7 @@ public class CommandMain implements CommandClass {
 
   // Generic command help.
   @Command(
-      names = {"help"},
+      names = {"help", "?"},
       desc = "%translatable:margaret.help.desc%")
   public void mainCommand(CommandSender sender,
                           CommandFlow commandFlow) {

@@ -39,7 +39,7 @@ import static me.oczi.bukkit.utils.CommandPreconditions.checkInstanceOfPlayer;
 public class CommandList implements CommandClass {
 
   @Command(
-      names = {"help", "?", ""},
+      names = {"help", "?"},
       desc = "%translatable:list.help.desc%")
   public void mainCommand(CommandSender sender,
                           CommandFlow commandFlow,

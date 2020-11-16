@@ -19,7 +19,7 @@ import static me.oczi.bukkit.utils.CommandPreconditions.checkCollectionNotContai
 public class CommandPermission implements CommandClass {
 
   @Command(
-      names = {"help", "h"},
+      names = {"help", "?"},
       desc = "%translatable:permission.help.desc%")
   public void mainCommand(CommandSender sender,
                           CommandFlow commandFlow) {

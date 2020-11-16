@@ -23,7 +23,7 @@ import static me.oczi.bukkit.utils.CommandPreconditions.*;
 public class CommandAdmin implements CommandClass {
 
   @Command(
-      names = {"help", "?", ""},
+      names = {"help", "?"},
       desc = "%translatable:admin.help.desc%")
   public void mainCommand(CommandSender sender,
                           CommandFlow commandFlow) {

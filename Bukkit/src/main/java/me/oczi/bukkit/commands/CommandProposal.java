@@ -29,7 +29,7 @@ import static me.oczi.bukkit.utils.CommandPreconditions.*;
 public class CommandProposal implements CommandClass {
 
   @Command(
-      names = {"help", "h"},
+      names = {"help", "?"},
       desc = "%translatable:proposal.help.desc%")
   public void mainCommand(CommandSender sender,
                           CommandFlow commandFlow) {
