@@ -35,13 +35,13 @@ public enum MargaretLibrary implements Dependency {
       "commandflow-universal",
       "0.1.1-SNAPSHOT",
       "0.1.1-20201104.001951-2",
-      "11oFmN8MXDgzS2ODG6Bjrmvo6MOPmYx+bJmYxA/AXuk=",
+      "jk4UgXbiHyTRnj+HFr72FLejdezkBeCQQLeNiJzTS4c=",
       MavenRepository.UNNAMED),
   COMMANDFLOW_BUKKIT("me.fixeddev",
       "commandflow-bukkit",
       "0.1.1-SNAPSHOT",
       "0.1.1-20201104.001958-2",
-      "+Ne/yItO25rL6Xx3PTIQodYnvhkN3aCvJwFXhmK1Dpw=",
+      "k6I8myTcik3VKoTXUKX42GI0UMX3LpdXNmABYhNIMvg=",
       MavenRepository.UNNAMED),
 
   // Text Framework

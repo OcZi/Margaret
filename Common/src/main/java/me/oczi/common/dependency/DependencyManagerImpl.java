@@ -89,6 +89,7 @@ public class DependencyManagerImpl implements DependencyManager {
   }
 
   private List<Dependency> getResultAndClear() {
+    // Clone dependencyList.
     List<Dependency> result = Lists.newArrayList(dependencyList);
     dependencyList.clear();
     return result;
@@ -110,8 +111,7 @@ public class DependencyManagerImpl implements DependencyManager {
             String.format("Dependency file %s doesn't exist.",
                 dependency.getFileName()));
       }
-      // FIXME: ACTIVATE CHECK HASH BEFORE RELEASE
-      // checkHash(fileOutput, dependency.getChecksum());
+      checkHash(fileOutput, dependency.getChecksum());
       files.add(fileOutput);
     }
     return files;
@@ -164,25 +164,9 @@ public class DependencyManagerImpl implements DependencyManager {
     }
   }
 
-  private void info(String... messages) {
-    if (logger != null) {
-      for (String s : messages) {
-        logger.info(s);
-      }
-    }
-  }
-
   private void warning(String message) {
     if (logger != null) {
       logger.warning(message);
-    }
-  }
-
-  private void warning(String... messages) {
-    if (logger != null) {
-      for (String s : messages) {
-        logger.warning(s);
-      }
     }
   }
 
