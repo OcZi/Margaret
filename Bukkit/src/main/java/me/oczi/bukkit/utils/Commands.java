@@ -189,13 +189,16 @@ public interface Commands {
     if (part instanceof SubCommandPart) {
       SubCommandPart subCommandPart = (SubCommandPart) part;
       for (Command subCommand : subCommandPart.getSubCommands()) {
-        map.computeIfAbsent(commandName,
-            k -> new TreeSet<>(
-                Comparator.comparing(Command::getName)));
-        map.computeIfPresent(commandName, (k, v) -> {
-          v.add(subCommand);
-          return v;
-        });
+        map.compute(commandName,
+            (k, v) -> {
+              if (v == null)  {
+                v = new TreeSet<>(
+                    Comparator.comparing(Command::getName));
+              } else {
+                v.add(subCommand);
+              }
+              return v;
+            });
         map.putAll(getDeepSubCommandsOf(subCommand));
       }
     } else if (part instanceof PartsWrapper) {
