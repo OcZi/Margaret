@@ -152,9 +152,9 @@ public class SqlScript implements DbScript {
     List<String> uuidsPlayerPartner = new ArrayList<>();
     List<StatementBasicData> partnersIdOutdated = new ArrayList<>();
     List<Map<String, SqlObject>> rows = resultMap.getRows();
-    for (Map<String, SqlObject> row : rows) {
-      String id = row.get("id").getString();
-      String partnerid = row.get("partnerid").getString();
+    for (Map<String, SqlObject> playerRow : rows) {
+      String id = playerRow.get("id").getString();
+      String partnerid = playerRow.get("partnerid").getString();
       uuidsOutdated.add(id);
       if (!partnerid.equals(EmptyObjects.getEmptyPartnerId())) {
         ResultMap query = statementProcessor.queryMap(dsl
@@ -163,14 +163,16 @@ public class SqlScript implements DbScript {
             .where("id", partnerid)
             .build());
         if (!CommonsUtils.isNullOrEmpty(query)) {
-          String player1 = row.get("player1").getString();
-          String player2 = row.get("player2").getString();
-          TypePair<String> pair = new TypePairImpl<>(player1, player2);
-          int side = pair.getSide(id);
-          Preconditions.checkArgument(
-              side != 0,
-              "Incorrect partner data (outdated data?)");
-          uuidsPlayerPartner.add(pair.getBySide(side));
+          for (Map<String, SqlObject> partnerRow : query) {
+            String player1 = partnerRow.get("player1").getString();
+            String player2 = partnerRow.get("player2").getString();
+            TypePair<String> pair = new TypePairImpl<>(player1, player2);
+            int side = pair.getSide(id);
+            Preconditions.checkArgument(
+                side != 0,
+                "Incorrect partner data (outdated data?)");
+            uuidsPlayerPartner.add(pair.getBySide(side));
+          }
         }
         partnersIdOutdated.add(StatementBasicData
             .wrapParameters(partnerid));
