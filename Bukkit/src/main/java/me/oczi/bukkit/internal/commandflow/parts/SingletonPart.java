@@ -17,9 +17,8 @@ public class SingletonPart<T> implements CommandPart {
   private final String name;
   private final T object;
 
-  public static <T> CommandPart of(T object,
-                                   String name) {
-    return new SingletonPart<>(object, name);
+  public static <T> CommandPart of(T object) {
+    return new SingletonPart<>(object, object.getClass().getSimpleName());
   }
 
   SingletonPart(T object,

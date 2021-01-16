@@ -45,8 +45,7 @@ public class MargaretCommandFlow implements CommandFlow {
     // Bind himself
     this.injector.bindPart(
         CommandFlow.class,
-        SingletonPart.of(
-            this, getClass().getSimpleName()));
+        SingletonPart.of(this));
     AnnotatedCommandTreeBuilder builder = AnnotatedCommandTreeBuilder
         .create(injector);
     this.commandManager.registerCommands(

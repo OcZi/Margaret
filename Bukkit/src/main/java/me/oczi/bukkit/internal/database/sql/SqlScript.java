@@ -208,7 +208,7 @@ public class SqlScript implements DbScript {
     if (!uuidsPlayerPartner.isEmpty()) {
       statementProcessor.update(dsl
           .update(MargaretSqlTable.PLAYER_DATA)
-          .set("partnerid", "--------")
+          .set("partnerid", EmptyObjects.getEmptyPartnerId())
           .where("id", uuidsPlayerPartner)
           .build());
     }
