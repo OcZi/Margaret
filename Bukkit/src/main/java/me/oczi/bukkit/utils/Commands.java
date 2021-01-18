@@ -194,9 +194,8 @@ public interface Commands {
               if (v == null)  {
                 v = new TreeSet<>(
                     Comparator.comparing(Command::getName));
-              } else {
-                v.add(subCommand);
               }
+              v.add(subCommand);
               return v;
             });
         map.putAll(getDeepSubCommandsOf(subCommand));
