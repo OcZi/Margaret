@@ -70,7 +70,6 @@ public class MargaretModule extends BukkitModule {
   public <T> void bind(Class<T> clazz, T object) {
     bind(clazz,
         // Wrap object into a CommandPart
-        SingletonPart.of(
-            object, clazz.getSimpleName()));
+        SingletonPart.of(object));
   }
 }
