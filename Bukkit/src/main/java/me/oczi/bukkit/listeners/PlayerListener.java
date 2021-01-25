@@ -42,6 +42,9 @@ public class PlayerListener implements Listener {
     if (!margaretPlayer1.havePartner()) {
       return;
     }
+    if (player1.isSneaking()) {
+      return;
+    }
 
     Player player2 = (Player) entity;
     UUID partnerUuid = Partnerships.foundUuidOfPartner(margaretPlayer1);
