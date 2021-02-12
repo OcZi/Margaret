@@ -130,7 +130,7 @@ public class CommandList implements CommandClass {
       desc = "%translatable:list.proposals.desc%")
   public void proposals(CommandSender sender,
                         @OptArg MargaretPlayer margaretPlayer) {
-    if (margaretPlayer.isEmpty()) {
+    if (margaretPlayer == null || margaretPlayer.isEmpty()) {
       checkInstanceOfPlayer(sender, Messages.NEEDS_ARGUMENT);
       margaretPlayer = MargaretPlayers
           .getAsMargaretPlayer(sender);
