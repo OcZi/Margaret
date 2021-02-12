@@ -26,6 +26,13 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <repository>
+            <id>unnamed-snapshots</id>
+            <url>https://repo.unnamed.team/repository/unnamed-snapshots/</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <!-- IntelliJ annotations -->
         <dependency>

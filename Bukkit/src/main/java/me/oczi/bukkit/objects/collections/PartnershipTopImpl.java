@@ -4,11 +4,9 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import me.oczi.bukkit.internal.database.DbTasks;
-import me.oczi.bukkit.objects.player.PlayerData;
 import me.oczi.bukkit.objects.player.PlayerDataPair;
 import me.oczi.bukkit.other.PartnershipTopWriter;
 import me.oczi.common.api.collections.TypePair;
-import me.oczi.common.api.collections.TypePairImpl;
 import me.oczi.common.storage.sql.dsl.result.ResultMap;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.utils.CommonsUtils;
@@ -108,7 +106,7 @@ public class PartnershipTopImpl
             ENTRIES_PER_PAGE);
       } else {
         this.pages = Collections.emptyList();
-        entries.put(1, new PlayerDataPair(null, null));
+        entries.put(1, PlayerDataPair.empty());
       }
     }
   }
@@ -130,8 +128,7 @@ public class PartnershipTopImpl
       String player1 = row.get("player1").getString();
       String player2 = row.get("player2").getString();
       String id = row.get("id").getString();
-      namePairs.put(id,
-          new TypePairImpl<>(player1, player2));
+      namePairs.put(id, TypePair.of(player1, player2));
       values.add(player1);
       values.add(player2);
     }
@@ -154,32 +151,17 @@ public class PartnershipTopImpl
     Map<String, PlayerDataPair> pairs = new HashMap<>();
     for (Map<String, SqlObject> row : rows) {
       String partnerid = row.get("partnerid").getString();
-      PlayerData playerData = getPlayerDataFrom(row);
-      PlayerDataPair dataPair = pairs.computeIfAbsent(partnerid,
-          id -> new PlayerDataPair(null, null));
-      TypePair<String> namePair = namePairs.get(partnerid);
-      int i = namePair.getSide(playerData.getUniqueId().toString());
-      dataPair.setBySide(i, playerData);
+      pairs.compute(partnerid,
+          (k, v) ->
+              PlayerDataPair.serializePartnership(
+                  row,
+                  namePairs.get(k),
+                  v)
+      );
     }
-    List<PlayerDataPair> result = Lists.newArrayList(pairs.values());
-    return Lists.reverse(result);
-  }
-
-  /**
-   * Convert a row of Player's data to object.
-   *
-   * @param row Row of Player's data table.
-   * @return Player data object.
-   */
-  private PlayerData getPlayerDataFrom(Map<String, SqlObject> row) {
-    String id = row.get("id").getString();
-    String name = row.get("name").getString();
-    String gender = row.get("gender").getString();
-
-    return new PlayerData(UUID.fromString(id),
-        name,
-        null,
-        gender);
+    List<PlayerDataPair> list = Lists.newArrayList(pairs.values());
+    Collections.sort(list);
+    return list;
   }
 
   @Override
