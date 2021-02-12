@@ -3,6 +3,10 @@ package me.oczi.common.api.collections;
 public interface TypePair<T>
     extends Pair<T, T>, Iterable<T> {
 
+  static <T> TypePair<T> of(T left, T right) {
+    return new TypePairImpl<>(left, right);
+  }
+
   boolean contains(T type);
 
   default int getSide(T type) {
