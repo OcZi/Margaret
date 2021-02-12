@@ -5,6 +5,7 @@ import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.utils.DefaultGender;
 import me.oczi.bukkit.utils.EmptyObjects;
 import me.oczi.bukkit.utils.Genders;
+import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -16,6 +17,24 @@ public class PlayerData {
   private final Partnership partnership;
   private final String name;
   private final Gender gender;
+
+  /**
+   * Convert a row of Player's data to object.
+   *
+   * @param row Row of Player's data table.
+   * @return Player data object.
+   */
+  public static PlayerData serialize(Map<String, SqlObject> row) {
+    String id = row.get("id").getString();
+    String name = row.get("name").getString();
+    String gender = row.get("gender").getString();
+
+    return new PlayerData(UUID.fromString(id),
+        name,
+        null,
+        gender);
+  }
+
 
   public PlayerData(UUID uuid,
                     String name,
