@@ -152,18 +152,18 @@ public enum Messages {
   SET_GENDER_OF("$1Gender of $2{0} $1set to $2{1}", "gender"),
 
   //List messages
-  LIST_HOME_HEADER("Homes[{0}]", "list"),
-  LIST_PROPOSALS_HEADER("Proposals[{0}]", "list"),
-  LIST_RELATIONS_HEADER("Relations[{0}]", "list"),
-  LIST_SETTINGS_HEADER("Settings[{0}]", "list"),
-  LIST_GENDERS_HEADER("Genders[{0}]", "list"),
-  LIST_PARTNER_HEADER("Top partnerships[{0} of {1}]", "list"),
+  LIST_HOME_HEADER("Homes [{0}]", "list"),
+  LIST_PROPOSALS_HEADER("Proposals [{0}]", "list"),
+  LIST_RELATIONS_HEADER("Relations [{0}]", "list"),
+  LIST_SETTINGS_HEADER("Settings [{0}]", "list"),
+  LIST_GENDERS_HEADER("Genders [{0}]", "list"),
+  LIST_PARTNER_HEADER("Top partnerships [{0} of {1}]", "list"),
 
   LIST_ENTRY("- {0}", "list"),
   LIST_ENUM_ENTRY("{0}. {1}", "list"),
   LIST_HOME_ENTRY("{0}. ID: $1{2}", "list"),
   LIST_HOME_WITH_ALIAS_ENTRY("{0}. ID: $1{1} ({2})", "list"),
-  LIST_SETTING_ENTRY_HOVER("$1Click to set $3{0} $1to $3{1}!", "list"),
+  LIST_SETTING_ENTRY_HOVER("$1Click to set {0} $1to {1}$1!", "list"),
   LIST_PARTNER_ENTRY("$1{0}. {1} $1- {2}", "list"),
   LIST_PARTNER_ENTRY_EMPTY("$1{0}. Nothing $1- here!", "list"),
 
