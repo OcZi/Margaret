@@ -42,13 +42,11 @@ public class MargaretPlayerPart extends MargaretAbstractPart {
                             ArgumentStack stack)
       throws ArgumentParseException {
     String next = stack.next();
-    System.out.println("next = " + next);
     MargaretPlayer player = MargaretPlayers.getAsMargaretPlayer(next);
     if (player.isEmpty() && !optional) {
       throw ConditionException.newException(
           Messages.PLAYER_OFFLINE, next);
     }
-    System.out.println("player = " + player);
     return Collections.singletonList(player);
   }
 
