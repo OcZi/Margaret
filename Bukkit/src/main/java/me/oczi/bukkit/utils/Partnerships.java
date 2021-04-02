@@ -38,7 +38,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Date;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static me.oczi.bukkit.utils.CommandPreconditions.*;
 import static me.oczi.bukkit.utils.MargaretPlayers.cleanUpProposals;
@@ -109,7 +112,8 @@ public final class Partnerships {
     int oldBits = permissions.getBits();
     int newBits = transformPermissions(
         oldBits,
-        player);
+        player,
+        null);
     if (oldBits != newBits) {
       permissions.setBits(newBits);
       if (update) {
@@ -123,11 +127,12 @@ public final class Partnerships {
    * into Partner's permissions in bits.
    *
    * @param bits    Starter bits.
-   * @param players Players to get their permissions.
+   * @param player1 Player 1 to get their permissions
+   * @param player2 Player 2 to get their permissions
    * @return Bits + Player's permission in bits.
    */
-  public static int transformPermissions(int bits, Player... players) {
-    return transformPermissions(bits, Arrays.asList(players));
+  public static int transformPermissions(int bits, Player player1, Player player2) {
+    return transformPermissions(bits, TypePair.of(player1, player2));
   }
 
   /**
@@ -138,7 +143,7 @@ public final class Partnerships {
    * @param players Players to get their permissions.
    * @return Bits + Player's permission in bits.
    */
-  public static int transformPermissions(int bits, @Nullable Collection<Player> players) {
+  public static int transformPermissions(int bits, @Nullable TypePair<Player> players) {
     if (CommonsUtils.isNullOrEmpty(players)) {
       return 0;
     }
@@ -156,7 +161,7 @@ public final class Partnerships {
   }
 
   public static int getMaxHomesOf(int startMaxHomes,
-                                  @Nullable Collection<Player> collection) {
+                                  @Nullable TypePair<Player> collection) {
     if (CommonsUtils.isNullOrEmpty(collection)) {
       return startMaxHomes;
     }

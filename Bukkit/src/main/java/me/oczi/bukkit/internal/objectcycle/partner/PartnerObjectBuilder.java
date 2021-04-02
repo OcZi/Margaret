@@ -18,6 +18,7 @@ import me.oczi.bukkit.utils.MessageUtils;
 import me.oczi.bukkit.utils.PartnershipPermission;
 import me.oczi.bukkit.utils.Partnerships;
 import me.oczi.common.api.Emptyble;
+import me.oczi.common.api.collections.TypePair;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.utils.BitMasks;
 import me.oczi.common.utils.CommonsUtils;
@@ -56,8 +57,8 @@ public class PartnerObjectBuilder {
         margaretPlayer2.getUniqueId(),
         proposal.getRelation());
 
-    List<Player> pair = MargaretPlayers
-        .getAsPlayer(
+    TypePair<Player> pair = MargaretPlayers
+        .getAsPlayerPair(
             margaretPlayer1, margaretPlayer2);
     PartnershipProperties partnershipProperties =
         createPartnerProperties(id,
@@ -79,8 +80,7 @@ public class PartnerObjectBuilder {
     Map<String, SqlObject> metadata = dbTasks.getPartnershipData(id);
     if (CommonsUtils.isNullOrEmpty(metadata)) {
       MessageUtils.warning(
-          "Partner ID "
-              + id + " doesn't exist in database.");
+          "Partner ID " + id + " doesn't exist in database.");
       return null;
     }
 
@@ -88,7 +88,7 @@ public class PartnerObjectBuilder {
   }
 
   public PartnershipProperties initPartnerProperties(String id,
-                                                     Collection<Player> players) {
+                                                     TypePair<Player> players) {
     Map<String, SqlObject> partnerProperties =
         dbTasks.getPartnershipProperties(id);
     if (CommonsUtils.isNullOrEmpty(partnerProperties)) {
@@ -144,7 +144,7 @@ public class PartnerObjectBuilder {
   public PartnershipProperties createPartnerProperties(String id,
                                                        int maxHomes,
                                                        int bits,
-                                                       Collection<Player> players) {
+                                                       TypePair<Player> players) {
     if (bits == -1) {
       bits = refillPartnerPermission();
     }

@@ -3,6 +3,7 @@ package me.oczi.common.utils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import me.oczi.common.api.collections.Pair;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -30,9 +31,10 @@ public interface CommonsUtils {
 
   /**
    * Check if enum class contains a enum with first argument.
+   *
    * @param enumName Enum name to check.
-   * @param clazz Class of enum.
-   * @param <E> Enum type.
+   * @param clazz    Class of enum.
+   * @param <E>      Enum type.
    * @return result of check.
    */
   static <E extends Enum<E>> boolean enumExist(String enumName, Class<E> clazz) {
@@ -55,6 +57,7 @@ public interface CommonsUtils {
 
   /**
    * Format all "." to "/" for urls.
+   *
    * @param string String to format.
    * @return String formatted.
    */
@@ -64,6 +67,7 @@ public interface CommonsUtils {
 
   /**
    * Map the files of a path.
+   *
    * @param path Path to map.
    * @return map of files in path.
    */
@@ -73,6 +77,7 @@ public interface CommonsUtils {
 
   /**
    * Map the files of a path.
+   *
    * @param path Path to map.
    * @return map of files in path.
    */
@@ -92,13 +97,14 @@ public interface CommonsUtils {
 
   /**
    * Array of strings to a single string.
+   *
    * @param strings Strings to single string.
    * @return Array joined or first value of array.
    */
   static String arrayToString(String[] strings) {
     if (strings.length == 1) {
       return strings[0];
-    } else if (strings.length > 1){
+    } else if (strings.length > 1) {
       return String.join(", ", strings);
     } else {
       return "";
@@ -107,6 +113,7 @@ public interface CommonsUtils {
 
   /**
    * Array to search a argument.
+   *
    * @param array Array to iterate.
    * @param match Object to search.
    * @return result of search.
@@ -119,17 +126,21 @@ public interface CommonsUtils {
 
   /**
    * Check is string contains a space.
+   *
    * @param str String to check.
    * @return result of check.
    */
   static boolean containsSpace(String str) {
     for (char c : str.toCharArray())
-      if (!Character.isSpaceChar(c)) { return true; }
+      if (!Character.isSpaceChar(c)) {
+        return true;
+      }
     return false;
   }
 
   /**
    * Check is string contains a regex.
+   *
    * @param str String to check.
    * @return result of check.
    */
@@ -140,13 +151,16 @@ public interface CommonsUtils {
   /**
    * Apply {@link String#equalsIgnoreCase(String)} to
    * all the elements of array with first parameter.
-   * @param match - String to compare
+   *
+   * @param match   - String to compare
    * @param strings - array to iterate
    * @return is equals
    */
   static boolean stringEqualsTo(String match, String... strings) {
     for (String var : strings)
-      if (match.equalsIgnoreCase(var)) { return true; }
+      if (match.equalsIgnoreCase(var)) {
+        return true;
+      }
 
     return false;
   }
@@ -154,42 +168,51 @@ public interface CommonsUtils {
   /**
    * Apply {@link String#equalsIgnoreCase(String)} to
    * all the elements of iterable with first parameter.
-   * @param match - String to compare
+   *
+   * @param match   - String to compare
    * @param strings - Iterable to iterate
    * @return is equals
    */
   static boolean stringEqualsTo(String match, Iterable<String> strings) {
     for (String var : strings)
-      if (match.equalsIgnoreCase(var)) { return true; }
+      if (match.equalsIgnoreCase(var)) {
+        return true;
+      }
 
     return false;
   }
 
   /**
    * Check is object equals to any object of array.
-   * @param object Object to compare with array.
+   *
+   * @param object  Object to compare with array.
    * @param objects Array of objects to compare.
-   * @param <T> Type.
+   * @param <T>     Type.
    * @return is equals
    */
   @SafeVarargs
   static <T> boolean equalsTo(T object, T... objects) {
     for (T t : objects)
-      if (object == t) { return true; }
+      if (object == t) {
+        return true;
+      }
 
     return false;
   }
 
   /**
    * Check is object equals to any object of iterable.
-   * @param object Object to compare with iterable.
+   *
+   * @param object  Object to compare with iterable.
    * @param objects Iterable of objects to compare.
-   * @param <T> Type.
+   * @param <T>     Type.
    * @return is equals
    */
   static <T> boolean equalsTo(T object, Iterable<T> objects) {
     for (T t : objects)
-      if (object == t) { return true; }
+      if (object == t) {
+        return true;
+      }
 
     return false;
   }
@@ -197,17 +220,21 @@ public interface CommonsUtils {
   /**
    * Check if any string is null or empty
    * Used for plural cases.
+   *
    * @param strings - Strings to check.
    * @return is null or empty.
    */
   static boolean isNullOrEmpty(String... strings) {
     for (String var : strings)
-      if (isNullOrEmpty(var)) { return true; }
+      if (isNullOrEmpty(var)) {
+        return true;
+      }
     return false;
   }
 
   /**
    * Check is string null or empty.
+   *
    * @param str String to check
    * @return is null or empty.
    */
@@ -217,6 +244,7 @@ public interface CommonsUtils {
 
   /**
    * Check if an Array is null or empty.
+   *
    * @param objects - Objects to check.
    * @return is mull or empty.
    */
@@ -224,9 +252,20 @@ public interface CommonsUtils {
     return objects == null || objects.length == 0;
   }
 
+  /**
+   * Check if a {@link Pair} is null or empty.
+   *
+   * @param pair Pair to check.
+   * @return Is null or empty.
+   */
+  static boolean isNullOrEmpty(Pair<?, ?> pair) {
+    return pair == null || pair.isEmpty();
+  }
+
 
   /**
    * Check if a collection is null or empty.
+   *
    * @param collection - Collection to check
    * @return is Null or empty
    */
@@ -236,6 +275,7 @@ public interface CommonsUtils {
 
   /**
    * Check if a map is null or empty.
+   *
    * @param map - Collection to check
    * @return is Null or empty
    */
@@ -246,9 +286,10 @@ public interface CommonsUtils {
   /**
    * A dirty trick to repeat
    * Strings and {@link String#join} them.
-   * @param string - String to repeat.
+   *
+   * @param string       - String to repeat.
    * @param charSequence - CharSequence to join the result.
-   * @param repeat - Number of repeats for string.
+   * @param repeat       - Number of repeats for string.
    * @return String repeated joined by CharSequence.
    */
   static String joinRepeatedString(String string,
@@ -267,6 +308,7 @@ public interface CommonsUtils {
   /**
    * {@link String#join}-alike
    * for iterables of any type.
+   *
    * @param iterable - Iterable to join
    * @return Collection joined as String
    */
@@ -277,6 +319,7 @@ public interface CommonsUtils {
   /**
    * {@link String#join}-alike
    * for iterables of any type.
+   *
    * @param iterable - Iterable to join
    * @return Collection joined as String
    */
@@ -296,8 +339,9 @@ public interface CommonsUtils {
   /**
    * Check if string parameters is null or empty,
    * and if is, will throw NullPointerException.
+   *
    * @param strings - Strings to check
-   * @exception NullPointerException - If found a String empty or null.
+   * @throws NullPointerException - If found a String empty or null.
    */
   static void checkStrings(String message, String... strings) {
     if (isNullOrEmpty(strings)) {
@@ -307,34 +351,37 @@ public interface CommonsUtils {
 
   /**
    * Join all the elements of collection into parentheses.
+   *
    * @param collection Collection to join.
-   * @param <E> Type of elements.
+   * @param <E>        Type of elements.
    * @return Collection joined into parentheses.
    */
   static <E> String parenthesesString(Collection<E> collection) {
     return !isNullOrEmpty(collection)
         ? parenthesesString(
-            joinIterable(collection))
+        joinIterable(collection))
         : "";
   }
 
   /**
    * Join all the elements of array into parentheses.
+   *
    * @param objects Array to join.
-   * @param <T> Type of elements.
+   * @param <T>     Type of elements.
    * @return Collection joined into parentheses.
    */
   @SafeVarargs
   static <T> String parenthesesString(T... objects) {
     return objects.length > 0
         ? parenthesesString(
-            Joiner.on(", ")
-                .join(objects))
+        Joiner.on(", ")
+            .join(objects))
         : "";
   }
 
   /**
    * Return String into parentheses.
+   *
    * @param string - String to enclose.
    * @return String into Parentheses.
    */
@@ -354,6 +401,7 @@ public interface CommonsUtils {
    * Replace all the placeholders with the inserted objects.
    * <br>NOTE: If there are more placeholders than objects to replace,
    * there will be placeholders without replacing them.<br/>
+   *
    * @param message - Message with placeholders unmodified
    * @param objects - Replacement objects
    */
@@ -366,6 +414,7 @@ public interface CommonsUtils {
    * Replace all the placeholders with the inserted objects.
    * <br>NOTE: If there are more placeholders than objects to replace,
    * there will be placeholders without replacing them.<br/>
+   *
    * @param message - Message with placeholders unmodified
    * @param objects - Replacement objects
    */
@@ -378,8 +427,9 @@ public interface CommonsUtils {
    * Replace all the placeholders with the inserted objects.
    * <br>NOTE: If there are more placeholders than objects to replace,
    * there will be placeholders without replacing them.<br/>
+   *
    * @param message - Message with placeholders unmodified
-   * @param format - Format concatenated to object number.
+   * @param format  - Format concatenated to object number.
    * @param objects - Replacement objects
    */
   static String format(String message,
@@ -397,6 +447,7 @@ public interface CommonsUtils {
   /**
    * Format a UUID string without dashes
    * to a complete UUID.
+   *
    * @param notFormat UUID string to format.
    * @return UUID.
    */
@@ -422,6 +473,7 @@ public interface CommonsUtils {
   /**
    * Iterate all the elements
    * to format with the next value.
+   *
    * @param strings Strings to format in cycle.
    * @return A string formatted.
    */
@@ -432,7 +484,8 @@ public interface CommonsUtils {
   /**
    * Iterate all the elements
    * to format with the next value.
-   * @param strings Strings to format in cycle.
+   *
+   * @param strings  Strings to format in cycle.
    * @param endWithS End with %s.
    * @return A string formatted.
    */
@@ -457,11 +510,13 @@ public interface CommonsUtils {
   }
 
   // Method used to not break the api if i remove Google Guava.
+
   /**
    * Part list in I SubLists.
+   *
    * @param list List to part.
-   * @param i Number to part the list.
-   * @param <E> Element type.
+   * @param i    Number to part the list.
+   * @param <E>  Element type.
    * @return SubLists.
    */
   static <E> List<List<E>> partitionList(List<E> list,
@@ -471,6 +526,7 @@ public interface CommonsUtils {
 
   /**
    * Parse a string to boolean.
+   *
    * @param str String to boolean.
    * @return Boolean.
    */
@@ -485,6 +541,7 @@ public interface CommonsUtils {
 
   /**
    * Parse a integer to boolean.
+   *
    * @param intToBoolean Integer to boolean.
    * @return Boolean.
    */
@@ -494,6 +551,7 @@ public interface CommonsUtils {
 
   /**
    * Parse a boolean to integer.
+   *
    * @param toInt Boolean to integer.
    * @return Integer..
    */
@@ -503,18 +561,20 @@ public interface CommonsUtils {
 
   /**
    * Parse a string to integer safety.
+   *
    * @param toInt String to integer.
    * @return String to integer or 0.
    */
   static int parseInt(String toInt) {
     return !Strings.isNullOrEmpty(toInt) &&
-           regexNumber.matcher(toInt).matches()
+        regexNumber.matcher(toInt).matches()
         ? Integer.parseInt(toInt)
         : 0;
   }
 
   /**
    * Check is string contains only numbers.
+   *
    * @param string String to check.
    * @return result of check.
    */
@@ -524,6 +584,7 @@ public interface CommonsUtils {
 
   /**
    * Check is string contains a number.
+   *
    * @param string String to check.
    * @return result of check.
    */

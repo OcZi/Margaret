@@ -1,10 +1,24 @@
 package me.oczi.common.api.collections;
 
+import java.util.List;
+
 public interface TypePair<T>
     extends Pair<T, T>, Iterable<T> {
 
   static <T> TypePair<T> of(T left, T right) {
     return new TypePairImpl<>(left, right);
+  }
+
+  static <T> TypePair<T> toPair(List<T> list) {
+    if (list.isEmpty()) {
+      return of(null, null);
+    }
+    T left = list.get(0);
+    if (list.size() < 2) {
+      return of(left, null);
+    }
+    T right = list.get(1);
+    return of(left, right);
   }
 
   boolean contains(T type);
