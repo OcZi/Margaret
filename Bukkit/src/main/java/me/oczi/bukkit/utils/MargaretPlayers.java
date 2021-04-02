@@ -160,6 +160,11 @@ public final class MargaretPlayers {
     return list;
   }
 
+  public static TypePair<Player> getAsPlayerPair(MargaretPlayer margaretPlayer1,
+                                                 MargaretPlayer margaretPlayer2) {
+    return TypePair.of(getAsPlayer(margaretPlayer1), getAsPlayer(margaretPlayer2));
+  }
+
   /**
    * Get the name of {@link MargaretPlayer} colorized by their gender.
    * @param margaretPlayer MargaretPlayer.
