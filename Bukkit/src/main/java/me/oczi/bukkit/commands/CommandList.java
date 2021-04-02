@@ -202,24 +202,30 @@ public class CommandList implements CommandClass {
       boolean isSetting = margaretPlayer.isSetting(setting);
       String settingName = setting.getFormalName();
       if (!margaretPlayer.isEmpty()) {
-        ChatColor colorized = isSetting
-            ? ChatColor.GREEN
-            : ChatColor.RED;
+        ChatColor colorized = colorizeBoolean(isSetting);
         settingName = colorized + settingName;
       }
+      boolean isNotSetting = !isSetting;
+      String negateSetting = colorizeBoolean(isNotSetting) + String.valueOf(isNotSetting);
       TextComponent component = TextComponent.of(settingName)
           .clickEvent(
               ClickEvent.runCommand(
-                  "/mr setting " + settingName))
+                  "/mr setting " + setting.getName()))
           .hoverEvent(
               MessageUtils.hoverTextOf(
                   Messages.LIST_SETTING_ENTRY_HOVER,
-                  settingName, isSetting));
+                  settingName, negateSetting));
       MessageUtils.composeInteractive(sender,
           Messages.LIST_ENTRY,
           false,
           component);
     }
+  }
+
+  public ChatColor colorizeBoolean(boolean bool) {
+    return bool
+        ? ChatColor.GREEN
+        : ChatColor.RED;
   }
 
   @Command(
