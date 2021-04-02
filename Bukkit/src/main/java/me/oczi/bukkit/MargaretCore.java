@@ -6,6 +6,8 @@ import me.oczi.bukkit.internal.commandflow.MargaretCommandFlow;
 import me.oczi.bukkit.internal.database.DatabaseManager;
 import me.oczi.bukkit.internal.database.DbTasks;
 import me.oczi.bukkit.internal.database.sql.SqlManagerImpl;
+import me.oczi.bukkit.internal.objectcycle.ObjectCycleManager;
+import me.oczi.bukkit.internal.objectcycle.ObjectCycleManagerImpl;
 import me.oczi.bukkit.listeners.ChatListener;
 import me.oczi.bukkit.listeners.PlayerListener;
 import me.oczi.bukkit.objects.partnership.Partnership;
@@ -118,7 +120,7 @@ public class MargaretCore implements PluginCore {
   }
 
   private void initDatabase() {
-    // TODO: Change SqlManager to DatabaseManager if MongoDBManager is implemented
+    // TODO: Change SqlManager to DatabaseManager if MongoDBManager is implemented... some day
     this.dbManager = new SqlManagerImpl(
         MargaretYamlStorage.isDebugMode());
   }
