@@ -17,12 +17,7 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
+        <!-- Common dependency -->
         <dependency>
            <groupId>me.oczi</groupId>
            <artifactId>Common</artifactId>
@@ -30,11 +25,19 @@
            <scope>compile</scope>
         </dependency>
 
+        <!-- Server API -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Command Framework -->
         <dependency>
             <groupId>me.fixeddev</groupId>
             <artifactId>commandflow-bukkit</artifactId>
-            <version>0.1.1-SNAPSHOT</version>
+            <version>0.4.0-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <!-- Exclude all text-api libraries -->
