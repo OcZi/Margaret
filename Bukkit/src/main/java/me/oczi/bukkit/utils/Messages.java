@@ -87,7 +87,7 @@ public enum Messages {
 
   //Gift messages
   GIFT_SENT("$1You gift $3{0} $1to your partner!", "partnership"),
-  GIFT_RECEIVED("$1You receive d$3{0} $1from your partner!", "partnership"),
+  GIFT_RECEIVED("$1You received $3{0} $1from your partner!", "partnership"),
 
   //Relation messages
   RELATION_SET("$1Relation set to $3{0}", "partnership"),
