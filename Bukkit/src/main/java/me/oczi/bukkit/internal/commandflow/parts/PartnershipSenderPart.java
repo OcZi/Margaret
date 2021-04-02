@@ -6,8 +6,6 @@ import me.fixeddev.commandflow.stack.ArgumentStack;
 import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
-import me.oczi.bukkit.utils.Commands;
-import me.oczi.bukkit.utils.MargaretPlayers;
 import me.oczi.bukkit.utils.Messages;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,12 +24,10 @@ public class PartnershipSenderPart extends MargaretAbstractPart {
   public List<?> parseValue(CommandContext context,
                             ArgumentStack stack)
       throws ArgumentParseException {
-    MargaretPlayer margaretPlayer = MargaretPlayers
-        .getAsMargaretPlayer(
-            Commands.toSender(context));
-    if (margaretPlayer.isEmpty()) {
-      throw ConditionException.newException(
-          Messages.ONLY_PLAYER);
+    MargaretPlayer margaretPlayer = context.getObject(
+        MargaretPlayer.class, MargaretSenderPart.MARGARET_SENDER);
+    if (margaretPlayer == null) {
+      margaretPlayer = MargaretSenderPart.parsePlayer(context, stack, optional);
     }
     Partnership partnership = margaretPlayer.getPartnership();
     if (partnership.isEmpty() && !optional) {

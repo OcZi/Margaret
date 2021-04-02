@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class MargaretSenderPart extends MargaretAbstractPart {
+  public static final String MARGARET_SENDER = "MARGARET_PLAYER_SENDER";
 
   public MargaretSenderPart(@NotNull String name, boolean optional) {
     super(true, name, optional);
@@ -23,13 +24,22 @@ public class MargaretSenderPart extends MargaretAbstractPart {
   public List<?> parseValue(CommandContext context,
                             ArgumentStack stack)
       throws ArgumentParseException {
+    MargaretPlayer margaretPlayer = parsePlayer(context, stack, optional);
+    context.setObject(MargaretPlayer.class, MARGARET_SENDER, margaretPlayer);
+    return Collections.singletonList(margaretPlayer);
+  }
+
+  public static MargaretPlayer parsePlayer(CommandContext context,
+                                           ArgumentStack stack,
+                                           boolean optional)
+      throws ArgumentParseException {
     MargaretPlayer margaretPlayer =
         Commands.toMargaretPlayer(context);
     if (margaretPlayer.isEmpty() && !optional) {
       throw ConditionException.newException(
           Messages.ONLY_PLAYER);
     }
-    return Collections.singletonList(margaretPlayer);
+    return margaretPlayer;
   }
 
   @Override
