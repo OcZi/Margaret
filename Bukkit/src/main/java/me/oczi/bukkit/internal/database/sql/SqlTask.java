@@ -268,11 +268,17 @@ public class SqlTask implements DbTasks {
 
   @Override
   public ResultMap getTopOfPartnerships(int limit) {
-    return getRowsByColumn("",
-        PARTNERSHIP_DATA,
-        limit,
-        "creation_date",
-        Lists.newArrayList("id", "player1", "player2"));
+    StatementBasicData data = StatementBasicData
+        .newData(PARTNERSHIP_DATA,
+            Lists.newArrayList("id, player1, player2, creation_date"),
+            null);
+    return sqlExecutor
+        .queryMap("", // Empty statement id to bypass cache
+            data,
+            dsl -> dsl.select("*")
+                .from(PARTNERSHIP_DATA)
+                .limit(limit)
+                .build());
   }
 
   @Override
@@ -300,7 +306,7 @@ public class SqlTask implements DbTasks {
   public ResultMap getAnythingOfPartnershipData() {
     StatementBasicData data = StatementBasicData
         .newData(PLAYER_DATA,
-            Arrays.asList("id", "player1", "player2"),
+            Arrays.asList("id", "player1", "player2", "creation_date"),
             null);
     return sqlExecutor
         .queryMap("", // Empty statement id to bypass cache

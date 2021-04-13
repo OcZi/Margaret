@@ -4,17 +4,20 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import me.oczi.bukkit.internal.database.DbTasks;
+import me.oczi.bukkit.objects.player.PlayerData;
 import me.oczi.bukkit.objects.player.PlayerDataPair;
 import me.oczi.bukkit.other.PartnershipTopWriter;
-import me.oczi.common.api.collections.TypePair;
 import me.oczi.common.storage.sql.dsl.result.ResultMap;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.utils.CommonsUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Date;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class PartnershipTopImpl
     implements PartnershipTop {
@@ -54,15 +57,16 @@ public class PartnershipTopImpl
           ? Collections.emptyList()
           : pages.get(pages.size() - 1);
     }
-    return pages.get(numPage);
+    if (numPage <= 0) {
+      numPage = 1;
+    }
+    return pages.get(numPage - 1);
   }
 
   @Override
   public List<List<PlayerDataPair>> getPages() {
     renovate();
-    return pages == null
-        ? Collections.emptyList()
-        : pages;
+    return pages;
   }
 
   @Override
@@ -101,9 +105,7 @@ public class PartnershipTopImpl
         for (int i = 0; i < firstPartners.size(); i++) {
           entries.put(i + 1, firstPartners.get(i));
         }
-        this.pages = CommonsUtils.partitionList(
-            Lists.newArrayList(asMap().values()),
-            ENTRIES_PER_PAGE);
+        this.pages = Lists.partition(firstPartners, ENTRIES_PER_PAGE);
       } else {
         this.pages = Collections.emptyList();
         entries.put(1, PlayerDataPair.empty());
@@ -122,13 +124,18 @@ public class PartnershipTopImpl
     ResultMap firstPartners = maxEntries > 0
         ? dbTasks.getTopOfPartnerships(maxEntries)
         : dbTasks.getAnythingOfPartnershipData();
-    Map<String, TypePair<String>> namePairs = new HashMap<>();
+    Map<String, PlayerDataPair> namePairs = new HashMap<>();
     List<String> values = new ArrayList<>();
     for (Map<String, SqlObject> row : firstPartners.getRows()) {
       String player1 = row.get("player1").getString();
       String player2 = row.get("player2").getString();
       String id = row.get("id").getString();
-      namePairs.put(id, TypePair.of(player1, player2));
+      Date creationDate = row.get("creation_date").getSqlDate();
+      namePairs.put(id,
+          PlayerDataPair.prepareOf(
+              UUID.fromString(player1),
+              UUID.fromString(player2),
+              creationDate));
       values.add(player1);
       values.add(player2);
     }
@@ -147,19 +154,19 @@ public class PartnershipTopImpl
    * @return Map of top.
    */
   private List<PlayerDataPair> createTopPartners(List<Map<String, SqlObject>> rows,
-                                                 Map<String, TypePair<String>> namePairs) {
-    Map<String, PlayerDataPair> pairs = new HashMap<>();
+                                                 Map<String, PlayerDataPair> namePairs) {
     for (Map<String, SqlObject> row : rows) {
+      String id = row.get("id").getString();
+      UUID uuid = UUID.fromString(id);
       String partnerid = row.get("partnerid").getString();
-      pairs.compute(partnerid,
-          (k, v) ->
-              PlayerDataPair.serializePartnership(
-                  row,
-                  namePairs.get(k),
-                  v)
-      );
+      namePairs.compute(partnerid, (k, v) -> {
+        checkNotNull(v, "Trying to process PartnershipTop produce an exception (Wrong SQL query results?)");
+        int side = v.getSideByUUID(uuid);
+        v.setBySide(side, PlayerData.serialize(row));
+        return v;
+      });
     }
-    List<PlayerDataPair> list = Lists.newArrayList(pairs.values());
+    List<PlayerDataPair> list = Lists.newArrayList(namePairs.values());
     Collections.sort(list);
     return list;
   }

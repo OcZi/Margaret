@@ -2,13 +2,12 @@ package me.oczi.bukkit.objects.player;
 
 import me.oczi.common.api.collections.PairIterator;
 import me.oczi.common.api.collections.TypePair;
-import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Date;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.UUID;
 
 public class PlayerDataPair
     implements TypePair<PlayerData>,
@@ -24,20 +23,8 @@ public class PlayerDataPair
     return new PlayerDataPair(null, null, null);
   }
 
-  public static PlayerDataPair serializePartnership(Map<String, SqlObject> row,
-                                                    @NotNull TypePair<String> namePair,
-                                                    @Nullable PlayerDataPair pair) {
-    if (pair == null) {
-      pair = PlayerDataPair.empty();
-    }
-    PlayerData playerData = PlayerData.serialize(row);
-    if (pair.getDate() == null) {
-      pair.setDate(
-          row.get("creation_date").getSqlDate());
-    }
-    int i = namePair.getSide(playerData.getUniqueId().toString());
-    pair.setBySide(i, playerData);
-    return pair;
+  public static PlayerDataPair prepareOf(UUID uuid1, UUID uuid2, Date date) {
+    return new PlayerDataPair(new PlayerData(uuid1), new PlayerData(uuid2), date);
   }
 
   public PlayerDataPair(PlayerData left,
@@ -73,7 +60,7 @@ public class PlayerDataPair
     this.right = right;
   }
 
-  public void setBySide(int side,  PlayerData type) {
+  public void setBySide(int side, PlayerData type) {
     if (side == 1) {
       setLeft(type);
     } else if (side == 2) {
@@ -124,5 +111,15 @@ public class PlayerDataPair
     return date == null || pair.getDate() == null
         ? 0
         : date.compareTo(pair.getDate());
+  }
+
+  public int getSideByUUID(UUID uuid) {
+    if (left.getUniqueId().equals(uuid)) {
+      return 1;
+    } else if (right.getUniqueId().equals(uuid)) {
+      return 2;
+    } else {
+      return 0;
+    }
   }
 }

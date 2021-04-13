@@ -14,9 +14,9 @@ import java.util.UUID;
 
 public class PlayerData {
   private final UUID uuid;
-  private final Partnership partnership;
-  private final String name;
-  private final Gender gender;
+  private String name;
+  private Partnership partnership;
+  private Gender gender;
 
   /**
    * Convert a row of Player's data to object.
@@ -35,11 +35,14 @@ public class PlayerData {
         gender);
   }
 
+  public PlayerData(UUID uuid) {
+    this(uuid, null, null, null);
+  }
 
   public PlayerData(UUID uuid,
-                    String name,
+                    @Nullable String name,
                     @Nullable Partnership partnership,
-                    String gender) {
+                    @Nullable String gender) {
     this.uuid = uuid;
     this.name = name;
     this.partnership = partnership == null
@@ -48,6 +51,18 @@ public class PlayerData {
     this.gender = Genders.genderExist(gender)
         ? Genders.getGender(gender)
         : Genders.getGender(DefaultGender.UNKNOWN.getName());
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setGender(Gender gender) {
+    this.gender = gender;
+  }
+
+  public void setPartnership(Partnership partnership) {
+    this.partnership = partnership;
   }
 
   public String getName() {
