@@ -4,7 +4,7 @@ import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.bukkit.utils.*;
-import me.oczi.bukkit.utils.settings.CacheSettings;
+import me.oczi.bukkit.utils.settings.CacheSetting;
 import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static me.oczi.bukkit.utils.settings.BasicSettings.SHOW_GENDER;
-import static me.oczi.bukkit.utils.settings.BasicSettings.SHOW_PARTNER;
-import static me.oczi.bukkit.utils.settings.CacheSettings.CHAT;
+import static me.oczi.bukkit.utils.settings.BasicSetting.SHOW_GENDER;
+import static me.oczi.bukkit.utils.settings.BasicSetting.SHOW_PARTNER;
+import static me.oczi.bukkit.utils.settings.CacheSetting.CHAT;
 import static me.oczi.common.utils.CommonsUtils.isNullOrEmpty;
 
 public class ChatListener implements Listener {
@@ -144,7 +144,7 @@ public class ChatListener implements Listener {
       if (player.hasPermission("margaret.admin.chat-spy")) {
         MargaretPlayer margaretPlayer = MargaretPlayers
             .getAsMargaretPlayer(player);
-        if (margaretPlayer.isSetting(CacheSettings.CHAT_SPY)) {
+        if (margaretPlayer.isSetting(CacheSetting.CHAT_SPY)) {
           MessageUtils.compose(player,
               Messages.CHAT_SPY_RECEIVED,
               false,

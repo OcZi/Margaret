@@ -33,10 +33,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static me.oczi.bukkit.utils.CommandPreconditions.*;
 import static me.oczi.bukkit.utils.MargaretPlayers.cleanUpProposals;
@@ -107,7 +112,8 @@ public final class Partnerships {
     int oldBits = permissions.getBits();
     int newBits = transformPermissions(
         oldBits,
-        player);
+        player,
+        null);
     if (oldBits != newBits) {
       permissions.setBits(newBits);
       if (update) {
@@ -121,11 +127,12 @@ public final class Partnerships {
    * into Partner's permissions in bits.
    *
    * @param bits    Starter bits.
-   * @param players Players to get their permissions.
+   * @param player1 Player 1 to get their permissions
+   * @param player2 Player 2 to get their permissions
    * @return Bits + Player's permission in bits.
    */
-  public static int transformPermissions(int bits, Player... players) {
-    return transformPermissions(bits, Arrays.asList(players));
+  public static int transformPermissions(int bits, Player player1, Player player2) {
+    return transformPermissions(bits, TypePair.of(player1, player2));
   }
 
   /**
@@ -136,13 +143,14 @@ public final class Partnerships {
    * @param players Players to get their permissions.
    * @return Bits + Player's permission in bits.
    */
-  public static int transformPermissions(int bits, @Nullable Iterable<Player> players) {
-    if (players == null || !players.iterator().hasNext()) {
+  public static int transformPermissions(int bits, @Nullable TypePair<Player> players) {
+    if (CommonsUtils.isNullOrEmpty(players)) {
       return 0;
     }
     Map<String, PartnershipPermission> permissions = PartnershipPermission.getPermissions();
     List<Integer> sumBits = new ArrayList<>();
     for (Player player : players) {
+      if (player == null) continue;
       for (Map.Entry<String, PartnershipPermission> perm : permissions.entrySet()) {
         if (player.hasPermission(perm.getKey())) {
           sumBits.add(BitMasks.mask(perm.getValue()));
@@ -150,6 +158,38 @@ public final class Partnerships {
       }
     }
     return BitMasks.sumBits(bits, sumBits);
+  }
+
+  public static int getMaxHomesOf(int startMaxHomes,
+                                  @Nullable TypePair<Player> collection) {
+    if (CommonsUtils.isNullOrEmpty(collection)) {
+      return startMaxHomes;
+    }
+    String prefix = "margaret.partnership.home-";
+    for (Player player : collection) {
+      if (player == null) continue;
+      for (PermissionAttachmentInfo attachmentInfo : player.getEffectivePermissions()) {
+        String permission = attachmentInfo.getPermission();
+
+        if (permission.startsWith(prefix)) {
+          String amountPart = permission.substring(
+              permission.lastIndexOf("-"));
+          if (!CommonsUtils.isNumeric(amountPart)) {
+            MessageUtils.warning(
+                String.format(
+                    "Permission %s of %s have a invalid format.",
+                    permission,
+                    player.getName()));
+            continue;
+          }
+          int amount = Integer.parseInt(amountPart);
+          if (amount > startMaxHomes) {
+            startMaxHomes = amount;
+          }
+        }
+      }
+    }
+    return startMaxHomes;
   }
 
   /**
@@ -179,7 +219,10 @@ public final class Partnerships {
         alias.length() > 20
         ? "unknown-" + id
         : alias;
-    Home home = new PartnershipHome(id, alias, location);
+    Home home = new PartnershipHome(id,
+        new Date(System.currentTimeMillis()),
+        alias,
+        location);
     dbTasks.setupPartnershipHome(partnerId, home);
     return home;
   }
@@ -231,6 +274,18 @@ public final class Partnerships {
     partnership.setRelation(relation);
     dbTasks.updatePartnershipData(
         "relation", relation, partnership.getId());
+  }
+
+  public static void setHomeAlias(Home home, String alias) {
+    home.setAlias(alias);
+    dbTasks.updateHomeData("alias", alias, home.getId());
+  }
+
+  public static void setHomeLocation(Home home,
+                                     String partnerId,
+                                     Location location) {
+    home.setLocation(location);
+    dbTasks.updateHomeLocation(location, partnerId, home);
   }
 
   /**
@@ -553,7 +608,7 @@ public final class Partnerships {
    * Send information of the {@link Partnership} of a {@link MargaretPlayer}.
    *
    * @param sender         Sender to send information.
-   * @param margaretPlayer MargaretPlayer to get Partnership information-
+   * @param margaretPlayer MargaretPlayer to get Partnership information.
    */
   public static void sendInfo(CommandSender sender,
                               MargaretPlayer margaretPlayer) {
@@ -581,6 +636,21 @@ public final class Partnerships {
         true, getHomesId(homeList));
     MessageUtils.compose(sender, Messages.PARTNER_MAX_HOMES,
         true, homeList.getMaxHomes());
+  }
+
+  public static void sendHomeInfo(CommandSender sender, Home home) {
+    String id = home.getId();
+    String alias = home.getAlias();
+    Location location = home.getLocation();
+    java.util.Date creationDate = home.getCreationDate();
+    MessageUtils.compose(sender, Messages.HOME_ID,
+        true, id);
+    MessageUtils.compose(sender, Messages.HOME_ALIAS,
+        true, alias);
+    MessageUtils.compose(sender, Messages.HOME_LOCATION,
+        true, BukkitUtils.locationToString(location));
+    MessageUtils.compose(sender, Messages.HOME_CREATION_DATE,
+        true, creationDate);
   }
 
   /**

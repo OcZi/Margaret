@@ -1,12 +1,11 @@
 package me.oczi.bukkit.utils;
 
-import com.google.common.base.Strings;
 import me.oczi.bukkit.objects.Proposal;
 import me.oczi.bukkit.objects.collections.HomeList;
 import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
-import me.oczi.bukkit.utils.settings.EnumSettings;
+import me.oczi.bukkit.utils.settings.EnumSetting;
 import me.oczi.common.api.Emptyble;
 import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.Bukkit;
@@ -17,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -30,11 +28,12 @@ public interface CommandPreconditions {
 
   /**
    * Throw a {@link ConditionException} if the predicate is true.
-   * @param t Type that have the predicate.
+   *
+   * @param t         Type that have the predicate.
    * @param predicate Predicate.
-   * @param message Message to send with the exception.
-   * @param objects Objects to format message.
-   * @param <T> Type that have the predicate.
+   * @param message   Message to send with the exception.
+   * @param objects   Objects to format message.
+   * @param <T>       Type that have the predicate.
    * @throws ConditionException If predicate is true or parameter t is null.
    */
   static <T> void throwIf(@Nullable T t,
@@ -154,7 +153,7 @@ public interface CommandPreconditions {
   }
 
   static void checkSetting(MargaretPlayer margaretPlayer,
-                           EnumSettings enumSetting,
+                           EnumSetting enumSetting,
                            Messages message,
                            Object... objects)
       throws ConditionException {
@@ -181,7 +180,7 @@ public interface CommandPreconditions {
       throws ConditionException {
     throwIf(player,
         p -> !(p instanceof Player) &&
-             !p.hasPermission(permission),
+            !p.hasPermission(permission),
         Messages.PLAYER_NO_PERMISSION);
   }
 
@@ -225,7 +224,8 @@ public interface CommandPreconditions {
       throws ConditionException {
     throwIf(partnership,
         p -> !p.hasPermission(permission),
-        Messages.YOUR_PARTNER_NO_PERMISSION);
+        Messages.PARTNERSHIP_NO_PERMISSION,
+        permission);
   }
 
   static void checkMargaretPlayerHavePartner(MargaretPlayer margaretPlayer)
@@ -259,7 +259,7 @@ public interface CommandPreconditions {
         objects);
   }
 
-  static void checkMaxHomes(HomeList homes, Player player)
+  static void checkMaxHomes(HomeList homes)
       throws ConditionException {
     throwIf(homes.size(),
         h -> h >= homes.getMaxHomes(),
@@ -286,42 +286,21 @@ public interface CommandPreconditions {
         objects);
   }
 
-  static void checkStateString(String string,
-                               Messages message,
-                               Object... objects)
-      throws ConditionException {
-    throwIf(string,
-        Strings::isNullOrEmpty,
-        message,
-        objects);
-  }
-
   static void checkStringEquals(String s1,
                                 String s2,
                                 Messages message,
                                 Object... objects)
       throws ConditionException {
-   throwIf(s1,
-       s -> s.equalsIgnoreCase(s2),
-       message,
-       objects);
-  }
-
-  static void checkNotStringEquals(String s1,
-                                String s2,
-                                Messages message,
-                                Object... objects)
-      throws ConditionException {
     throwIf(s1,
-        s -> !(s.equalsIgnoreCase(s2)),
+        s -> s.equalsIgnoreCase(s2),
         message,
         objects);
   }
 
   static <T> void checkCollectionNotContains(Collection<T> collection,
-                                          T object,
-                                          Messages message,
-                                          Object... objects)
+                                             T object,
+                                             Messages message,
+                                             Object... objects)
       throws ConditionException {
     throwIf(collection,
         c -> (c.contains(object)),
@@ -330,9 +309,9 @@ public interface CommandPreconditions {
   }
 
   static <T> void checkCollectionContains(Collection<T> collection,
-                                             T object,
-                                             Messages message,
-                                             Object... objects)
+                                          T object,
+                                          Messages message,
+                                          Object... objects)
       throws ConditionException {
     throwIf(collection,
         c -> !(c.contains(object)),
@@ -340,24 +319,11 @@ public interface CommandPreconditions {
         objects);
   }
 
-  static <T> void checkMapContains(Map<T, ?> collection,
-                                   T object,
-                                   Messages message,
-                                   Object... objects)
-      throws ConditionException {
-    throwIf(collection,
-        c -> !(c.containsKey(object)),
-        message,
-        objects);
-  }
-
-  static void checkCollectionEmpty(Collection<?> collection,
-                                   Messages message,
-                                   Object... objects)
-      throws ConditionException {
-    throwIf(collection,
-        Collection::isEmpty,
-        message,
-        objects);
+  static void checkHomeListAlias(HomeList homeList,
+                                 String alias) {
+    throwIf(alias,
+        homeList::containsAlias,
+        Messages.HOME_ALREADY_HAVE_ALIAS,
+        alias);
   }
 }

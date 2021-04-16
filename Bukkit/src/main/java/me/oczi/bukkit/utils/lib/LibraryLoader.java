@@ -1,7 +1,8 @@
 package me.oczi.bukkit.utils.lib;
 
-import me.oczi.common.dependency.DependencyManager;
+import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
 import me.oczi.common.dependency.Dependency;
+import me.oczi.common.dependency.DependencyManager;
 import me.oczi.common.dependency.DependencyManagerImpl;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +25,8 @@ public class LibraryLoader implements DependencyManager {
 
   public LibraryLoader(File path, ClassLoader classLoader, @Nullable Logger logger) {
     this.delegate = new DependencyManagerImpl(path, classLoader, logger);
+    setOfflineMode(
+        MargaretYamlStorage.isOfflineMode());
   }
 
   @Override
@@ -57,6 +60,11 @@ public class LibraryLoader implements DependencyManager {
   @Override
   public List<Dependency> getDependencyList() {
     return delegate.getDependencyList();
+  }
+
+  @Override
+  public void setOfflineMode(boolean offlineMode) {
+    delegate.setOfflineMode(offlineMode);
   }
 
   @Override

@@ -5,7 +5,7 @@ import me.oczi.bukkit.utils.PartnershipPermission;
 import java.util.HashSet;
 import java.util.Set;
 
-public enum BasicSettings implements EnumSettings {
+public enum BasicSetting implements EnumSetting {
 
   SOUND_EFFECTS("sound-effects", true),
   SHOW_GENDER("show-gender", true),
@@ -15,7 +15,7 @@ public enum BasicSettings implements EnumSettings {
   private final String formalName;
   private final boolean defaultValue;
 
-  BasicSettings(String formalName, boolean defaultValue) {
+  BasicSetting(String formalName, boolean defaultValue) {
     this.formalName = formalName;
     this.defaultValue = defaultValue;
   }
@@ -38,7 +38,7 @@ public enum BasicSettings implements EnumSettings {
   @Deprecated
   public static Set<String> getValuesNames() {
     Set<String> set = new HashSet<>();
-    for (BasicSettings value : values()) {
+    for (BasicSetting value : values()) {
       set.add(value.name().toLowerCase());
     }
 

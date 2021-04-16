@@ -5,7 +5,7 @@ import me.oczi.bukkit.objects.Proposal;
 import me.oczi.bukkit.objects.collections.CacheSet;
 import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.utils.EmptyObjects;
-import me.oczi.bukkit.utils.settings.EnumSettings;
+import me.oczi.bukkit.utils.settings.EnumSetting;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -97,7 +97,7 @@ public class MargaretPlayerImpl implements MargaretPlayer {
   }
 
   @Override
-  public void toggleSetting(EnumSettings setting) {
+  public void toggleSetting(EnumSetting setting) {
     toggleSetting(setting.getName());
   }
 
@@ -107,7 +107,7 @@ public class MargaretPlayerImpl implements MargaretPlayer {
   }
 
   @Override
-  public boolean isSetting(EnumSettings setting) {
+  public boolean isSetting(EnumSetting setting) {
     return isSetting(setting.getName());
   }
 

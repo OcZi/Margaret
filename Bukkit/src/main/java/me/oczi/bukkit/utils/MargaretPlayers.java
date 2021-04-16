@@ -12,8 +12,8 @@ import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.objects.player.MargaretPlayerPair;
 import me.oczi.bukkit.objects.player.MargaretPlayerProposal;
 import me.oczi.bukkit.storage.yaml.MargaretYamlStorage;
-import me.oczi.bukkit.utils.settings.CacheSettings;
-import me.oczi.bukkit.utils.settings.EnumSettings;
+import me.oczi.bukkit.utils.settings.CacheSetting;
+import me.oczi.bukkit.utils.settings.EnumSetting;
 import me.oczi.common.api.collections.TypePair;
 import me.oczi.common.api.collections.TypePairImpl;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
@@ -132,7 +132,7 @@ public final class MargaretPlayers {
    * @return MargaretPlayer, or EmptyMargaretPlayer if not exist.
    */
   public static MargaretPlayer getAsMargaretPlayer(String playerName) {
-    Player player = Bukkit.getPlayer(playerName);
+    Player player = Bukkit.getPlayerExact(playerName);
     return player != null
         ? core.getMargaretPlayer(player.getUniqueId())
         : EmptyObjects.getEmptyMargaretPlayer();
@@ -158,6 +158,11 @@ public final class MargaretPlayers {
       list.add(getAsPlayer(margaretPlayer));
     }
     return list;
+  }
+
+  public static TypePair<Player> getAsPlayerPair(MargaretPlayer margaretPlayer1,
+                                                 MargaretPlayer margaretPlayer2) {
+    return TypePair.of(getAsPlayer(margaretPlayer1), getAsPlayer(margaretPlayer2));
   }
 
   /**
@@ -284,11 +289,11 @@ public final class MargaretPlayers {
    * @return New value setting.
    */
   public static boolean toggleSetting(MargaretPlayer margaretPlayer,
-                                      EnumSettings setting) {
+                                      EnumSetting setting) {
     margaretPlayer.toggleSetting(setting);
     boolean settingValue = margaretPlayer
         .isSetting(setting);
-    if (!(setting instanceof CacheSettings)) {
+    if (!(setting instanceof CacheSetting)) {
       dbTasks.updatePlayerSetting(setting.getName(),
           settingValue,
           margaretPlayer.getUniqueId());
@@ -345,9 +350,9 @@ public final class MargaretPlayers {
    * @return Has all settings or not.
    */
   public static boolean isSettings(MargaretPlayer margaretPlayer,
-                                   EnumSettings... settings) {
+                                   EnumSetting... settings) {
     List<Integer> disabled = new ArrayList<>();
-    for (EnumSettings setting : settings) {
+    for (EnumSetting setting : settings) {
       if (!margaretPlayer.isSetting(setting)) {
         disabled.add(1);
       }

@@ -37,7 +37,7 @@ table:
 
 ## Database credentials.
 ## Only for remote Databases.
-## Ports
+## Ports default:
 ## - MySQL: 3306
 ## - Postgresql: 5432
 credentials:
@@ -59,7 +59,8 @@ hikariconfig:
 
 ## Database properties.
 ## You can make your own properties with
-## the name of database as node and the properties to add.
+## the name of database as first node
+## and the properties to add.
 properties:
   mysql:
     cache-prep-stmts: true

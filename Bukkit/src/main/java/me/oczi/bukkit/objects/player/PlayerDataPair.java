@@ -3,18 +3,36 @@ package me.oczi.bukkit.objects.player;
 import me.oczi.common.api.collections.PairIterator;
 import me.oczi.common.api.collections.TypePair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.sql.Date;
 import java.util.Iterator;
+import java.util.UUID;
 
-public class PlayerDataPair implements TypePair<PlayerData> {
+public class PlayerDataPair
+    implements TypePair<PlayerData>,
+    Comparable<PlayerDataPair> {
   private final Iterator<PlayerData> iterator;
   private PlayerData left;
   private PlayerData right;
 
+  @Nullable
+  private Date date;
+
+  public static PlayerDataPair empty() {
+    return new PlayerDataPair(null, null, null);
+  }
+
+  public static PlayerDataPair prepareOf(UUID uuid1, UUID uuid2, Date date) {
+    return new PlayerDataPair(new PlayerData(uuid1), new PlayerData(uuid2), date);
+  }
+
   public PlayerDataPair(PlayerData left,
-                        PlayerData right) {
+                        PlayerData right,
+                        @Nullable Date date) {
     this.left = left;
     this.right = right;
+    this.date = date;
     this.iterator = new PairIterator<>(left, right);
   }
 
@@ -42,12 +60,16 @@ public class PlayerDataPair implements TypePair<PlayerData> {
     this.right = right;
   }
 
-  public void setBySide(int side,  PlayerData type) {
+  public void setBySide(int side, PlayerData type) {
     if (side == 1) {
       setLeft(type);
     } else if (side == 2) {
       setRight(type);
     }
+  }
+
+  public void setDate(@Nullable Date date) {
+    this.date = date;
   }
 
   public boolean isFull() {
@@ -70,6 +92,11 @@ public class PlayerDataPair implements TypePair<PlayerData> {
     return right;
   }
 
+  @Nullable
+  public Date getDate() {
+    return date;
+  }
+
   @Override
   public String toString() {
     return "PlayerDataPair{" +
@@ -77,5 +104,22 @@ public class PlayerDataPair implements TypePair<PlayerData> {
         ", left=" + left +
         ", right=" + right +
         '}';
+  }
+
+  @Override
+  public int compareTo(@NotNull PlayerDataPair pair) {
+    return date == null || pair.getDate() == null
+        ? 0
+        : date.compareTo(pair.getDate());
+  }
+
+  public int getSideByUUID(UUID uuid) {
+    if (left.getUniqueId().equals(uuid)) {
+      return 1;
+    } else if (right.getUniqueId().equals(uuid)) {
+      return 2;
+    } else {
+      return 0;
+    }
   }
 }

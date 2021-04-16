@@ -1,26 +1,39 @@
 package me.oczi.bukkit.commands;
 
-import app.ashcon.intake.Command;
-import app.ashcon.intake.bukkit.parametric.annotation.Sender;
+import me.fixeddev.commandflow.annotated.CommandClass;
+import me.fixeddev.commandflow.annotated.annotation.Command;
+import me.oczi.bukkit.internal.commandflow.CommandFlow;
 import me.oczi.bukkit.objects.collections.PartnershipPermissionSet;
 import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.other.exceptions.ConditionException;
-import me.oczi.bukkit.utils.MessageUtils;
-import me.oczi.bukkit.utils.Messages;
-import me.oczi.bukkit.utils.PartnershipPermission;
-import me.oczi.bukkit.utils.Partnerships;
+import me.oczi.bukkit.utils.*;
 import org.bukkit.command.CommandSender;
 
 import static me.oczi.bukkit.utils.CommandPreconditions.checkCollectionContains;
 import static me.oczi.bukkit.utils.CommandPreconditions.checkCollectionNotContains;
 
-public class CommandPermission {
+@Command(
+    names = {"permission", "perm"},
+    desc = "%translatable:permission.desc%",
+    permission = "margaret.partnership-permission")
+public class CommandPermission implements CommandClass {
 
   @Command(
-      aliases = "add",
-      desc = "Add permission to a partner.",
-      perms = "margaret.permission.control")
-  public void add(@Sender CommandSender sender,
+      names = {"help", "?"},
+      desc = "%translatable:permission.help.desc%")
+  public void mainCommand(CommandSender sender,
+                          CommandFlow commandFlow) {
+    Commands.composeFullChildrenHelp(sender,
+        commandFlow.getSubCommandsOf("permission"),
+        "margaret",
+        "permission");
+  }
+
+  @Command(
+      names = "add",
+      desc = "%translatable:permission.add.desc%",
+      permission = "margaret.partnership-permission")
+  public void add(CommandSender sender,
                   Partnership partnership,
                   PartnershipPermission permission)
       throws ConditionException {
@@ -41,10 +54,10 @@ public class CommandPermission {
   }
 
   @Command(
-      aliases = "remove",
-      desc = "Remove permission to a partner.",
-      perms = "margaret.permission.control")
-  public void remove(@Sender CommandSender sender,
+      names = "remove",
+      desc = "%translatable:permission.remove.desc%",
+      permission = "margaret.partnership-permission")
+  public void remove(CommandSender sender,
                      Partnership partnership,
                      PartnershipPermission permission)
       throws ConditionException {

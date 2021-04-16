@@ -1,5 +1,8 @@
 package me.oczi.bukkit.internal.database.tasks;
 
+import me.oczi.bukkit.objects.Home;
+import org.bukkit.Location;
+
 import java.util.UUID;
 
 public interface DbTaskUpdate {
@@ -26,4 +29,12 @@ public interface DbTaskUpdate {
   void updatePartnershipProperty(String settingName,
                                  Object param,
                                  String id);
+
+  void updateHomeData(String columnName,
+                      String param,
+                      String homeId);
+
+  void updateHomeLocation(Location location,
+                          String partnerId,
+                          Home home);
 }

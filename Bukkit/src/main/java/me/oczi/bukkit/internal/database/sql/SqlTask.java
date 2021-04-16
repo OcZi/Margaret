@@ -17,7 +17,6 @@ import me.oczi.common.storage.sql.dsl.result.ResultMap;
 import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import me.oczi.common.storage.sql.dsl.statements.data.StatementBasicData;
 import me.oczi.common.storage.sql.processor.SqlProcessorCache;
-import me.oczi.common.utils.CommonsUtils;
 import org.bukkit.Location;
 
 import java.sql.Date;
@@ -34,7 +33,7 @@ public class SqlTask implements DbTasks {
 
   public SqlTask(DatabaseManager databaseManager,
                  SqlProcessorCache executor,
-                 ListeningExecutorService executorService){
+                 ListeningExecutorService executorService) {
     this.databaseManager = databaseManager;
     this.sqlExecutor = new SqlTaskExecutor(
         executor, executorService);
@@ -87,10 +86,7 @@ public class SqlTask implements DbTasks {
   @Override
   public void setupPartnershipHome(String partnerId, Home home) {
     String id = home.getId();
-    String alias = CommonsUtils.isNullOrEmpty(home.getAlias())
-        ? "unknown-" + home.getId()
-        : home.getAlias();
-
+    String alias = home.getAlias();
     Location location = home.getLocation();
     String world = location.getWorld().getName();
     double x = location.getX();
@@ -171,6 +167,31 @@ public class SqlTask implements DbTasks {
   }
 
   @Override
+  public void updateHomeData(String columnName, String param, String homeId) {
+    updateColumnOfRow("",
+        PARTNERSHIP_HOME,
+        columnName,
+        param,
+        homeId);
+  }
+
+  @Override
+  public void updateHomeLocation(Location location, String partnerId, Home home) {
+    List<Object> param = Arrays.asList(
+        home.getId(),
+        home.getAlias(),
+        partnerId,
+        location.getWorld().getName(),
+        location.getX(),
+        location.getY(),
+        location.getZ(),
+        home.getCreationDate());
+    insertOrReplaceRow("home-location-merge",
+        PARTNERSHIP_HOME,
+        param);
+  }
+
+  @Override
   public void setHomeList(String id, List<Object> params) {
     insertOrReplaceRow("partnership-home-merge",
         PARTNERSHIP_HOMES_LIST,
@@ -247,11 +268,17 @@ public class SqlTask implements DbTasks {
 
   @Override
   public ResultMap getTopOfPartnerships(int limit) {
-    return getRowsByColumn("",
-        PARTNERSHIP_DATA,
-        limit,
-        "creation_date",
-        Lists.newArrayList("id", "player1", "player2"));
+    StatementBasicData data = StatementBasicData
+        .newData(PARTNERSHIP_DATA,
+            Lists.newArrayList("id, player1, player2, creation_date"),
+            null);
+    return sqlExecutor
+        .queryMap("", // Empty statement id to bypass cache
+            data,
+            dsl -> dsl.select("*")
+                .from(PARTNERSHIP_DATA)
+                .limit(limit)
+                .build());
   }
 
   @Override
@@ -279,7 +306,7 @@ public class SqlTask implements DbTasks {
   public ResultMap getAnythingOfPartnershipData() {
     StatementBasicData data = StatementBasicData
         .newData(PLAYER_DATA,
-            Arrays.asList("id", "player1", "player2"),
+            Arrays.asList("id", "player1", "player2", "creation_date"),
             null);
     return sqlExecutor
         .queryMap("", // Empty statement id to bypass cache
@@ -431,7 +458,7 @@ public class SqlTask implements DbTasks {
                             MargaretSqlTable table,
                             Object id,
                             List<String> selects) {
-    List<String> columns  = Lists.newArrayList(
+    List<String> columns = Lists.newArrayList(
         String.join(", ", selects));
     columns.add("id");
     StatementBasicData data = StatementBasicData.newData(
@@ -444,10 +471,10 @@ public class SqlTask implements DbTasks {
   }
 
   private Map<String, SqlObject> getRow(String idStatement,
-                            MargaretSqlTable table,
-                            Object id,
-                            List<String> selects) {
-    List<String> columns  = Lists.newArrayList(
+                                        MargaretSqlTable table,
+                                        Object id,
+                                        List<String> selects) {
+    List<String> columns = Lists.newArrayList(
         String.join(", ", selects));
     columns.add("id");
     StatementBasicData data = StatementBasicData.newData(
@@ -478,7 +505,7 @@ public class SqlTask implements DbTasks {
                                  int start,
                                  int end,
                                  List<String> selects) {
-    List<String> columns  = Lists.newArrayList(
+    List<String> columns = Lists.newArrayList(
         String.join(", ", selects));
     StatementBasicData data = StatementBasicData.newData(
         table, columns, null);
@@ -494,7 +521,7 @@ public class SqlTask implements DbTasks {
                                  MargaretSqlTable table,
                                  int limit,
                                  List<String> selects) {
-    List<String> columns  = Lists.newArrayList(
+    List<String> columns = Lists.newArrayList(
         String.join(", ", selects));
     StatementBasicData data = StatementBasicData.newData(
         table, columns, null);
@@ -510,7 +537,7 @@ public class SqlTask implements DbTasks {
                                     int limit,
                                     String orderColumnName,
                                     List<String> selects) {
-    List<String> columns  = Lists.newArrayList(
+    List<String> columns = Lists.newArrayList(
         String.join(", ", selects));
     columns.add(orderColumnName);
     StatementBasicData data = StatementBasicData.newData(
@@ -550,10 +577,11 @@ public class SqlTask implements DbTasks {
 
   /**
    * Update a specified column of row.
-   * @param table - SQL table
-   * @param columnName - Name of column to update
-   * @param param - Update parameter for columnName
-   * @param ids - ID of row
+   *
+   * @param table      SQL table
+   * @param columnName Name of column to update
+   * @param param      Update parameter for columnName
+   * @param ids        ID of row
    */
   private void updateColumnOfRow(String idStatement,
                                  MargaretSqlTable table,

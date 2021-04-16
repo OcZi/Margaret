@@ -1,10 +1,10 @@
 package me.oczi.common.dependency;
 
 import me.oczi.common.dependency.monitor.MonitorByteChannel;
+import me.oczi.common.request.HttpUrlConnectionBuilder;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,37 +26,52 @@ public class DependencyDownloaderImpl implements DependencyDownloader {
         dependency.getFileName());
     File dependencyFile = dependencyPath.toFile();
     try {
-      URL url = new URL(dependency.getAbsoluteUrl());
-      int expectedSize = getFileSizeOf(url);
+      HttpURLConnection connection =
+          newConnection(dependency.getAbsoluteUrl());
+      int expectedSize = connection.getContentLength();
+      String dependencyName = dependency.getArtifactId();
       if (dependencyFile.exists()) {
         long fileSize = Files.size(dependencyPath);
         if (fileSize == expectedSize) {
-          info(dependency.getFileName() + " [Already exist]");
+          info(dependencyName + " [Already exist]");
           return dependencyFile;
         } else {
-          warning("Dependency file '" + dependency.getFileName()
-                  + "' size not match with file size in Maven repository."
-                  + "(File size in folder: " + fileSize
-                  + ", File size in repository: " + expectedSize,
+          if (expectedSize == -1) {
+            throw new IOException(
+                String.format(
+                    "Dependency file '%s' not found in %s's repository " +
+                        "(Repository offline or server without internet?)",
+                    dependency.getArtifactId(),
+                    dependency.getMavenRepository()));
+          }
+          warning(
+              String.format(
+                  "Dependency file '%s' size not match with file size in %s's repository " +
+                      "(File size in folder: %d, File size in repository: %d",
+                  dependency.getFileName(),
+                  dependency.getMavenRepository(),
+                  fileSize,
+                  expectedSize),
               "deleting file to download it again...");
           dependencyFile.delete();
         }
       }
 
       dependencyFile.createNewFile();
-      try (final InputStream inputStream = url.openStream()) {
+      try (final InputStream inputStream = connection.getInputStream()) {
         try (MonitorByteChannel channel = MonitorByteChannel
             .newChannel(
-                inputStream,
-                dependency.getFileName(),
-                expectedSize,
-                logger)) {
+                inputStream, dependencyName,
+                expectedSize, logger)) {
           FileOutputStream stream = new FileOutputStream(dependencyFile);
           stream
               .getChannel()
               .transferFrom(channel, 0, expectedSize);
         }
-        info("Downloading " + dependency.getFileName() + "... [Success]");
+        info(
+            String.format(
+            "Downloading %s... [Success]",
+                dependencyName));
       }
     } catch (FileNotFoundException e) {
       dependencyFile.delete();
@@ -68,9 +83,12 @@ public class DependencyDownloaderImpl implements DependencyDownloader {
     return dependencyFile;
   }
 
-  public int getFileSizeOf(URL url) throws IOException {
-    URLConnection connection = url.openConnection();
-    return connection.getContentLength();
+  private HttpURLConnection newConnection(String url) {
+    return HttpUrlConnectionBuilder.newBuilder(url)
+        .setProperty("User-Agent", "Margaret")
+        .setReadTimeout(10000)
+        .setConnectionTimeout(10000)
+        .build();
   }
 
   private void info(String message) {
@@ -82,7 +100,7 @@ public class DependencyDownloaderImpl implements DependencyDownloader {
   private void info(String... messages) {
     if (logger != null) {
       for (String s : messages) {
-        logger.info(s);
+        info(s);
       }
     }
   }
@@ -96,7 +114,7 @@ public class DependencyDownloaderImpl implements DependencyDownloader {
   private void warning(String... messages) {
     if (logger != null) {
       for (String s : messages) {
-        logger.warning(s);
+        warning(s);
       }
     }
   }

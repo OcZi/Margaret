@@ -1,5 +1,6 @@
-package me.oczi.bukkit.internal;
+package me.oczi.bukkit.internal.objectcycle;
 
+import me.oczi.bukkit.internal.MemoryManager;
 import me.oczi.bukkit.internal.objectcycle.partner.PartnerObjectLoader;
 import me.oczi.bukkit.internal.objectcycle.player.PlayerObjectLoader;
 

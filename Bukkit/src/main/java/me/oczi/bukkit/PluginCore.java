@@ -2,8 +2,8 @@ package me.oczi.bukkit;
 
 import me.oczi.bukkit.internal.CooldownManager;
 import me.oczi.bukkit.internal.MemoryManager;
-import me.oczi.bukkit.internal.ObjectCycleManager;
-import me.oczi.bukkit.internal.commandmanager.CommandManager;
+import me.oczi.bukkit.internal.objectcycle.ObjectCycleManager;
+import me.oczi.bukkit.internal.commandflow.CommandFlow;
 import me.oczi.bukkit.internal.database.DatabaseManager;
 import me.oczi.bukkit.internal.database.DbTasks;
 import me.oczi.bukkit.objects.partnership.Partnership;
@@ -103,7 +103,7 @@ public interface PluginCore {
    * Get command manager of plugin.
    * @return Command manager.
    */
-  CommandManager getCommandManager();
+  CommandFlow getCommandManager();
 
   /**
    * Get gender manager of plugin.

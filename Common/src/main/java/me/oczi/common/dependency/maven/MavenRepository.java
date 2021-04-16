@@ -4,9 +4,8 @@ package me.oczi.common.dependency.maven;
  * URL of Maven's repository.
  */
 public enum MavenRepository {
-  JITPACK("https://jitpack.io/"),
   MAVEN("https://repo1.maven.org/maven2/"),
-  ASHCON("https://repo.ashcon.app/nexus/content/repositories/snapshots/");
+  UNNAMED_RELEASES("https://repo.unnamed.team/repository/unnamed-releases/");
 
   private final String url;
 

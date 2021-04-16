@@ -10,10 +10,9 @@ import me.oczi.bukkit.objects.collections.PartnershipPermissionSet;
 import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.objects.player.MargaretPlayerMeta;
-import me.oczi.bukkit.utils.settings.EnumSettings;
+import me.oczi.bukkit.utils.settings.EnumSetting;
 import me.oczi.common.exceptions.NotInstantiatedClassException;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,6 @@ public final class EmptyObjects {
   private EmptyObjects() {
     throw new NotInstantiatedClassException();
   }
-
 
   public static MargaretPlayer getEmptyMargaretPlayer() {
     return EMPTY_MARGARET_PLAYER;
@@ -108,13 +106,13 @@ public final class EmptyObjects {
     public void clearCurrentProposal() {}
 
     @Override
-    public void toggleSetting(EnumSettings setting) {}
+    public void toggleSetting(EnumSetting setting) {}
 
     @Override
     public void toggleSetting(String setting) {}
 
     @Override
-    public boolean isSetting(EnumSettings setting) {
+    public boolean isSetting(EnumSetting setting) {
       return false;
     }
 
@@ -349,51 +347,17 @@ public final class EmptyObjects {
     }
   }
 
-  public static class EmptyGender implements Gender {
-
-    @Override
-    public String getFormalName() {
-      return "";
-    }
-
-    @Override
-    public String getRealName() {
-      return "";
-    }
-
-    @Override
-    public ChatColor getChatColor() {
-      return ChatColor.WHITE;
-    }
-
-    @Override
-    public String getPrefix() {
-      return "";
-    }
-
-    @Override
-    public String getFormalNameColorized() {
-      return "";
-    }
-
-    @Override
-    public String getPrefixColorized() {
-      return "";
-    }
-
-    @Override
-    public boolean isEmpty() {
-      return true;
-    }
-  }
-
   public static class EmptyHome implements Home {
+    private final Date DATE = new Date();
     private final Location LOCATION = new Location(
         Bukkit.getWorlds().get(0),
         0, 0 , 0);
 
     @Override
     public void setAlias(String alias) {}
+
+    @Override
+    public void setLocation(Location location) {}
 
     @Override
     public boolean hasAlias() {
@@ -403,6 +367,11 @@ public final class EmptyObjects {
     @Override
     public Location getLocation() {
       return LOCATION;
+    }
+
+    @Override
+    public Date getCreationDate() {
+      return DATE;
     }
 
     @Override

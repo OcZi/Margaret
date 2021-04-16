@@ -28,16 +28,34 @@ public enum PartnershipPermission {
     this.node = node;
   }
 
+  private static final Map<String, PartnershipPermission> formattedPermissions =
+      createFormattedPermissionMap();
+
+  private static Map<String, PartnershipPermission> createFormattedPermissionMap() {
+    Map<String, PartnershipPermission> map = new HashMap<>();
+    for (PartnershipPermission value : values()) {
+      map.put(value.toString()
+          .toLowerCase()
+          .replace("_", "-"),
+          value);
+    }
+    return map;
+  }
+
   private static final Map<String, PartnershipPermission> permissions =
       createPermissionMap();
 
   private static Map<String, PartnershipPermission> createPermissionMap() {
     Map<String, PartnershipPermission> map = new HashMap<>();
-    for (PartnershipPermission entry : PartnershipPermission.values()) {
+    for (PartnershipPermission entry : values()) {
       map.putIfAbsent(entry.getNode(), entry);
     }
 
     return map;
+  }
+
+  public static Map<String, PartnershipPermission> getFormattedPermissions() {
+    return formattedPermissions;
   }
 
   public static Map<String, PartnershipPermission> getPermissions() {

@@ -5,6 +5,7 @@ import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.utils.DefaultGender;
 import me.oczi.bukkit.utils.EmptyObjects;
 import me.oczi.bukkit.utils.Genders;
+import me.oczi.common.storage.sql.dsl.result.SqlObject;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -13,14 +14,35 @@ import java.util.UUID;
 
 public class PlayerData {
   private final UUID uuid;
-  private final Partnership partnership;
-  private final String name;
-  private final Gender gender;
+  private String name;
+  private Partnership partnership;
+  private Gender gender;
+
+  /**
+   * Convert a row of Player's data to object.
+   *
+   * @param row Row of Player's data table.
+   * @return Player data object.
+   */
+  public static PlayerData serialize(Map<String, SqlObject> row) {
+    String id = row.get("id").getString();
+    String name = row.get("name").getString();
+    String gender = row.get("gender").getString();
+
+    return new PlayerData(UUID.fromString(id),
+        name,
+        null,
+        gender);
+  }
+
+  public PlayerData(UUID uuid) {
+    this(uuid, null, null, null);
+  }
 
   public PlayerData(UUID uuid,
-                    String name,
+                    @Nullable String name,
                     @Nullable Partnership partnership,
-                    String gender) {
+                    @Nullable String gender) {
     this.uuid = uuid;
     this.name = name;
     this.partnership = partnership == null
@@ -29,6 +51,18 @@ public class PlayerData {
     this.gender = Genders.genderExist(gender)
         ? Genders.getGender(gender)
         : Genders.getGender(DefaultGender.UNKNOWN.getName());
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setGender(Gender gender) {
+    this.gender = gender;
+  }
+
+  public void setPartnership(Partnership partnership) {
+    this.partnership = partnership;
   }
 
   public String getName() {

@@ -2,7 +2,7 @@ package me.oczi.bukkit.utils.settings;
 
 import me.oczi.bukkit.utils.PartnershipPermission;
 
-public enum CacheSettings implements EnumSettings {
+public enum CacheSetting implements EnumSetting {
 
   CHAT("chat", false, PartnershipPermission.CHAT),
   CHAT_SPY("chat-spy", false);
@@ -11,14 +11,14 @@ public enum CacheSettings implements EnumSettings {
   private final boolean defaultValue;
   private final PartnershipPermission permissionEquivalent;
 
-  CacheSettings(String formalName, boolean defaultValue) {
+  CacheSetting(String formalName, boolean defaultValue) {
     this.formalName = formalName;
     this.defaultValue = defaultValue;
     this.permissionEquivalent = null;
   }
 
-  CacheSettings(String formalName, boolean defaultValue,
-                PartnershipPermission permissionEquivalent) {
+  CacheSetting(String formalName, boolean defaultValue,
+               PartnershipPermission permissionEquivalent) {
     this.formalName = formalName;
     this.defaultValue = defaultValue;
     this.permissionEquivalent = permissionEquivalent;
@@ -47,6 +47,6 @@ public enum CacheSettings implements EnumSettings {
 
   @Override
   public String getFormalName() {
-    return formalName.isEmpty() ? getName() : formalName;
+    return formalName;
   }
 }

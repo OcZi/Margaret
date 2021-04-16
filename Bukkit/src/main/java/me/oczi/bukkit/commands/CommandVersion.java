@@ -1,24 +1,23 @@
 package me.oczi.bukkit.commands;
 
-import app.ashcon.intake.Command;
-import app.ashcon.intake.bukkit.parametric.annotation.Sender;
+import me.fixeddev.commandflow.annotated.CommandClass;
+import me.fixeddev.commandflow.annotated.annotation.Command;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.*;
 import net.kyori.text.TextComponent;
 import net.kyori.text.event.ClickEvent;
-import net.kyori.text.format.TextColor;
 import net.kyori.text.format.TextDecoration;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
-public class CommandVersion {
+public class CommandVersion implements CommandClass {
 
   @Command(
-      aliases = {"version", "ver"},
-      desc = "Plugin version information.")
-  public void version(@Sender CommandSender sender,
+      names = {"version", "ver"},
+      desc = "%translatable:version.desc%")
+  public void version(CommandSender sender,
                       Plugin plugin) {
     PluginDescriptionFile description = plugin.getDescription();
     MessageUtils.compose(sender,
@@ -26,7 +25,8 @@ public class CommandVersion {
         true,
         description.getVersion());
     String authors = String.join(
-        ", ", description.getAuthors());
+        ", ",
+        description.getAuthors());
     MessageUtils.compose(sender,
         Messages.AUTHORS,
         true,
@@ -37,15 +37,19 @@ public class CommandVersion {
         true,
         component);
     if (sender instanceof Player) {
-      MargaretPlayer margaretPlayer = MargaretPlayers.getAsMargaretPlayer(sender);
-      SoundUtils.playSound(margaretPlayer, VersionSound.LEVEL_UP);
+      MargaretPlayer margaretPlayer = MargaretPlayers
+          .getAsMargaretPlayer(sender);
+      SoundUtils.playSound(margaretPlayer,
+          VersionSound.LEVEL_UP);
     }
   }
 
-  private TextComponent composeGithubMessage(PluginDescriptionFile description) {
+  private TextComponent composeGithubMessage(
+      PluginDescriptionFile description) {
     String website = description.getWebsite();
+    MargaretColor color = MargaretColor.IMPORTANT;
     return TextComponent.of(website)
-        .color(TextColor.DARK_AQUA)
+        .color(color.getDefaultTextColor())
         .decoration(TextDecoration.UNDERLINED, true)
         .clickEvent(ClickEvent.openUrl(website))
         .hoverEvent(MessageUtils

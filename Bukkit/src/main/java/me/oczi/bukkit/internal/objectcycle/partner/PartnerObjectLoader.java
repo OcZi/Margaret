@@ -8,6 +8,9 @@ import me.oczi.bukkit.objects.partnership.PartnershipImpl;
 import me.oczi.bukkit.objects.partnership.PartnershipProperties;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.utils.MessageUtils;
+import me.oczi.common.api.collections.TypePair;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class PartnerObjectLoader extends AbstractObjectLoader<String> {
   private final PartnerObjectBuilder builder;
@@ -36,7 +39,12 @@ public class PartnerObjectLoader extends AbstractObjectLoader<String> {
       return;
     }
 
-    PartnershipProperties partnershipProperties = builder.initPartnerProperties(id);
+    Player left = Bukkit.getPlayer(
+        partnershipData.getPlayerUUID1());
+    Player right = Bukkit.getPlayer(
+        partnershipData.getPlayerUUID2());
+    TypePair<Player> pair = TypePair.of(left, right);
+    PartnershipProperties partnershipProperties = builder.initPartnerProperties(id, pair);
     Partnership partnership = new PartnershipImpl(partnershipData, partnershipProperties);
     persistenceCache.putPartner(partnership.getId(), partnership);
   }

@@ -19,7 +19,7 @@ import me.oczi.bukkit.utils.DefaultGender;
 import me.oczi.bukkit.utils.EmptyObjects;
 import me.oczi.bukkit.utils.MessageUtils;
 import me.oczi.bukkit.utils.Partnerships;
-import me.oczi.bukkit.utils.settings.EnumSettings;
+import me.oczi.bukkit.utils.settings.EnumSetting;
 import me.oczi.bukkit.utils.settings.PlayerSettings;
 import me.oczi.common.api.mojang.MojangAccount;
 import me.oczi.common.exceptions.SQLCastException;
@@ -52,7 +52,7 @@ public class PlayerObjectBuilder {
       PlayerSettings.getDatabaseSettings()
           .values()
           .stream()
-          .map(EnumSettings::getDefaultValue)
+          .map(EnumSetting::getDefaultValue)
           .collect(Collectors.toList());
   private final AsyncMojangResolver resolver;
 
@@ -127,11 +127,14 @@ public class PlayerObjectBuilder {
         if (!account.getName().equals(player.getName()) ||
             !account.getId().equals(player.getUniqueId().toString())) {
           throw new IllegalStateException(
-              "Player name not match in Mojang's api " +
-                  "(Player's UUID: " + player.getUniqueId() +
-                  ", name: " + player.getName() +
-                  ", Mojang's Account UUID: " + account.getId() +
-                  ", name: " + account.getName());
+              String.format(
+                  "Player name not match in Mojang's api " +
+                      "(Player's UUID: %s, name: %s, " +
+                      "Mojang's Account UUID: %s, name: %s",
+                  player.getUniqueId(),
+                  player.getName(),
+                  account.getId(),
+                  account.getName()));
         }
 
         MessageUtils.debug("Update name " + playerNameDB +
@@ -197,7 +200,7 @@ public class PlayerObjectBuilder {
       e.printStackTrace();
     }
 
-    for (EnumSettings setting : PlayerSettings.getAllSettings().values()) {
+    for (EnumSetting setting : PlayerSettings.getAllSettings().values()) {
       settings.putIfAbsent(setting.getName(), setting.getDefaultValue());
     }
     return new MargaretPlayerMeta(settings);

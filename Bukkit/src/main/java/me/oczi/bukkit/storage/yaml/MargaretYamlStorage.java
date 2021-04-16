@@ -29,20 +29,21 @@ public final class MargaretYamlStorage {
 
   private static int maxProposals;
   private static int proposalTimeout;
-  private static int commandTimeout;
+  private static int commandCooldown;
   private static int daysToExpire;
 
   private static int threads;
 
-  private static int cacheTimeOut;
   private static int partnerMaxHomes;
   private static int maxPossibleHomes;
+  private static int proposalCooldown;
 
   private static boolean debugMode;
   private static boolean announcePartner;
   private static boolean playerAuthentication;
   private static boolean validatePlayerAuthentication;
   private static boolean updateCheck;
+  private static boolean offlineMode;
 
   public static void generateYamlFiles(JavaPlugin plugin) {
     MargaretYamlStorage.plugin = plugin;
@@ -95,12 +96,14 @@ public final class MargaretYamlStorage {
 
     maxProposals = mainConfig.getInt("player.maximum-proposals", 10);
     proposalTimeout = mainConfig.getInt("player.proposal-time-out", 30);
-    commandTimeout = mainConfig.getInt("command.command-cooldown", 30);
+    proposalCooldown = mainConfig.getInt("player.proposal-cooldown", 30);
+    commandCooldown = mainConfig.getInt("command.command-cooldown", 30);
     daysToExpire = mainConfig.getInt("player.player-days-expire", 30);
     partnerMaxHomes = mainConfig.getInt("partnership.permission.default-max-homes", 5);
 
     debugMode = mainConfig.getBoolean("other.debug-mode", false);
     updateCheck = mainConfig.getBoolean("other.update-check", false);
+    offlineMode = mainConfig.getBoolean("other.offline-mode", false);
     announcePartner = mainConfig.getBoolean("partnership.announce-partnership", false);
   }
 
@@ -170,6 +173,10 @@ public final class MargaretYamlStorage {
     return updateCheck;
   }
 
+  public static boolean isOfflineMode() {
+    return offlineMode;
+  }
+
   public static List<String> getAllowedRelations() {
     return allowedRelations;
   }
@@ -198,12 +205,16 @@ public final class MargaretYamlStorage {
     return databaseConfig;
   }
 
-  public static int getCommandTimeout() {
-    return commandTimeout;
+  public static int getCommandCooldown() {
+    return commandCooldown;
   }
 
   public static int getProposalTimeout() {
     return proposalTimeout;
+  }
+
+  public static int getProposalCooldown() {
+    return proposalCooldown;
   }
 
   public static int getMaxProposals() {
@@ -212,10 +223,6 @@ public final class MargaretYamlStorage {
 
   public static int getDaysToExpire() {
     return daysToExpire;
-  }
-
-  public static int getCacheTimeOut() {
-    return cacheTimeOut;
   }
 
   public static int getPartnerMaxHomes() {

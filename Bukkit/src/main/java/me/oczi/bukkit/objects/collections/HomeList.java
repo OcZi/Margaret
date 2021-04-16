@@ -49,7 +49,7 @@ public class HomeList extends ForwardingList<Home> {
   }
 
   /**
-   * Get home by alias.
+   * Get home by alias or id.
    * @param alias Alias of home
    * @return A home, or a EmptyHome if not found.
    */
@@ -57,7 +57,9 @@ public class HomeList extends ForwardingList<Home> {
     if (!CommonsUtils.isNullOrEmpty(alias)) {
       for (Home home : homeList) {
         String homeAlias = home.getAlias();
-        if (homeAlias.startsWith(alias)) {
+        String homeId = home.getId();
+        if (homeAlias.startsWith(alias) ||
+            homeId.startsWith(alias)) {
           return home;
         }
       }
@@ -113,6 +115,15 @@ public class HomeList extends ForwardingList<Home> {
     Home result = super.remove(index);
     update();
     return result;
+  }
+
+  public boolean containsAlias(String alias) {
+    for (Home home : homeList) {
+      if (home.getAlias().equals(alias)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private void update() {

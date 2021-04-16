@@ -10,7 +10,7 @@ player:
   maximum-proposals: 12
 
   ## Time out to evict proposal from player's proposal list.
-  proposal-time-out: 60
+  proposal-time-out: 30
 
   ## Cooldown to send proposals after end a partnership
   ## or their proposal be declined.
@@ -41,12 +41,12 @@ partnership:
   ## Maximum homes for any player without exceptions.
   ## will be the number of columns available for homes in table database.
   ## NOTE: ONLY CAN BE INCREMENTED, NOT DECREMENTED.
-  max-possible-homes: 1
+  max-possible-homes: 5
 
   permission:
 
     ## Default max homes for partners.
-    default-max-homes: 5
+    default-max-homes: 1
 
     ## Allow the players to set a custom relation
     allow-custom-relations: true
@@ -95,6 +95,12 @@ cache:
   cache-max-entries: 20
 
 other:
+
+  ## Set the plugin in offline mode.
+  ## Will not download any dependency, and just load their files
+  ## in the lib folder if exists.
+  ## If not, the plugin will be disabled.
+  offline-mode: false
 
   ## Activates debugging tools and other things
   ## to test the plugin.

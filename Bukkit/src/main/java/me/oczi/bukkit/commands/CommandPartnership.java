@@ -1,36 +1,38 @@
 package me.oczi.bukkit.commands;
 
-import app.ashcon.intake.Command;
-import app.ashcon.intake.bukkit.parametric.annotation.Sender;
-import app.ashcon.intake.dispatcher.Dispatcher;
-import app.ashcon.intake.parametric.annotation.Default;
-import me.oczi.bukkit.internal.commandmanager.CommandManager;
+import me.fixeddev.commandflow.annotated.CommandClass;
+import me.fixeddev.commandflow.annotated.annotation.Command;
+import me.fixeddev.commandflow.annotated.annotation.OptArg;
+import me.fixeddev.commandflow.annotated.annotation.SubCommandClasses;
+import me.fixeddev.commandflow.bukkit.annotation.Sender;
+import me.oczi.bukkit.internal.commandflow.CommandFlow;
+import me.oczi.bukkit.objects.partnership.Partnership;
 import me.oczi.bukkit.objects.player.MargaretPlayer;
 import me.oczi.bukkit.other.exceptions.ConditionException;
-import me.oczi.bukkit.utils.*;
+import me.oczi.bukkit.utils.Commands;
+import me.oczi.bukkit.utils.MessageUtils;
+import me.oczi.bukkit.utils.Messages;
+import me.oczi.bukkit.utils.Partnerships;
 import org.bukkit.command.CommandSender;
 
-import static me.oczi.bukkit.utils.CommandPreconditions.checkHavePartner;
-import static me.oczi.bukkit.utils.CommandPreconditions.checkInstanceOfPlayer;
-
-public class CommandPartnership {
+@Command(
+    names = {"partner", "partnership", "pr"},
+    desc = "%translatable:partner.desc%",
+    permission = "margaret.partnership")
+@SubCommandClasses({SubCommandPartnership.class, CommandHome.class})
+public class CommandPartnership implements CommandClass {
 
   // Generic command help.
   @Command(
-      aliases = {"help", "?", ""},
-      desc = "Partnership command.")
-  public void mainCommand(@Sender CommandSender sender,
-                          CommandManager commandManager,
-                          @Default("") String arg) {
-    Dispatcher dispatcher = commandManager
-        .getPartnerNode().getDispatcher();
-    MargaretPlayer margaretPlayer = MargaretPlayers
-        .getAsMargaretPlayer(sender);
-    Commands.composeFullHelp(sender,
-        dispatcher,
+      names = {"help", "?"},
+      desc = "%translatable:partner.help.desc%")
+  public void mainCommand(CommandSender sender,
+                          @OptArg @Sender MargaretPlayer margaretPlayer,
+                          CommandFlow commandFlow) {
+    Commands.composeFullChildrenHelp(sender,
+        commandFlow.getSubCommandsOf("partner"),
+        "margaret",
         "partner",
-        "partnership",
-        true,
         partnerExtraMessage(margaretPlayer));
   }
 
@@ -45,29 +47,23 @@ public class CommandPartnership {
   }
 
   @Command(
-      aliases = {"information", "info"},
-      desc = "See the information of your partnership.",
-      perms = "margaret.partnership.info")
-  public void info(@Sender CommandSender sender)
+      names = {"information", "info"},
+      desc = "%translatable:partnership.information.desc%",
+      permission = "margaret.partnership.info")
+  public void info(CommandSender sender,
+                   @Sender MargaretPlayer margaretSender,
+                   // Pass partnership check
+                   @Sender Partnership partnershipSender)
       throws ConditionException {
-    checkInstanceOfPlayer(sender,
-        Messages.NEEDS_ARGUMENT);
-    MargaretPlayer margaretPlayer = MargaretPlayers
-        .getAsMargaretPlayer(sender);
-    checkHavePartner(margaretPlayer);
-    Partnerships.sendInfo(sender, margaretPlayer);
+    Partnerships.sendInfo(sender, margaretSender);
   }
 
   @Command(
-      aliases = {"end", "divorce"},
-      desc = "End your partnership.")
-  public void end(@Sender CommandSender sender)
+      names = {"end", "divorce"},
+      desc = "%translatable:partnership.end.desc%")
+  public void end(@Sender Partnership partnershipSender)
       throws ConditionException {
-    checkInstanceOfPlayer(sender);
-    MargaretPlayer margaretPlayer = MargaretPlayers
-        .getAsMargaretPlayer(sender);
-    checkHavePartner(margaretPlayer);
-    Partnerships.endPartner(margaretPlayer.getPartnership());
+    Partnerships.endPartner(partnershipSender);
   }
 }
 

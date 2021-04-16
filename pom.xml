@@ -6,7 +6,7 @@
 
     <groupId>me.oczi</groupId>
     <artifactId>Margaret</artifactId>
-    <version>0.9.8-SNAPSHOT</version>
+    <version>0.9.10-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -17,14 +17,21 @@
     <repositories>
         <repository>
             <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/mavenRepository/snapshots/</url>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
         <repository>
-            <id>ashcon.app</id>
-            <url>https://repo.ashcon.app/nexus/content/repositories/snapshots/</url>
+            <id>unnamed-snapshots</id>
+            <url>https://repo.unnamed.team/repository/unnamed-snapshots/</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>unnamed-snapshots</id>
+            <url>https://repo.unnamed.team/repository/unnamed-snapshots/</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <!-- IntelliJ annotations -->
@@ -57,12 +64,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.199</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.7.0-M1</version>
@@ -83,6 +84,9 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
